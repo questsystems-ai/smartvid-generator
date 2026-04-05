@@ -1,0 +1,295 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1380 720" width="1380" height="720">
+<defs>
+  <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+    <line x1="0" y1="0" x2="0" y2="8" stroke="#664400" stroke-width="1.5"/>
+  </pattern>
+  <marker id="arr-b" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto">
+    <polygon points="0 0,7 3,0 6" fill="#4da6ff"/>
+  </marker>
+  <marker id="arr-o" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto">
+    <polygon points="0 0,7 3,0 6" fill="#ff9944"/>
+  </marker>
+  <marker id="arr-r" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto">
+    <polygon points="0 0,7 3,0 6" fill="#ff5555"/>
+  </marker>
+  <marker id="arr-g" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto">
+    <polygon points="0 0,7 3,0 6" fill="#44dd88"/>
+  </marker>
+  <marker id="arr-p" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto">
+    <polygon points="0 0,7 3,0 6" fill="#cc66ff"/>
+  </marker>
+  <marker id="arr-w" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto">
+    <polygon points="0 0,7 3,0 6" fill="#aaaaaa"/>
+  </marker>
+</defs>
+
+<!-- Background -->
+<rect width="1380" height="720" fill="#0d1117"/>
+
+<!-- Title block -->
+<text x="690" y="25" text-anchor="middle" font-family="'Courier New',monospace" font-size="13" fill="#cccccc" font-weight="bold" letter-spacing="1">PULSE POWER MODULE — PROCESS FLOW DIAGRAM</text>
+<text x="690" y="41" text-anchor="middle" font-family="'Courier New',monospace" font-size="9.5" fill="#555555">Primary Embodiment: C₃H₈ / 90% H₂O₂  ·  Patent Pending March 2026  ·  IPC: F02C 5/00 · H02K 7/18 · F02K 9/42</text>
+<line x1="20" y1="50" x2="1360" y2="50" stroke="#2a2a2a" stroke-width="1"/>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PROCESS LINES                                         -->
+<!-- ══════════════════════════════════════════════════════ -->
+
+<!-- H₂O₂ stream (blue): TANK-01 → SOL-01 → CAT-01 → into CC top -->
+<line x1="120" y1="148" x2="147" y2="148" stroke="#4da6ff" stroke-width="2.5" marker-end="url(#arr-b)"/>
+<line x1="187" y1="148" x2="210" y2="148" stroke="#4da6ff" stroke-width="2.5" marker-end="url(#arr-b)"/>
+<line x1="350" y1="148" x2="392" y2="148" stroke="#4da6ff" stroke-width="2.5"/>
+<line x1="392" y1="148" x2="392" y2="212" stroke="#4da6ff" stroke-width="2.5"/>
+<line x1="392" y1="212" x2="400" y2="212" stroke="#4da6ff" stroke-width="2.5" marker-end="url(#arr-b)"/>
+<!-- stream condition after CAT-01 -->
+<text x="357" y="141" font-family="'Courier New'" font-size="7" fill="#4da6ff">O₂+H₂O · 600-700°C</text>
+
+<!-- Propane stream (orange): TANK-02 → SOL-02 → into CC bottom -->
+<line x1="120" y1="458" x2="147" y2="458" stroke="#ff9944" stroke-width="2.5" marker-end="url(#arr-o)"/>
+<line x1="187" y1="458" x2="392" y2="458" stroke="#ff9944" stroke-width="2.5"/>
+<line x1="392" y1="458" x2="392" y2="392" stroke="#ff9944" stroke-width="2.5"/>
+<line x1="392" y1="392" x2="400" y2="392" stroke="#ff9944" stroke-width="2.5" marker-end="url(#arr-o)"/>
+
+<!-- Hot gas: CC-01 → NZ-01 → T-01 (red) -->
+<line x1="510" y1="300" x2="516" y2="300" stroke="#ff5555" stroke-width="3"/>
+<!-- exit nozzle right edge x=565, y=300 -->
+<line x1="565" y1="300" x2="583" y2="300" stroke="#ff5555" stroke-width="3" marker-end="url(#arr-r)"/>
+<!-- stream condition before turbine -->
+<text x="566" y="272" font-family="'Courier New'" font-size="7" fill="#ff5555">55-85 bar</text>
+<text x="566" y="282" font-family="'Courier New'" font-size="7" fill="#ff5555">~2,200°C</text>
+
+<!-- Turbine exhaust → DV-01 (gray) -->
+<line x1="625" y1="342" x2="625" y2="400" stroke="#aaaaaa" stroke-width="2.5" marker-end="url(#arr-w)"/>
+<!-- DV-01 → EX-01 muffler -->
+<line x1="645" y1="412" x2="678" y2="412" stroke="#aaaaaa" stroke-width="2" marker-end="url(#arr-w)"/>
+<!-- DV-01 → TN-01 thrust (purple) -->
+<line x1="625" y1="424" x2="625" y2="472" stroke="#cc66ff" stroke-width="2.5" marker-end="url(#arr-p)"/>
+<!-- post-turbine exhaust conditions -->
+<text x="630" y="372" font-family="'Courier New'" font-size="7" fill="#888">600-900°C</text>
+<text x="630" y="382" font-family="'Courier New'" font-size="7" fill="#888">5-20 bar</text>
+
+<!-- Mechanical shaft: T-01 → G-01 (white dashed) -->
+<line x1="667" y1="300" x2="686" y2="300" stroke="#dddddd" stroke-width="2" stroke-dasharray="5,3"/>
+
+<!-- Electrical: G-01 → R-01 → BAT-01 → DCDC-01 → outputs (green) -->
+<line x1="742" y1="300" x2="760" y2="300" stroke="#44dd88" stroke-width="2.5" marker-end="url(#arr-g)"/>
+<line x1="832" y1="300" x2="855" y2="300" stroke="#44dd88" stroke-width="2.5" marker-end="url(#arr-g)"/>
+<line x1="927" y1="300" x2="950" y2="300" stroke="#44dd88" stroke-width="2.5" marker-end="url(#arr-g)"/>
+<!-- electrical annotation -->
+<text x="743" y="272" font-family="'Courier New'" font-size="7" fill="#44dd88">200-800V AC</text>
+<text x="743" y="282" font-family="'Courier New'" font-size="7" fill="#44dd88">high-freq</text>
+<!-- DCDC → three output rails -->
+<line x1="1022" y1="300" x2="1052" y2="300" stroke="#44dd88" stroke-width="2"/>
+<line x1="1052" y1="260" x2="1052" y2="340" stroke="#44dd88" stroke-width="2"/>
+<line x1="1052" y1="260" x2="1082" y2="260" stroke="#44dd88" stroke-width="2" marker-end="url(#arr-g)"/>
+<line x1="1052" y1="300" x2="1082" y2="300" stroke="#44dd88" stroke-width="2" marker-end="url(#arr-g)"/>
+<line x1="1052" y1="340" x2="1082" y2="340" stroke="#44dd88" stroke-width="2" marker-end="url(#arr-g)"/>
+
+<!-- ECU control signals (dashed yellow) -->
+<!-- ECU → SOL-01 (run up left rail then across) -->
+<line x1="90" y1="548" x2="90" y2="168" stroke="#ffdd44" stroke-width="1" stroke-dasharray="4,3" opacity="0.65"/>
+<line x1="90" y1="168" x2="147" y2="168" stroke="#ffdd44" stroke-width="1" stroke-dasharray="4,3" opacity="0.65"/>
+<!-- ECU → SOL-02 -->
+<line x1="140" y1="568" x2="167" y2="480" stroke="#ffdd44" stroke-width="1" stroke-dasharray="4,3" opacity="0.65"/>
+<!-- ECU → DV-01 -->
+<line x1="150" y1="558" x2="605" y2="412" stroke="#ffdd44" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- EQUIPMENT                                            -->
+<!-- ══════════════════════════════════════════════════════ -->
+
+<!-- TANK-01: H₂O₂ Oxidizer Cartridge (cylinder symbol) -->
+<rect x="40" y="86" width="80" height="124" rx="4" fill="#0a1a2d" stroke="#4da6ff" stroke-width="2"/>
+<ellipse cx="80" cy="86" rx="40" ry="9" fill="#0a1a2d" stroke="#4da6ff" stroke-width="2"/>
+<ellipse cx="80" cy="210" rx="40" ry="9" fill="#0a1a2d" stroke="#4da6ff" stroke-width="1.5"/>
+<line x1="120" y1="148" x2="130" y2="148" stroke="#4da6ff" stroke-width="2"/>
+<text x="80" y="130" text-anchor="middle" font-family="'Courier New'" font-size="9" fill="#4da6ff" font-weight="bold">TANK-01</text>
+<text x="80" y="143" text-anchor="middle" font-family="'Courier New'" font-size="8" fill="#3a7ab5">90% H₂O₂</text>
+<text x="80" y="156" text-anchor="middle" font-family="'Courier New'" font-size="7.5" fill="#2a5a88">~1 bar · 20°C</text>
+<text x="80" y="168" text-anchor="middle" font-family="'Courier New'" font-size="7.5" fill="#2a5a88">340 mL</text>
+<text x="80" y="180" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#1a4066">Ti / 316L SS</text>
+
+<!-- SOL-01: H₂O₂ Solenoid Valve -->
+<polygon points="167,128 187,148 167,168 147,148" fill="#12120a" stroke="#ffdd44" stroke-width="2"/>
+<text x="167" y="152" text-anchor="middle" font-family="'Courier New'" font-size="7.5" fill="#ffdd44" font-weight="bold">S01</text>
+<text x="167" y="119" text-anchor="middle" font-family="'Courier New'" font-size="8" fill="#ffdd44">SOL-01</text>
+<text x="167" y="179" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#998800">N.C. solenoid</text>
+
+<!-- CAT-01: Catalyst Bed (hatched reactor symbol) -->
+<rect x="210" y="90" width="140" height="116" fill="url(#hatch)" stroke="#ff9922" stroke-width="2.5"/>
+<rect x="210" y="90" width="140" height="116" fill="rgba(255,153,0,0.04)" stroke="#ff9922" stroke-width="2.5"/>
+<text x="280" y="114" text-anchor="middle" font-family="'Courier New'" font-size="9" fill="#ff9922" font-weight="bold">CAT-01</text>
+<text x="280" y="126" text-anchor="middle" font-family="'Courier New'" font-size="7.5" fill="#cc8822">Catalyst Bed</text>
+<text x="280" y="138" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#aa7711">80-mesh Ag gauze · 4× beds</text>
+<text x="280" y="149" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#aa7711">22mm dia · 25mm depth · Ti</text>
+<text x="280" y="161" text-anchor="middle" font-family="'Courier New'" font-size="7.5" fill="#ffaa44">2H₂O₂ → 2H₂O + O₂</text>
+<text x="280" y="172" text-anchor="middle" font-family="'Courier New'" font-size="7.5" fill="#ffaa44">+196 kJ/mol (exo)</text>
+<text x="280" y="184" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#886600">~5,000 cycle service life</text>
+<text x="280" y="196" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#886600">PTFE seals only · no rubber</text>
+
+<!-- CC-01: Combustion Chamber -->
+<rect x="400" y="163" width="110" height="274" rx="5" fill="#150202" stroke="#ff4444" stroke-width="3"/>
+<rect x="408" y="171" width="94" height="258" rx="3" fill="none" stroke="#551111" stroke-width="1" stroke-dasharray="3,2"/>
+<text x="455" y="194" text-anchor="middle" font-family="'Courier New'" font-size="9" fill="#ff4444" font-weight="bold">CC-01</text>
+<text x="455" y="207" text-anchor="middle" font-family="'Courier New'" font-size="8" fill="#cc3333">Combustion</text>
+<text x="455" y="219" text-anchor="middle" font-family="'Courier New'" font-size="8" fill="#cc3333">Chamber</text>
+<text x="455" y="237" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#993333">ZrO₂ liner 4-6mm</text>
+<text x="455" y="248" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#993333">Ti alloy outer shell</text>
+<text x="455" y="260" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#993333">300-500 mL volume</text>
+<text x="455" y="278" text-anchor="middle" font-family="'Courier New'" font-size="8" fill="#ff6666">55–85 bar peak</text>
+<text x="455" y="290" text-anchor="middle" font-family="'Courier New'" font-size="8" fill="#ff6666">~2,200°C</text>
+<text x="455" y="308" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#bb4444">C₃H₈ + 5O₂ →</text>
+<text x="455" y="319" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#bb4444">3CO₂ + 4H₂O</text>
+<text x="455" y="330" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#bb4444">ΔH = -2,220 kJ/mol</text>
+<text x="455" y="348" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#773333">O/F ratio: 3.8–4.0</text>
+<text x="455" y="359" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#773333">Spark plug (cold-start</text>
+<text x="455" y="370" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#773333">backup, &lt;5°C ambient)</text>
+<text x="455" y="388" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#551111">Clean interval ~500 cycles</text>
+<!-- entry labels -->
+<text x="455" y="182" text-anchor="middle" font-family="'Courier New'" font-size="6.5" fill="#4da6ff">← O₂/steam · 600-700°C</text>
+<text x="455" y="428" text-anchor="middle" font-family="'Courier New'" font-size="6.5" fill="#ff9944">← C₃H₈ · 8 bar · 20°C</text>
+
+<!-- NZ-01: Fixed-Geometry Ceramic Nozzle (converging, pointing right) -->
+<polygon points="510,268 565,284 565,316 510,332" fill="#0a0a18" stroke="#ff5555" stroke-width="2"/>
+<text x="537" y="299" text-anchor="middle" font-family="'Courier New'" font-size="8" fill="#ff5555">NZ-01</text>
+<text x="537" y="310" text-anchor="middle" font-family="'Courier New'" font-size="6.5" fill="#993333">ZrO₂ · choked</text>
+
+<!-- T-01: Micro-Turbine (circle with blade marks) -->
+<circle cx="625" cy="300" r="42" fill="#0e0718" stroke="#bb88ff" stroke-width="2.5"/>
+<line x1="625" y1="260" x2="635" y2="290" stroke="#bb88ff" stroke-width="1" opacity="0.55"/>
+<line x1="625" y1="260" x2="615" y2="290" stroke="#bb88ff" stroke-width="1" opacity="0.55"/>
+<line x1="625" y1="340" x2="635" y2="310" stroke="#bb88ff" stroke-width="1" opacity="0.55"/>
+<line x1="625" y1="340" x2="615" y2="310" stroke="#bb88ff" stroke-width="1" opacity="0.55"/>
+<line x1="583" y1="300" x2="613" y2="310" stroke="#bb88ff" stroke-width="1" opacity="0.55"/>
+<line x1="583" y1="300" x2="613" y2="290" stroke="#bb88ff" stroke-width="1" opacity="0.55"/>
+<text x="625" y="295" text-anchor="middle" font-family="'Courier New'" font-size="9" fill="#bb88ff" font-weight="bold">T-01</text>
+<text x="625" y="306" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#8844cc">Micro-Turbine</text>
+<text x="625" y="317" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#7733bb">40-80mm Si₃N₄</text>
+<text x="625" y="328" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#7733bb">60-120k RPM</text>
+
+<!-- G-01: Permanent Magnet Generator (circle) -->
+<circle cx="714" cy="300" r="28" fill="#020f06" stroke="#44dd88" stroke-width="2.5"/>
+<text x="714" y="296" text-anchor="middle" font-family="'Courier New'" font-size="9" fill="#44dd88" font-weight="bold">G-01</text>
+<text x="714" y="307" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#22aa66">PM Gen</text>
+<text x="714" y="317" text-anchor="middle" font-family="'Courier New'" font-size="6.5" fill="#117744">~AC out</text>
+
+<!-- R-01: Full-wave Rectifier -->
+<rect x="760" y="272" width="72" height="56" rx="3" fill="#020f06" stroke="#44dd88" stroke-width="2"/>
+<text x="796" y="292" text-anchor="middle" font-family="'Courier New'" font-size="8.5" fill="#44dd88" font-weight="bold">R-01</text>
+<text x="796" y="303" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#22aa66">Rectifier</text>
+<text x="796" y="314" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#22aa66">AC → DC</text>
+<text x="796" y="322" text-anchor="middle" font-family="'Courier New'" font-size="6.5" fill="#116633">solid-state</text>
+
+<!-- BAT-01: LiPo Buffer Battery -->
+<rect x="855" y="272" width="72" height="56" rx="3" fill="#020f06" stroke="#44dd88" stroke-width="2"/>
+<text x="891" y="292" text-anchor="middle" font-family="'Courier New'" font-size="8.5" fill="#44dd88" font-weight="bold">BAT-01</text>
+<text x="891" y="303" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#22aa66">LiPo Buffer</text>
+<text x="891" y="314" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#22aa66">10,000 mAh</text>
+<text x="891" y="322" text-anchor="middle" font-family="'Courier New'" font-size="6.5" fill="#116633">100C cont.</text>
+
+<!-- DCDC-01: DC-DC Converter + BMS -->
+<rect x="950" y="272" width="72" height="56" rx="3" fill="#020f06" stroke="#44dd88" stroke-width="2"/>
+<text x="986" y="292" text-anchor="middle" font-family="'Courier New'" font-size="8" fill="#44dd88" font-weight="bold">DCDC-01</text>
+<text x="986" y="303" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#22aa66">DC-DC Conv</text>
+<text x="986" y="314" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#22aa66">+ BMS</text>
+<text x="986" y="322" text-anchor="middle" font-family="'Courier New'" font-size="6.5" fill="#116633">regulated</text>
+
+<!-- Output voltage rails -->
+<rect x="1084" y="247" width="58" height="22" rx="3" fill="#020f06" stroke="#44dd88" stroke-width="1.5"/>
+<text x="1113" y="262" text-anchor="middle" font-family="'Courier New'" font-size="11" fill="#44dd88" font-weight="bold">48V</text>
+<rect x="1084" y="287" width="58" height="22" rx="3" fill="#020f06" stroke="#44dd88" stroke-width="1.5"/>
+<text x="1113" y="302" text-anchor="middle" font-family="'Courier New'" font-size="11" fill="#44dd88" font-weight="bold">12V</text>
+<rect x="1084" y="327" width="70" height="22" rx="3" fill="#020f06" stroke="#44dd88" stroke-width="1.5"/>
+<text x="1119" y="342" text-anchor="middle" font-family="'Courier New'" font-size="10" fill="#44dd88" font-weight="bold">5V USB</text>
+
+<!-- TANK-02: Propane Fuel Cartridge (cylinder) -->
+<rect x="40" y="394" width="80" height="124" rx="4" fill="#150800" stroke="#ff9944" stroke-width="2"/>
+<ellipse cx="80" cy="394" rx="40" ry="9" fill="#150800" stroke="#ff9944" stroke-width="2"/>
+<ellipse cx="80" cy="518" rx="40" ry="9" fill="#150800" stroke="#ff9944" stroke-width="1.5"/>
+<line x1="120" y1="458" x2="130" y2="458" stroke="#ff9944" stroke-width="2"/>
+<text x="80" y="436" text-anchor="middle" font-family="'Courier New'" font-size="9" fill="#ff9944" font-weight="bold">TANK-02</text>
+<text x="80" y="449" text-anchor="middle" font-family="'Courier New'" font-size="8" fill="#cc6622">C₃H₈</text>
+<text x="80" y="461" text-anchor="middle" font-family="'Courier New'" font-size="7.5" fill="#994411">8 bar · 20°C</text>
+<text x="80" y="473" text-anchor="middle" font-family="'Courier New'" font-size="7.5" fill="#994411">~100 mL</text>
+<text x="80" y="485" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#663300">Al / SS cartridge</text>
+
+<!-- SOL-02: Propane Solenoid Valve -->
+<polygon points="167,438 187,458 167,478 147,458" fill="#12120a" stroke="#ffdd44" stroke-width="2"/>
+<text x="167" y="462" text-anchor="middle" font-family="'Courier New'" font-size="7.5" fill="#ffdd44" font-weight="bold">S02</text>
+<text x="167" y="429" text-anchor="middle" font-family="'Courier New'" font-size="8" fill="#ffdd44">SOL-02</text>
+<text x="167" y="489" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#998800">N.C. solenoid</text>
+
+<!-- DV-01: Diverter Valve -->
+<polygon points="625,400 645,412 625,424 605,412" fill="#111111" stroke="#aaaaaa" stroke-width="2"/>
+<text x="625" y="416" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#aaaaaa">DV</text>
+<text x="652" y="408" font-family="'Courier New'" font-size="7.5" fill="#888888">DV-01</text>
+<text x="652" y="419" font-family="'Courier New'" font-size="6.5" fill="#555555">thrust/exhaust</text>
+
+<!-- EX-01: Exhaust Muffler -->
+<rect x="678" y="393" width="82" height="42" rx="3" fill="#111111" stroke="#777777" stroke-width="1.5"/>
+<text x="719" y="411" text-anchor="middle" font-family="'Courier New'" font-size="8" fill="#888888">EX-01</text>
+<text x="719" y="423" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#555555">Exhaust / Muffler</text>
+
+<!-- TN-01: de Laval Thrust Nozzle assembly (two nozzles) -->
+<polygon points="608,472 608,520 645,496" fill="#180028" stroke="#cc66ff" stroke-width="2"/>
+<text x="655" y="486" font-family="'Courier New'" font-size="8" fill="#cc66ff">TN-01</text>
+<text x="655" y="498" font-family="'Courier New'" font-size="7" fill="#9944bb">de Laval</text>
+<text x="655" y="510" font-family="'Courier New'" font-size="7" fill="#9944bb">Vectored thrust</text>
+<text x="655" y="522" font-family="'Courier New'" font-size="7" fill="#9944bb">gimbaled opt.</text>
+
+<!-- ECU Control Box -->
+<rect x="38" y="546" width="112" height="68" rx="4" fill="#0f0f00" stroke="#ffdd44" stroke-width="1.5" stroke-dasharray="5,2"/>
+<text x="94" y="566" text-anchor="middle" font-family="'Courier New'" font-size="9" fill="#ffdd44" font-weight="bold">ECU</text>
+<text x="94" y="579" text-anchor="middle" font-family="'Courier New'" font-size="7.5" fill="#ccaa22">Pulse Control</text>
+<text x="94" y="590" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#ccaa22">Timing / Safety</text>
+<text x="94" y="601" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#ccaa22">P + T feedback</text>
+<text x="94" y="609" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#886600">misfire: auto-purge</text>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- ANNOTATION BOXES                                      -->
+<!-- ══════════════════════════════════════════════════════ -->
+
+<!-- Pulse Cycle Timing -->
+<rect x="182" y="546" width="218" height="142" rx="4" fill="none" stroke="#2a2a2a" stroke-width="1"/>
+<text x="291" y="563" text-anchor="middle" font-family="'Courier New'" font-size="8.5" fill="#555555" font-weight="bold">PULSE CYCLE TIMING</text>
+<text x="192" y="578" font-family="'Courier New'" font-size="7.5" fill="#4da6ff">T=0.00s  SOL-01 open → CAT-01</text>
+<text x="192" y="591" font-family="'Courier New'" font-size="7.5" fill="#ff9944">T=0.20s  SOL-02 open → ignition</text>
+<text x="192" y="604" font-family="'Courier New'" font-size="7.5" fill="#ff5555">T=0.25s  Both valves close</text>
+<text x="192" y="617" font-family="'Courier New'" font-size="7.5" fill="#bb88ff">T=0.30s  Turbine accelerates</text>
+<text x="192" y="630" font-family="'Courier New'" font-size="7.5" fill="#44dd88">T=0.5-6s Generation coast</text>
+<text x="192" y="643" font-family="'Courier New'" font-size="7.5" fill="#888888">T=6-35s  Passive cool-down</text>
+<text x="192" y="656" font-family="'Courier New'" font-size="7" fill="#555555">~2 cycles/min  ·  each cycle independent</text>
+<text x="192" y="668" font-family="'Courier New'" font-size="7" fill="#555555">misfire → ECU auto-purge + retry</text>
+<text x="192" y="680" font-family="'Courier New'" font-size="7" fill="#555555">peak: 55-85 bar  ·  ~2,200°C  ·  &lt;0.05s</text>
+
+<!-- Performance Data -->
+<rect x="414" y="472" width="250" height="118" rx="4" fill="none" stroke="#2a2a2a" stroke-width="1"/>
+<text x="539" y="489" text-anchor="middle" font-family="'Courier New'" font-size="8.5" fill="#555555" font-weight="bold">PERFORMANCE (100g C₃H₈ load)</text>
+<text x="424" y="504" font-family="'Courier New'" font-size="7.5" fill="#44dd88">Usable electrical:  875 Wh</text>
+<text x="424" y="517" font-family="'Courier New'" font-size="7.5" fill="#44dd88">Battery charges:    ~67 × 12.95 Wh</text>
+<text x="424" y="530" font-family="'Courier New'" font-size="7.5" fill="#4da6ff">H₂O₂ required:     ~988 mL (~1 L)</text>
+<text x="424" y="543" font-family="'Courier New'" font-size="7.5" fill="#888888">System efficiency:  ~35% (turb×gen×cond)</text>
+<text x="424" y="556" font-family="'Courier New'" font-size="7.5" fill="#888888">Total mass:         ~3 kg (full fuel load)</text>
+<text x="424" y="569" font-family="'Courier New'" font-size="7.5" fill="#888888">Envelope:          280×180×120mm</text>
+<text x="424" y="578" font-family="'Courier New'" font-size="7" fill="#555555">Refuel &lt;30s no tools  ·  STANAG 4694 mount</text>
+
+<!-- Legend -->
+<rect x="760" y="390" width="288" height="178" rx="4" fill="none" stroke="#2a2a2a" stroke-width="1"/>
+<text x="904" y="407" text-anchor="middle" font-family="'Courier New'" font-size="8.5" fill="#555555" font-weight="bold">STREAM LEGEND</text>
+<line x1="773" y1="421" x2="813" y2="421" stroke="#4da6ff" stroke-width="2.5"/><text x="821" y="425" font-family="'Courier New'" font-size="7.5" fill="#4da6ff">Oxidizer (90% H₂O₂ → O₂ + H₂O)</text>
+<line x1="773" y1="437" x2="813" y2="437" stroke="#ff9944" stroke-width="2.5"/><text x="821" y="441" font-family="'Courier New'" font-size="7.5" fill="#ff9944">Fuel (C₃H₈)</text>
+<line x1="773" y1="453" x2="813" y2="453" stroke="#ff5555" stroke-width="2.5"/><text x="821" y="457" font-family="'Courier New'" font-size="7.5" fill="#ff5555">Hot combustion gas</text>
+<line x1="773" y1="469" x2="813" y2="469" stroke="#44dd88" stroke-width="2.5"/><text x="821" y="473" font-family="'Courier New'" font-size="7.5" fill="#44dd88">Electrical power</text>
+<line x1="773" y1="485" x2="813" y2="485" stroke="#cc66ff" stroke-width="2.5"/><text x="821" y="489" font-family="'Courier New'" font-size="7.5" fill="#cc66ff">Vectored thrust</text>
+<line x1="773" y1="501" x2="813" y2="501" stroke="#aaaaaa" stroke-width="2"/><text x="821" y="505" font-family="'Courier New'" font-size="7.5" fill="#aaaaaa">Exhaust gas</text>
+<line x1="773" y1="517" x2="813" y2="517" stroke="#dddddd" stroke-width="2" stroke-dasharray="5,3"/><text x="821" y="521" font-family="'Courier New'" font-size="7.5" fill="#cccccc">Mechanical (shaft)</text>
+<line x1="773" y1="533" x2="813" y2="533" stroke="#ffdd44" stroke-width="1.5" stroke-dasharray="4,3"/><text x="821" y="537" font-family="'Courier New'" font-size="7.5" fill="#ffdd44">ECU control signal</text>
+<text x="773" y="555" font-family="'Courier New'" font-size="7" fill="#444444">Hatched box = packed-bed reactor</text>
+<text x="773" y="566" font-family="'Courier New'" font-size="7" fill="#444444">Circle = rotating equipment</text>
+
+<!-- Bottom confidentiality rule -->
+<line x1="20" y1="698" x2="1360" y2="698" stroke="#2a2a2a" stroke-width="1"/>
+<text x="400" y="711" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#333333">PATENT PENDING · PROVISIONAL FILED MARCH 2026</text>
+<text x="960" y="711" text-anchor="middle" font-family="'Courier New'" font-size="7" fill="#333333">CONFIDENTIAL — NDA REQUIRED — DO NOT DISTRIBUTE</text>
+
+</svg>

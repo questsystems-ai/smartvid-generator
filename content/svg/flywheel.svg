@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-170 0 960 520">
+<defs>
+  <marker id="a0" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4da6ff" opacity="0.7"/></marker>
+  <marker id="a1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#bb88ff" opacity="0.7"/></marker>
+  <marker id="a2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#44dd88" opacity="0.7"/></marker>
+  <marker id="a3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff9944" opacity="0.7"/></marker>
+  <marker id="a4" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff5555" opacity="0.7"/></marker>
+</defs>
+
+<!-- Title -->
+<text x="310" y="30" text-anchor="middle" font-family="'Courier New',monospace" font-size="11" fill="#555" letter-spacing="2">THE FLYWHEEL</text>
+
+<!-- Arcs between nodes (on circle r=170, center 310,270) -->
+<!-- 0(top,310,100) → 1(top-right,472,217) -->
+<path d="M 320,107 A 170,170 0 0 1 462,223" fill="none" stroke="#4da6ff" stroke-width="1.8" stroke-dasharray="6,3" opacity="0.6" marker-end="url(#a0)"/>
+<!-- 1(472,217) → 2(bot-right,410,408) -->
+<path d="M 474,233 A 170,170 0 0 1 406,398" fill="none" stroke="#bb88ff" stroke-width="1.8" stroke-dasharray="6,3" opacity="0.6" marker-end="url(#a1)"/>
+<!-- 2(410,408) → 3(bot-left,210,408) -->
+<path d="M 393,412 A 170,170 0 0 1 227,412" fill="none" stroke="#44dd88" stroke-width="1.8" stroke-dasharray="6,3" opacity="0.6" marker-end="url(#a2)"/>
+<!-- 3(210,408) → 4(top-left,148,217) -->
+<path d="M 209,395 A 170,170 0 0 1 148,233" fill="none" stroke="#ff9944" stroke-width="1.8" stroke-dasharray="6,3" opacity="0.6" marker-end="url(#a3)"/>
+<!-- 4(148,217) → 0(310,100) -->
+<path d="M 158,223 A 170,170 0 0 1 300,107" fill="none" stroke="#ff5555" stroke-width="1.8" stroke-dasharray="6,3" opacity="0.6" marker-end="url(#a4)"/>
+
+<!-- Center hub -->
+<circle cx="310" cy="270" r="58" fill="#0d1117" stroke="#7c6ff7" stroke-width="1.5"/>
+<text x="310" y="264" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#7c6ff7" letter-spacing="2" font-weight="bold">EACH PROJECT</text>
+<text x="310" y="277" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#7c6ff7" letter-spacing="2">IS A DOOR.</text>
+<text x="310" y="290" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="rgba(124,111,247,0.5)" letter-spacing="1">EVERY DOOR</text>
+<text x="310" y="302" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="rgba(124,111,247,0.5)" letter-spacing="1">LEADS TO THE OTHERS.</text>
+
+<!-- Node 0: AuthorConsole (top) cx=310,cy=100 -->
+<circle cx="310" cy="100" r="52" fill="#0a1525" stroke="#4da6ff" stroke-width="2"/>
+<text x="310" y="88" text-anchor="middle" font-size="20">✍️</text>
+<text x="310" y="105" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#4da6ff" font-weight="bold">AUTHOR</text>
+<text x="310" y="116" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#4da6ff" font-weight="bold">CONSOLE</text>
+<text x="310" y="127" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="rgba(77,166,255,0.5)">provenance</text>
+
+<!-- Node 1: Presentation Engine (top-right) cx=472,cy=217 -->
+<circle cx="472" cy="217" r="52" fill="#180f2d" stroke="#bb88ff" stroke-width="2"/>
+<text x="472" y="205" text-anchor="middle" font-size="20">📽️</text>
+<text x="472" y="222" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#bb88ff" font-weight="bold">PRESENTATION</text>
+<text x="472" y="233" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#bb88ff" font-weight="bold">ENGINE</text>
+<text x="472" y="244" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="rgba(187,136,255,0.5)">narrated papers</text>
+
+<!-- Node 2: AI Cost Tracker (bot-right) cx=410,cy=408 -->
+<circle cx="410" cy="408" r="52" fill="#041408" stroke="#44dd88" stroke-width="2"/>
+<text x="410" y="396" text-anchor="middle" font-size="20">📊</text>
+<text x="410" y="413" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#44dd88" font-weight="bold">A.I. COST</text>
+<text x="410" y="424" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#44dd88" font-weight="bold">TRACKER</text>
+<text x="410" y="435" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="rgba(68,221,136,0.5)">spend visibility</text>
+
+<!-- Node 3: Illustration Studio (bot-left) cx=210,cy=408 -->
+<circle cx="210" cy="408" r="52" fill="#1a0800" stroke="#ff9944" stroke-width="2"/>
+<text x="210" y="396" text-anchor="middle" font-size="20">🎨</text>
+<text x="210" y="413" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#ff9944" font-weight="bold">ILLUSTRATION</text>
+<text x="210" y="424" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#ff9944" font-weight="bold">STUDIO</text>
+<text x="210" y="435" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="rgba(255,153,68,0.5)">romantasy authors</text>
+
+<!-- Node 4: Marketing Dashboard (top-left) cx=148,cy=217 -->
+<circle cx="148" cy="217" r="52" fill="#1a0202" stroke="#ff5555" stroke-width="2"/>
+<text x="148" y="205" text-anchor="middle" font-size="20">📣</text>
+<text x="148" y="222" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#ff5555" font-weight="bold">MARKETING</text>
+<text x="148" y="233" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#ff5555" font-weight="bold">DASHBOARD</text>
+<text x="148" y="244" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="rgba(255,85,85,0.5)">no agency needed</text>
+
+<!-- bottom tagline -->
+<text x="310" y="498" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#333" letter-spacing="1">I BUILT THE MARKETING MACHINE. IT RUNS THE WHOLE OPERATION.</text>
+</svg>

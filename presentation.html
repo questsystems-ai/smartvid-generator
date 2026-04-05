@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Workshop</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #0a0b0d;
+  color: #e2e3e5;
+  font-family: 'Inter', -apple-system, sans-serif;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+
+#canvas {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.layer.active { opacity: 1; }
+
+/* Narration bar */
+#narration {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 20px 40px;
+  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 60%, transparent 100%);
+  min-height: 80px;
+  display: flex;
+  align-items: flex-end;
+}
+#narration-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #c8cad0;
+  max-width: 800px;
+  font-weight: 400;
+  position: relative;
+}
+#narration-text strong { color: #38bdf8; font-weight: 600; }
+#narration-text .w { color: #4a4d55; transition: color 0.08s; }
+#narration-text .w.cap-past { color: #7b7f88; }
+#narration-text .w.cap-active { color: #e2e3e5; font-weight: 600; }
+#narration-text::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #0c8de9, #818cf8);
+  border-radius: 2px;
+  width: var(--speak-progress, 0%);
+  transition: width 0.15s linear;
+  opacity: 0.6;
+}
+
+/* Progress */
+#progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0c8de9, #818cf8);
+  z-index: 200;
+  transition: width 0.3s linear;
+}
+#scene-counter {
+  position: fixed;
+  bottom: 20px;
+  right: 28px;
+  font-size: 11px;
+  color: #60646d;
+  z-index: 200;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  font-family: 'Courier New', monospace;
+}
+
+/* Controls */
+#controls {
+  position: fixed;
+  top: 12px;
+  left: 24px;
+  z-index: 200;
+  display: flex;
+  gap: 8px;
+}
+#controls button {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #7b7f88;
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+#controls button:hover {
+  background: rgba(255,255,255,0.14);
+  color: #c8cad0;
+}
+
+/* Start overlay */
+#start-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: opacity 0.5s ease;
+}
+
+/* ── Title template ──────────────────── */
+.title-screen {
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+}
+.title-screen .ts-headline {
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  background: linear-gradient(135deg, #0c8de9 0%, #38bdf8 50%, #818cf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.title-screen .ts-subtitle {
+  font-size: 18px;
+  color: #7b7f88;
+  font-weight: 400;
+}
+.title-screen .ts-tagline {
+  font-size: 14px;
+  color: #4c4f57;
+  margin-top: 24px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+/* ── Pillars template ────────────────── */
+.pillars-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.pillars-row {
+  display: flex;
+  gap: 32px;
+}
+.pillar {
+  text-align: center;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: all 0.6s ease;
+}
+.pillar.visible { opacity: 1; transform: translateY(0); }
+.pillar .p-icon { font-size: 32px; margin-bottom: 8px; }
+.pillar .p-label { font-size: 14px; color: #fff; font-weight: 600; }
+.pillar .p-detail { font-size: 11px; color: #7b7f88; margin-top: 4px; }
+
+/* ── Metrics template ────────────────── */
+.metrics-layout {
+  display: flex;
+  justify-content: center;
+}
+.metrics-row {
+  display: flex;
+  gap: 16px;
+}
+.m-card {
+  background: #1a1b1f;
+  border: 1px solid #2a2b30;
+  border-radius: 12px;
+  padding: 20px 28px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.5s ease;
+}
+.m-card.visible { opacity: 1; transform: translateY(0); }
+.m-card .m-label { font-size: 10px; color: #60646d; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.m-card .m-value { font-size: 28px; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }
+.m-card .m-delta { font-size: 11px; margin-top: 4px; font-weight: 500; }
+.m-card .m-delta.up { color: #34d399; }
+.m-card .m-delta.down { color: #f87171; }
+
+/* ── Close template ──────────────────── */
+.close-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+.cl-headline {
+  font-size: 36px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -1px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 1s ease;
+}
+.cl-headline.visible { opacity: 1; transform: translateY(0); }
+.cl-divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #0c8de9, #818cf8);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.cl-divider.visible { opacity: 1; }
+.cl-cta {
+  font-size: 16px;
+  color: #38bdf8;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.cl-cta.visible { opacity: 1; }
+.cl-tagline {
+  font-size: 12px;
+  color: #4c4f57;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-top: 16px;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+.cl-tagline.visible { opacity: 1; }
+
+/* Section label */
+.section-label {
+  font-size: 11px;
+  color: #38bdf8;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+/* data-delay based visibility */
+[data-delay] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.6s ease;
+}
+[data-delay].visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Image template ──────────────────── */
+.image-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px;
+  width: 100%;
+  height: 100%;
+}
+.img-wrapper {
+  max-width: 80%;
+  max-height: 65vh;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+.scene-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.img-caption {
+  font-size: 14px;
+  color: #7b7f88;
+  text-align: center;
+  font-style: italic;
+  max-width: 600px;
+  line-height: 1.5;
+}
+
+
+/* ── presentaHTML Animation Library ── */
+/* Fade / slide entrance */
+.pa-fade    { opacity:0; animation: pa-fadeIn 0.5s ease forwards; }
+.pa-up      { opacity:0; transform:translateY(20px); animation: pa-slideUp 0.5s ease forwards; }
+.pa-left    { opacity:0; transform:translateX(-20px); animation: pa-slideLeft 0.5s ease forwards; }
+.pa-scale   { opacity:0; transform:scale(0.88); animation: pa-scaleIn 0.45s ease forwards; }
+/* Zoom lens — pan/zoom onto a region (add to a wrapper) */
+.pa-zoom-in  { animation: pa-zoomIn 0.7s ease forwards; }
+.pa-zoom-out { animation: pa-zoomOut 0.7s ease forwards; }
+/* Typewriter — fixed-width element, add width in inline style */
+.pa-type     { overflow:hidden; white-space:nowrap; border-right:2px solid currentColor;
+               animation: pa-typing var(--type-dur,2s) steps(var(--type-steps,40),end) forwards,
+                          pa-blink 0.75s step-end infinite; }
+/* Counter — JS-driven, use data-target="42" */
+.pa-count    { display:inline-block; }
+/* Highlight pulse */
+.pa-pulse    { animation: pa-pulse 1.4s ease-in-out infinite; }
+/* Stagger helper: add style="--d:Xms" and use delay: var(--d,0ms) */
+
+@keyframes pa-fadeIn    { to { opacity:1; } }
+@keyframes pa-slideUp   { to { opacity:1; transform:none; } }
+@keyframes pa-slideLeft { to { opacity:1; transform:none; } }
+@keyframes pa-scaleIn   { to { opacity:1; transform:none; } }
+@keyframes pa-zoomIn    { from { transform:scale(1); } to { transform:scale(1.18); } }
+@keyframes pa-zoomOut   { from { transform:scale(1.18); } to { transform:scale(1); } }
+@keyframes pa-typing    { from { width:0; } }
+@keyframes pa-blink     { from,to { border-color:transparent; } 50% { border-color:currentColor; } }
+@keyframes pa-pulse     { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(0.95); } }
+/* ───────────────────────────────────── */
+
+
+</style>
+</head>
+<body>
+<div id="canvas">
+  <div class="layer active" id="scene-0">
+
+    <div class="title-screen">
+      <h1 class="ts-headline">The Workshop</h1>
+      <p class="ts-subtitle">What I'm building — and what it needs to get done</p>
+      <p class="ts-tagline">AARON · 2026</p>
+    </div>
+    
+  </div>  <div class="layer " id="scene-1">
+
+    <div class="section-label">Something Has Changed</div>
+    
+  </div>  <div class="layer " id="scene-2">
+
+    <div class="title-screen">
+      <h1 class="ts-headline">The Method Is the Product</h1>
+      <p class="ts-subtitle">Each tool builds the next. Each paper funds the one after.</p>
+      <p class="ts-tagline">COMPOUNDING BY DESIGN</p>
+    </div>
+    
+  </div>  <div class="layer " id="scene-3">
+<div class="gallery-scene">
+  
+  <figure class="gallery-figure">
+    <div class="gallery-portrait">
+      <img src="content/images/user-uploaded/newton.jpg" alt="Isaac Newton">
+    </div>
+    <div class="gallery-name">Isaac Newton</div>
+    <div class="gallery-years">1643–1727</div>
+  </figure>
+  
+  <figure class="gallery-figure">
+    <div class="gallery-portrait">
+      <img src="content/images/user-uploaded/franklin.webp" alt="Benjamin Franklin">
+    </div>
+    <div class="gallery-name">Benjamin Franklin</div>
+    <div class="gallery-years">1706–1790</div>
+  </figure>
+  
+  <figure class="gallery-figure">
+    <div class="gallery-portrait">
+      <img src="content/images/user-uploaded/cayley.jpg" alt="George Cayley">
+    </div>
+    <div class="gallery-name">George Cayley</div>
+    <div class="gallery-years">1773–1857</div>
+  </figure>
+  
+  <figure class="gallery-figure">
+    <div class="gallery-portrait">
+      <img src="content/images/user-uploaded/babbage.webp" alt="Charles Babbage">
+    </div>
+    <div class="gallery-name">Charles Babbage</div>
+    <div class="gallery-years">1791–1871</div>
+  </figure>
+  
+</div>
+<style>
+  .gallery-scene {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 52px;
+    width: 100%;
+    height: 100%;
+    padding: 0 64px;
+  }
+  .gallery-figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+  .layer.active .gallery-figure { opacity: 1; transform: none; }
+  .layer.active .gallery-figure:nth-child(1) { transition-delay: 0.05s; }
+  .layer.active .gallery-figure:nth-child(2) { transition-delay: 0.85s; }
+  .layer.active .gallery-figure:nth-child(3) { transition-delay: 1.65s; }
+  .layer.active .gallery-figure:nth-child(4) { transition-delay: 2.45s; }
+  .layer.active .gallery-figure:nth-child(5) { transition-delay: 3.25s; }
+  .layer.active .gallery-figure:nth-child(6) { transition-delay: 4.05s; }
+
+  .gallery-portrait {
+    width: 148px;
+    height: 148px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid rgba(255,255,255,0.12);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.6), 0 0 0 1px rgba(12,141,233,0.15);
+    background: #1a1b1f;
+  }
+  .gallery-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    filter: sepia(0.18) contrast(1.05);
+  }
+  .gallery-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #e2e3e5;
+    letter-spacing: 0.04em;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .gallery-years {
+    font-size: 10px;
+    color: #4c4f57;
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
+</style>
+
+  </div>  <div class="layer " id="scene-4">
+<style>
+  #portfolio-scene {
+    display: grid;
+    grid-template-columns: 1.55fr 1fr 1fr;
+    gap: 0 44px;
+    width: 100%;
+    height: 100%;
+    padding: 44px 68px 36px;
+    align-content: start;
+  }
+  .pcol { display: flex; flex-direction: column; gap: 12px; }
+
+  /* Category labels — animate in with first card of their group */
+  .pcat {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding-bottom: 11px;
+    border-bottom: 1px solid rgba(255,255,255,0.09);
+    margin-bottom: 2px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .cat-tools  .pcat { color: #0c8de9; }
+  .cat-biz    .pcat { color: #c8a96e; }
+  .cat-res    .pcat { color: #818cf8; }
+
+  /* Cards */
+  .pcard {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.42s ease, transform 0.42s ease;
+  }
+  .cat-res .pcard {
+    background: rgba(129,140,248,0.07);
+    border-color: rgba(129,140,248,0.2);
+  }
+  .layer.active .pcard { opacity: 1; transform: none; }
+  .layer.active .pcat  { opacity: 1; }
+
+  .picon { font-size: 20px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+  .pbody { display: flex; flex-direction: column; gap: 5px; }
+  .pname { font-size: 14px; font-weight: 700; color: #e2e3e5; letter-spacing: 0.01em; }
+  .pdesc { font-size: 12px; color: #737680; line-height: 1.45; }
+</style>
+
+<div id="portfolio-scene">
+
+  <!-- TOOLS -->
+  <div class="pcol cat-tools">
+    <div class="pcat" style="transition-delay:0.15s">Tools</div>
+
+    <div class="pcard" style="transition-delay:0.15s">
+      <div class="picon">✍️</div>
+      <div class="pbody">
+        <div class="pname">AuthorConsole / paperHTML</div>
+        <div class="pdesc">Cryptographic proof of human authorship. paperHTML: research published as narrated interactive documents.</div>
+      </div>
+    </div>
+
+    <div class="pcard" style="transition-delay:0.35s">
+      <div class="picon">📽️</div>
+      <div class="pbody">
+        <div class="pname">presentaHTML / smartvid</div>
+        <div class="pdesc">YAML → narrated animated HTML presentation. Smartvid: topic → AI-generated educational explainer video.</div>
+      </div>
+    </div>
+
+    <div class="pcard" style="transition-delay:0.55s">
+      <div class="picon">🎬</div>
+      <div class="pbody">
+        <div class="pname">presentation.html</div>
+        <div class="pdesc">Live collaborative slide builder. Author narrates, Claude builds. You’re watching it now.</div>
+      </div>
+    </div>
+
+    <div class="pcard" style="transition-delay:0.75s">
+      <div class="picon">📊</div>
+      <div class="pbody">
+        <div class="pname">api-dash</div>
+        <div class="pdesc">Real-time AI spend dashboard across 8+ providers. Because someone has to watch the meter.</div>
+      </div>
+    </div>
+
+    <div class="pcard" style="transition-delay:0.95s">
+      <div class="picon">📣</div>
+      <div class="pbody">
+        <div class="pname">Marketing Dashboard</div>
+        <div class="pdesc">Autonomous AI marketing agent. Manages ads, email, social, and experiments. No agency required.</div>
+      </div>
+    </div>
+
+    <div class="pcard" style="transition-delay:1.15s">
+      <div class="picon">⚡</div>
+      <div class="pbody">
+        <div class="pname">initiate / terminate</div>
+        <div class="pdesc">Session continuity skills for AI-powered dev workflows. Zero ramp-up between sessions. Clean handoffs every time.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUSINESSES -->
+  <div class="pcol cat-biz">
+    <div class="pcat" style="transition-delay:2.0s">Businesses</div>
+
+    <div class="pcard" style="transition-delay:2.0s">
+      <div class="picon">✈️</div>
+      <div class="pbody">
+        <div class="pname">FlyIRL / SkyPark</div>
+        <div class="pdesc">Guided flight experiences in a defined SkyZone. For GA pilots and first-timers alike.</div>
+      </div>
+    </div>
+
+    <div class="pcard" style="transition-delay:2.25s">
+      <div class="picon">🎨</div>
+      <div class="pbody">
+        <div class="pname">Illustrat-assist</div>
+        <div class="pdesc">AI illustration studio for creative visual storytelling. Character portraits, world bibles, scene generation.</div>
+      </div>
+    </div>
+
+    <div class="pcard" style="transition-delay:2.5s">
+      <div class="picon">🔩</div>
+      <div class="pbody">
+        <div class="pname">PULSE (Patent)</div>
+        <div class="pdesc">Pulse combustion power module for drones and field equipment. H₂O₂ + propane → 48V DC. Provisional filed March 2026.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLIED AI RESEARCH -->
+  <div class="pcol cat-res">
+    <div class="pcat" style="transition-delay:3.4s">Applied AI Research</div>
+
+    <div class="pcard" style="transition-delay:3.4s">
+      <div class="picon">🧠</div>
+      <div class="pbody">
+        <div class="pname">Problem Solver Engine</div>
+        <div class="pdesc">Multi-agent AI research engine for hard policy problems. AETE: what happens to the economy when AI replaces knowledge work?</div>
+      </div>
+    </div>
+
+    <div class="pcard" style="transition-delay:3.65s">
+      <div class="picon">🧬</div>
+      <div class="pbody">
+        <div class="pname">TRACER</div>
+        <div class="pdesc">Bio-inspired AI memory. Use-reinforced, reconstructive, emotionally weighted — memory that grows like a relationship, not a database. arXiv target.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div><div class="layer " id="scene-5">
+<style>
+  #progress-scene {
+    display: grid;
+    grid-template-columns: 1.55fr 1fr 1fr;
+    gap: 0 44px;
+    width: 100%;
+    height: 100%;
+    padding: 44px 68px 36px;
+    align-content: start;
+  }
+  /* Columns mirror slide 5 exactly */
+  #progress-scene .pcol2 { display: flex; flex-direction: column; gap: 12px; }
+  #progress-scene .pcat2 {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding-bottom: 11px;
+    border-bottom: 1px solid rgba(255,255,255,0.09);
+    margin-bottom: 2px;
+  }
+  .cat-tools2 .pcat2  { color: #0c8de9; }
+  .cat-biz2   .pcat2  { color: #c8a96e; }
+  .cat-res2   .pcat2  { color: #818cf8; }
+
+  /* Cards — appear instantly (carry over from slide 5) */
+  #progress-scene .pcard2 {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+  }
+  .cat-res2 .pcard2 {
+    background: rgba(129,140,248,0.07);
+    border-color: rgba(129,140,248,0.2);
+  }
+  #progress-scene .picon2 { font-size: 20px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+  #progress-scene .pbody2 { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  #progress-scene .pname2 { font-size: 14px; font-weight: 700; color: #e2e3e5; letter-spacing: 0.01em; }
+
+  /* Progress bar */
+  .prg-row { display: flex; align-items: center; gap: 10px; }
+  .prg-track {
+    flex: 1;
+    height: 7px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .prg-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 4px;
+    transition: width 1.0s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .cat-tools2 .prg-fill { background: linear-gradient(90deg, #0c8de9, #38bdf8); }
+  .cat-biz2   .prg-fill { background: linear-gradient(90deg, #c8a96e, #f0d090); }
+  .cat-res2   .prg-fill { background: linear-gradient(90deg, #818cf8, #b06be0); }
+
+  .prg-pct {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    min-width: 36px;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .prg-label {
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.38);
+    white-space: nowrap;
+  }
+
+  /* Bars fill when active, grouped by category via transition-delay on .prg-fill */
+  .layer.active .prg-fill { width: var(--pct); }
+</style>
+
+<div id="progress-scene">
+
+  <!-- TOOLS -->
+  <div class="pcol2 cat-tools2">
+    <div class="pcat2">Tools</div>
+
+    <div class="pcard2">
+      <div class="picon2">✍️</div>
+      <div class="pbody2">
+        <div class="pname2">AuthorConsole / paperHTML</div>
+        <div class="prg-row">
+          <div class="prg-track"><div class="prg-fill" style="--pct:100%; transition-delay:0.1s"></div></div>
+          <div class="prg-pct">100%</div>
+        </div>
+        <div class="prg-label">ready to ship</div>
+      </div>
+    </div>
+
+    <div class="pcard2">
+      <div class="picon2">📽️</div>
+      <div class="pbody2">
+        <div class="pname2">presentaHTML / smartvid</div>
+        <div class="prg-row">
+          <div class="prg-track"><div class="prg-fill" style="--pct:75%; transition-delay:0.25s"></div></div>
+          <div class="prg-pct">75%</div>
+        </div>
+        <div class="prg-label">weeks to ship</div>
+      </div>
+    </div>
+
+    <div class="pcard2">
+      <div class="picon2">🎬</div>
+      <div class="pbody2">
+        <div class="pname2">presentation.html</div>
+        <div class="prg-row">
+          <div class="prg-track"><div class="prg-fill" style="--pct:75%; transition-delay:0.4s"></div></div>
+          <div class="prg-pct">75%</div>
+        </div>
+        <div class="prg-label">weeks to ship</div>
+      </div>
+    </div>
+
+    <div class="pcard2">
+      <div class="picon2">📊</div>
+      <div class="pbody2">
+        <div class="pname2">api-dash</div>
+        <div class="prg-row">
+          <div class="prg-track"><div class="prg-fill" style="--pct:100%; transition-delay:0.55s"></div></div>
+          <div class="prg-pct">100%</div>
+        </div>
+        <div class="prg-label">ready to ship</div>
+      </div>
+    </div>
+
+    <div class="pcard2">
+      <div class="picon2">📣</div>
+      <div class="pbody2">
+        <div class="pname2">Marketing Dashboard</div>
+        <div class="prg-row">
+          <div class="prg-track"><div class="prg-fill" style="--pct:65%; transition-delay:0.7s"></div></div>
+          <div class="prg-pct">65%</div>
+        </div>
+        <div class="prg-label">weeks to ship</div>
+      </div>
+    </div>
+
+    <div class="pcard2">
+      <div class="picon2">⚡</div>
+      <div class="pbody2">
+        <div class="pname2">initiate / terminate</div>
+        <div class="prg-row">
+          <div class="prg-track"><div class="prg-fill" style="--pct:100%; transition-delay:0.85s"></div></div>
+          <div class="prg-pct">100%</div>
+        </div>
+        <div class="prg-label">ready to ship</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUSINESSES -->
+  <div class="pcol2 cat-biz2">
+    <div class="pcat2">Businesses</div>
+
+    <div class="pcard2">
+      <div class="picon2">✈️</div>
+      <div class="pbody2">
+        <div class="pname2">FlyIRL / SkyPark</div>
+        <div class="prg-row">
+          <div class="prg-track"><div class="prg-fill" style="--pct:30%; transition-delay:1.8s"></div></div>
+          <div class="prg-pct" style="font-size:11px">Phase I</div>
+        </div>
+        <div class="prg-label">deployment phase I</div>
+      </div>
+    </div>
+
+    <div class="pcard2">
+      <div class="picon2">🎨</div>
+      <div class="pbody2">
+        <div class="pname2">Illustrat-assist</div>
+        <div class="prg-row">
+          <div class="prg-track"><div class="prg-fill" style="--pct:80%; transition-delay:1.95s"></div></div>
+          <div class="prg-pct">80%</div>
+        </div>
+        <div class="prg-label">weeks to ship</div>
+      </div>
+    </div>
+
+    <div class="pcard2">
+      <div class="picon2">🔩</div>
+      <div class="pbody2">
+        <div class="pname2">PULSE (Patent)</div>
+        <div class="prg-row">
+          <div class="prg-track"><div class="prg-fill" style="--pct:15%; transition-delay:2.1s"></div></div>
+          <div class="prg-pct">15%</div>
+        </div>
+        <div class="prg-label">18–24 months</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLIED AI RESEARCH -->
+  <div class="pcol2 cat-res2">
+    <div class="pcat2">Applied AI Research</div>
+
+    <div class="pcard2">
+      <div class="picon2">🧠</div>
+      <div class="pbody2">
+        <div class="pname2">Problem Solver Engine</div>
+        <div class="prg-row">
+          <div class="prg-track"><div class="prg-fill" style="--pct:15%; transition-delay:3.0s"></div></div>
+          <div class="prg-pct">15%</div>
+        </div>
+        <div class="prg-label">research phase</div>
+      </div>
+    </div>
+
+    <div class="pcard2">
+      <div class="picon2">🧬</div>
+      <div class="pbody2">
+        <div class="pname2">TRACER</div>
+        <div class="prg-row">
+          <div class="prg-track"><div class="prg-fill" style="--pct:15%; transition-delay:3.15s"></div></div>
+          <div class="prg-pct">15%</div>
+        </div>
+        <div class="prg-label">research phase</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>  <div class="layer " id="scene-6">
+<style>
+  .pfd-scene {
+    position: absolute;
+    inset: 0;
+  }
+  .pfd-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    opacity: 0.82;
+  }
+  .pfd-cards {
+    position: absolute;
+    top: 8%;
+    left: 54%;
+    right: 2%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    z-index: 2;
+  }
+  .pfd-card {
+    background: rgba(10,14,20,0.82);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .layer.active .pfd-card { opacity: 1; transform: none; }
+  .layer.active .pfd-card:nth-child(1) { transition-delay: 0.1s; }
+  .layer.active .pfd-card:nth-child(2) { transition-delay: 0.3s; }
+  .layer.active .pfd-card:nth-child(3) { transition-delay: 0.5s; }
+  .pfd-icon { font-size: 22px; }
+  .pfd-label { font-size: 13px; font-weight: 700; color: #e2e3e5; letter-spacing: 0.02em; }
+  .pfd-detail { font-size: 11px; color: #7b7f88; line-height: 1.5; }
+</style>
+<img class="pfd-bg" src="content/svg/pulse-pfd.svg" alt="PULSE PFD"/>
+<div class="pfd-cards">
+  <div class="pfd-card">
+    <div class="pfd-icon">🔩</div>
+    <div class="pfd-label">Hardware Patent</div>
+    <div class="pfd-detail">Provisional filed March 2026. I.P. protected.</div>
+  </div>
+  <div class="pfd-card">
+    <div class="pfd-icon">🏛️</div>
+    <div class="pfd-label">Gov’t Research Grants</div>
+    <div class="pfd-detail">Non-dilutive funding through D.O.D. and A.F. programs</div>
+  </div>
+  <div class="pfd-card">
+    <div class="pfd-icon">🤝</div>
+    <div class="pfd-label">Licensing Path</div>
+    <div class="pfd-detail">Partner with established manufacturers — no factory required</div>
+  </div>
+</div>
+</div>  <div class="layer " id="scene-7">
+<style>
+  #mono-scene {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    grid-template-rows: auto auto auto auto auto auto;
+    padding: 36px 72px 36px;
+    gap: 0;
+    align-items: start;
+  }
+  .mono-head {
+    text-align: center;
+    padding-bottom: 14px;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+  .layer.active .mono-head { opacity: 1; }
+  .mono-head-left  { transition-delay: 0.1s; }
+  .mono-head-right { transition-delay: 0.2s; }
+  .mono-head-icon  { font-size: 39.0px; margin-bottom: 5px; }
+  .mono-head-label { font-size: 16.5px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
+  .col-direct   .mono-head-label { color: #c8a96e; }
+  .col-audience .mono-head-label { color: #0c8de9; }
+
+  .mono-chips { display: flex; flex-direction: column; gap: 8px; padding: 0 8px; }
+  .mono-chip {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-size: 19.5px;
+    font-weight: 600;
+    color: #d0d1d4;
+    text-align: center;
+    opacity: 0;
+    transform: scale(0.96);
+    transition: opacity 0.38s ease, transform 0.38s ease;
+  }
+  .col-direct   .mono-chip { border-color: rgba(200,169,110,0.2); }
+  .col-audience .mono-chip { border-color: rgba(12,141,233,0.2); }
+  .layer.active .mono-chip { opacity: 1; transform: scale(1); }
+  .col-direct   .mono-chip:nth-child(1) { transition-delay: 0.25s; }
+  .col-direct   .mono-chip:nth-child(2) { transition-delay: 0.40s; }
+  .col-direct   .mono-chip:nth-child(3) { transition-delay: 0.55s; }
+  .col-audience .mono-chip:nth-child(1) { transition-delay: 0.30s; }
+  .col-audience .mono-chip:nth-child(2) { transition-delay: 0.45s; }
+  .col-audience .mono-chip:nth-child(3) { transition-delay: 0.60s; }
+  .col-audience .mono-chip:nth-child(4) { transition-delay: 0.75s; }
+
+  .mono-arrow {
+    text-align: center;
+    font-size: 36.0px;
+    padding: 8px 0 4px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .layer.active .mono-arrow { opacity: 1; }
+  .col-direct   .mono-arrow { color: rgba(200,169,110,0.5); transition-delay: 0.65s; }
+  .col-audience .mono-arrow { color: rgba(12,141,233,0.4);  transition-delay: 0.85s; }
+
+  .mono-mid {
+    border-radius: 10px;
+    padding: 11px 16px;
+    text-align: center;
+    margin: 0 8px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+  .layer.active .mono-mid { opacity: 1; transform: none; }
+  .mid-direct   { background: rgba(200,169,110,0.08); border: 1px solid rgba(200,169,110,0.28); transition-delay: 0.80s; }
+  .mid-audience { background: rgba(12,141,233,0.08);  border: 1px solid rgba(12,141,233,0.28);  transition-delay: 1.00s; }
+  .mono-mid-icon  { font-size: 27.0px; margin-bottom: 3px; }
+  .mono-mid-label { font-size: 19.5px; font-weight: 700; color: #e2e3e5; }
+  .mono-mid-sub   { font-size: 15.8px; color: #737680; margin-top: 3px; line-height: 1.4; }
+
+  .mono-converge {
+    grid-column: 1 / 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 0 2px;
+    opacity: 0;
+    transition: opacity 0.4s ease 1.2s;
+  }
+  .layer.active .mono-converge { opacity: 1; }
+  .conv-line-l { height: 2px; width: 26%; background: linear-gradient(90deg, rgba(200,169,110,0), rgba(200,169,110,0.55)); }
+  .conv-line-r { height: 2px; width: 26%; background: linear-gradient(90deg, rgba(12,141,233,0.55), rgba(12,141,233,0)); }
+  .conv-arrow  { font-size: 24.0px; color: rgba(255,255,255,0.25); }
+
+  .mono-revenue {
+    grid-column: 1 / 4;
+    text-align: center;
+    padding: 4px 0 6px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease 1.4s, transform 0.5s ease 1.4s;
+  }
+  .layer.active .mono-revenue { opacity: 1; transform: none; }
+  .rev-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(68,221,136,0.08);
+    border: 1px solid rgba(68,221,136,0.3);
+    border-radius: 12px;
+    padding: 12px 40px;
+  }
+  .rev-icon  { font-size: 33.0px; }
+  .rev-label { font-size: 25.5px; font-weight: 800; color: #44dd88; letter-spacing: 0.04em; }
+  .rev-sub   { font-size: 15.0px; color: #737680; margin-top: 2px; }
+
+  .mono-xpromo {
+    grid-column: 1 / 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 6px;
+    opacity: 0;
+    transition: opacity 0.4s ease 1.85s;
+  }
+  .layer.active .mono-xpromo { opacity: 1; }
+  .xp-label  { font-size: 15.0px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #818cf8; }
+  .xp-dash   { height: 1px; width: 100px; background: linear-gradient(90deg, rgba(129,140,248,0), rgba(129,140,248,0.45)); }
+  .xp-dash-r { height: 1px; width: 100px; background: linear-gradient(90deg, rgba(129,140,248,0.45), rgba(129,140,248,0)); }
+  .xp-arrow  { font-size: 19.5px; color: #818cf8; opacity: 0.7; }
+</style>
+
+<div id="mono-scene">
+
+  <div class="col-direct">
+    <div class="mono-head mono-head-left">
+      <div class="mono-head-icon">💰</div>
+      <div class="mono-head-label">Direct Revenue</div>
+    </div>
+    <div class="mono-chips">
+      <div class="mono-chip">Illustrat-assist</div>
+      <div class="mono-chip">FlyIRL / SkyPark</div>
+      <div class="mono-chip">PULSE — gov’t grants</div>
+    </div>
+    <div class="mono-arrow">↓</div>
+    <div class="mono-mid mid-direct">
+      <div class="mono-mid-icon">💳</div>
+      <div class="mono-mid-label">Subscriptions &amp; Licensing</div>
+      <div class="mono-mid-sub">Monthly SaaS · technology licensing · SBIR grants</div>
+    </div>
+  </div>
+
+  <div></div>
+
+  <div class="col-audience">
+    <div class="mono-head mono-head-right">
+      <div class="mono-head-icon">👥</div>
+      <div class="mono-head-label">Audience-First</div>
+    </div>
+    <div class="mono-chips">
+      <div class="mono-chip">AuthorConsole</div>
+      <div class="mono-chip">presentaHTML</div>
+      <div class="mono-chip">presentation.html</div>
+      <div class="mono-chip">api-dash</div>
+    </div>
+    <div class="mono-arrow">↓</div>
+    <div class="mono-mid mid-audience">
+      <div class="mono-mid-icon">🎧</div>
+      <div class="mono-mid-label">Patreon Audience</div>
+      <div class="mono-mid-sub">Followers support independent research · cross-discovers products</div>
+    </div>
+  </div>
+
+  <div class="mono-converge">
+    <div class="conv-line-l"></div>
+    <div class="conv-arrow">↘</div>
+    <div class="conv-arrow">↓</div>
+    <div class="conv-arrow">↙</div>
+    <div class="conv-line-r"></div>
+  </div>
+
+  <div class="mono-revenue">
+    <div class="rev-box">
+      <div class="rev-icon">📈</div>
+      <div>
+        <div class="rev-label">Revenue</div>
+        <div class="rev-sub">audience is the asset — everything else follows</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mono-xpromo">
+    <div class="xp-arrow">⇄</div>
+    <div class="xp-dash"></div>
+    <div class="xp-label">Each audience feeds every other project</div>
+    <div class="xp-dash-r"></div>
+    <div class="xp-arrow">⇄</div>
+  </div>
+
+</div>
+</div>  <div class="layer " id="scene-8">
+<div class="forge-pfd-scene">
+  <img class="pfd-bg" src="content/svg/flywheel.svg" alt="diagram"/>
+  <div class="pfd-overlay"></div>
+  <div class="pfd-pillars">
+    
+  </div>
+</div>
+<style>
+  .forge-pfd-scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 36px;
+  }
+  .pfd-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    opacity: 0.72;
+  }
+  .pfd-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 42%;
+    background: linear-gradient(to bottom, rgba(13,17,23,0.97) 40%, rgba(13,17,23,0.0));
+    pointer-events: none;
+  }
+  .pfd-pillars {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    gap: 48px;
+    justify-content: center;
+    padding: 0 32px;
+  }
+  .pfd-pillar {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    max-width: 100%;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: all 0.6s ease;
+  }
+  .layer.active .pfd-pillar { opacity: 1; transform: translateY(0); }
+  .layer.active .pfd-pillar:nth-child(1) { transition-delay: 0.1s; }
+  .layer.active .pfd-pillar:nth-child(2) { transition-delay: 0.3s; }
+  .layer.active .pfd-pillar:nth-child(3) { transition-delay: 0.5s; }
+  .pp-icon { font-size: 22px; margin-bottom: 4px; }
+  .pp-label { font-size: 15px; color: #fff; font-weight: 700; letter-spacing: 0.03em; margin-bottom: 5px; }
+  .pp-detail { font-size: 12px; color: #9a9b9e; line-height: 1.5; }
+</style>
+
+  </div>  <div class="layer " id="scene-9">
+
+    <div class="title-screen">
+      <h1 class="ts-headline">A New Kind of Business</h1>
+      <p class="ts-subtitle">Researcher. Builder. Publisher. One operation.</p>
+      <p class="ts-tagline">THE METHOD IS THE PRODUCT</p>
+    </div>
+    
+  </div>  <div class="layer " id="scene-10">
+
+    <div class="metrics-layout">
+      <div class="metrics-row" id="metrics-the-ask">
+        
+        <div class="m-card"><div class="m-label">Monthly</div><div class="m-value">$2,000</div><div class="m-delta up">$1,250 living · $750 A.I. + promo</div></div>
+        
+        <div class="m-card"><div class="m-label">Duration</div><div class="m-value">6 months</div><div class="m-delta up">April → October, then re-evaluate</div></div>
+        
+        <div class="m-card"><div class="m-label">Total</div><div class="m-value">$12,000</div><div class="m-delta up">with a defined check-in point</div></div>
+        
+      </div>
+    </div>
+    
+  </div>  <div class="layer " id="scene-11">
+
+    <div class="pillars-layout">
+      <div class="pillars-row" id="pillars-timeline">
+        
+        <div class="pillar"><div class="p-icon">🌱</div><div class="p-label">April – May</div><div class="p-detail">AuthorConsole, Presentation Engine, A.I. Tracker — all shipped</div></div>
+        
+        <div class="pillar"><div class="p-icon">☀️</div><div class="p-label">June – August</div><div class="p-detail">Romantasy Illustrator + Marketing Dashboard live</div></div>
+        
+        <div class="pillar"><div class="p-icon">📊</div><div class="p-label">September – October</div><div class="p-detail">Paper series complete · first revenue · re-evaluate together</div></div>
+        
+      </div>
+    </div>
+    
+  </div>  <div class="layer " id="scene-12">
+
+    <div class="close-layout">
+      <div class="cl-headline">Fund the Last Mile</div>
+      <div class="cl-divider"></div>
+      <div class="cl-cta">Six months. Twelve thousand. Re-evaluate together.</div>
+      <div class="cl-tagline">THE METHOD IS THE PRODUCT</div>
+    </div>
+    
+  </div>
+</div>
+
+<div id="narration"><div id="narration-text"></div></div>
+<div id="progress-bar" style="width: 0%"></div>
+<div id="scene-counter">1 / 13</div>
+<div id="controls">
+  <button onclick="togglePlay()" id="btn-play">Pause</button>
+  <button onclick="prevScene()">Prev</button>
+  <button onclick="nextScene()">Next</button>
+  <button onclick="restart()">Restart</button>
+  <button onclick="toggleMute()" id="btn-mute">Mute</button>
+</div>
+
+<script>
+const SCENES = [{"minDuration": 18, "narrationHtml": "Welcome to the workshop. This presentation is a walkthrough of what I've been building over the past year, where it stands today, and what it needs to get finished by December. One more thing worth knowing upfront \u2014 this presentation was made using one of the tools it describes. Which is, itself, part of the point.\n"}, {"minDuration": 34, "narrationHtml": "Something fundamental has changed. Not in a small way \u2014 in the way the printing press changed who could write, and who could be heard. Artificial intelligence has made it possible for one person, working alone, to do the research, the writing, the design, the engineering, and the distribution that used to require a whole team \u2014 or an entire department. Most people are still figuring out what that means. Some are already afraid of it. I've spent the past year building inside it. And what I've learned is this: the people who understand it earliest are the ones who shape what it becomes.\n"}, {"minDuration": 24, "narrationHtml": "Here's the insight that drives everything I'm doing. I didn't set out to build products. I set out to build a method. And the method... is the product. Each tool I make becomes part of the toolkit I use to build the next one. Each paper I publish attracts an audience that funds the one after it. That's not a side project. That's a compounding system \u2014 and it's about sixty percent built.\n"}, {"minDuration": 50, "narrationHtml": "Before universities became the gatekeepers of knowledge, there was a different model \u2014 the independent scientist. Someone with enough resources, or enough drive, to pursue real problems without asking for institutional permission. Isaac Newton worked alone. Benjamin Franklin was a printer. George Cayley was an English baronet who invented the concept of the fixed-wing aircraft simply because he was obsessed with flight. Charles Babbage spent forty years building a computer nobody else believed in. In England, natural philosophy was a perfectly respectable occupation for anyone with the means and the curiosity to pursue it. The Royal Society was full of them. What changed was the research university \u2014 which arrived around 1850 and made credentials the price of entry. That gate is now open again. Artificial intelligence is the great equalizer \u2014 it handles the patient, meticulous work that used to require a career of training. The independent researcher is back.\n"}, {"minDuration": 23, "narrationHtml": "Here's the portfolio. Eleven projects, all interconnected, all in progress. Five are software tools people can use right now, or very soon. One is a hardware patent with government research funding potential. And one \u2014 the tool you're watching this presentation on \u2014 is the publishing engine that makes all of it shareable and teachable. Every project links to the others. They're not separate bets. They're one compounding system.\n"}, {"minDuration": 24, "narrationHtml": "Here's where each project stands \u2014 as a percentage complete toward a product someone can download, subscribe to, or build on. The average across all seven is about forty-one percent done. Three of them can ship within the next month or two. The Romantasy Illustrator is the furthest along at sixty-five percent. The hardware patent \u2014 FORGE \u2014 is on a longer timeline by nature, but the intellectual property is already filed and protected.\n"}, {"minDuration": 35, "narrationHtml": "One project sits apart from the rest, and it's worth a moment of its own. FORGE is a hardware invention \u2014 a modular power generator designed for drones and field equipment that currently have to carry heavy, expensive, or hard-to-source fuel systems. The provisional patent was filed in March of this year. The path to revenue here is different from the software projects \u2014 it runs through government research grants and technology licensing partnerships, which are the standard commercial pathways for this kind of hard technology. What it adds to the portfolio is credibility of a different kind. Software can be copied. A patent cannot.\n"}, {"minDuration": 30, "narrationHtml": "There are two kinds of value in this portfolio, and it's worth understanding both. Some projects make money directly \u2014 monthly subscriptions, technology licensing, and government research grants. Others build an audience first, and the audience is what generates the revenue. That happens through Patreon \u2014 a platform where readers and followers pay a small amount each month to support independent researchers and creators \u2014 and through the natural cross-promotion that happens when one project's audience discovers another. In the modern creator economy, audience is the asset. Everything else follows.\n"}, {"minDuration": 33, "narrationHtml": "Here's how the compounding works in practice. AuthorConsole gets published. Academics and writers find it and follow along. They see the link to the narrated explainer \u2014 made with the presentation engine. They discover the presentation tool. Some become users. They find the A.I. cost tracker. They find the illustration studio. Each project is a door. Every door leads to the others. And the marketing dashboard \u2014 which is itself one of the products \u2014 means I never have to pay an agency to reach any of these audiences. I built the marketing machine. It runs the whole operation.\n"}, {"minDuration": 29, "narrationHtml": "What I'm describing is a new kind of business \u2014 one that doesn't have a clean name yet, but it's real and it's working. Not a startup. Not a consulting practice. Not a blog. A vertically integrated one-person operation, where the same person researches, writes, builds, ships, and markets everything \u2014 using the very tools they are building and writing about. This presentation is the proof of concept. It was made using the tools it describes. That's not a trick. That's what makes the whole model defensible.\n"}, {"minDuration": 33, "narrationHtml": "Here's the ask. Two thousand dollars a month, for six months. That breaks down simply: twelve hundred and fifty for living expenses, and seven hundred and fifty for A.I. API costs and minor brand promotion \u2014 things like getting the papers in front of the right people at the right moment. At six months, we re-evaluate together. If revenue has started, we stop. If we're close and it makes sense to continue, we talk. There's no open-ended commitment here. Just a focused runway to finish what is already most of the way built. Total for six months: twelve thousand dollars.\n"}, {"minDuration": 31, "narrationHtml": "Here's the six-month roadmap. April and May: the three projects closest to done all ship \u2014 AuthorConsole, the presentation engine, and the A.I. cost tracker. Each one launches publicly, starts building an audience, and feeds the next. June through August: the Romantasy Illustrator and the Marketing Dashboard go live. Both are feature-complete \u2014 they need polish and distribution, not invention. September and October: the paper series wraps up, the first revenue streams are active, and we sit down and look at what's working. That's the re-evaluation point. By then, the picture is clear.\n"}, {"minDuration": 26, "narrationHtml": "I'm not asking you to bet on a dream. I'm asking you to fund the last mile of something that is already mostly built \u2014 for a defined period, with a clear check-in point, and a specific number that covers exactly what it needs to cover and nothing more. The moment is real. The tools are working. What I need is the space to finish them \u2014 and someone who believes that's worth twelve thousand dollars to find out.\n"}];
+const AUDIO_IDS = ["title", "the-moment", "the-insight", "citizen-scientist", "the-portfolio", "projects-progress", "forge-spotlight", "monetization", "the-flywheel", "the-model", "the-ask", "timeline", "close"];
+const TIMING = {};
+let currentScene = 0;
+let playing = false;
+let audioMuted = false;
+let audioElements = {};
+let currentAudio = null;
+let sceneStartTime = 0;
+let audioFinishedResolve = null;
+let playSession = 0;
+let lastCaptionWord = -2;
+
+function preloadAudio() {
+  AUDIO_IDS.forEach((id, i) => {
+    const audio = new Audio(`audio/${id}.mp3`);
+    audio.preload = 'auto';
+    audioElements[i] = audio;
+  });
+}
+
+function getSceneElapsed() {
+  return (performance.now() - sceneStartTime) / 1000;
+}
+
+function playSceneAudio(index) {
+  if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+  return new Promise(resolve => {
+    const audio = audioElements[index];
+    if (!audio || audioMuted) {
+      const minDur = SCENES[index]?.minDuration || 5;
+      setTimeout(resolve, minDur * 1000);
+      return;
+    }
+    audioFinishedResolve = resolve;
+    audio.onended = () => {
+      const minDur = SCENES[index]?.minDuration || 5;
+      const elapsed = getSceneElapsed();
+      if (elapsed < minDur) {
+        setTimeout(resolve, (minDur - elapsed) * 1000);
+      } else {
+        resolve();
+      }
+    };
+    audio.onerror = () => {
+      setTimeout(resolve, (SCENES[index]?.minDuration || 5) * 1000);
+    };
+    currentAudio = audio;
+    audio.play().catch(() => {
+      setTimeout(resolve, (SCENES[index]?.minDuration || 5) * 1000);
+    });
+  });
+}
+
+function runCounters(el) {
+  el.querySelectorAll('.pa-count[data-target]').forEach(c => {
+    const target = parseFloat(c.dataset.target);
+    const prefix = c.dataset.prefix || '';
+    const suffix = c.dataset.suffix || '';
+    const dur    = parseInt(c.dataset.dur  || 1200);
+    const start  = performance.now();
+    function tick() {
+      const p = Math.min((performance.now() - start) / dur, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      c.textContent = prefix + (Number.isInteger(target) ? Math.round(target * ease) : (target * ease).toFixed(2)) + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+function showScene(index) {
+  document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
+  const el = document.getElementById(`scene-${index}`);
+  if (el) {
+    el.classList.add('active');
+    runCounters(el);
+  }
+  currentScene = index;
+  sceneStartTime = performance.now();
+  const words = TIMING[index];
+  if (words && words.length) {
+    document.getElementById('narration-text').innerHTML =
+      words.map((w, i) => `<span class="w" data-wi="${i}">${w[0]}</span>`).join(' ');
+  } else {
+    document.getElementById('narration-text').innerHTML = SCENES[index]?.narrationHtml || '';
+  }
+  lastCaptionWord = -2;
+  document.getElementById('scene-counter').textContent = `${index + 1} / ${SCENES.length}`;
+  document.getElementById('progress-bar').style.width = `${((index + 1) / SCENES.length) * 100}%`;
+}
+
+async function playFrom(index) {
+  const mySession = ++playSession;
+  playing = true;
+  document.getElementById('btn-play').textContent = 'Pause';
+  for (let i = index; i < SCENES.length && playing && playSession === mySession; i++) {
+    showScene(i);
+    await playSceneAudio(i);
+  }
+  if (playSession === mySession) {
+    playing = false;
+    document.getElementById('btn-play').textContent = 'Play';
+  }
+}
+
+function togglePlay() {
+  if (playing) {
+    playing = false;
+    if (currentAudio) currentAudio.pause();
+    document.getElementById('btn-play').textContent = 'Play';
+  } else {
+    playing = true;
+    document.getElementById('btn-play').textContent = 'Pause';
+    if (currentAudio && currentAudio.paused) {
+      currentAudio.play().catch(() => {});
+    } else {
+      playFrom(currentScene);
+    }
+  }
+}
+
+function nextScene() {
+  if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+  if (audioFinishedResolve) { audioFinishedResolve(); audioFinishedResolve = null; }
+  const next = Math.min(currentScene + 1, SCENES.length - 1);
+  showScene(next);
+  if (playing) playFrom(next);
+}
+
+function prevScene() {
+  if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+  if (audioFinishedResolve) { audioFinishedResolve(); audioFinishedResolve = null; }
+  const prev = Math.max(currentScene - 1, 0);
+  showScene(prev);
+  if (playing) playFrom(prev);
+}
+
+function restart() {
+  playing = false;
+  if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+  if (audioFinishedResolve) { audioFinishedResolve(); audioFinishedResolve = null; }
+  showScene(0);
+  setTimeout(() => playFrom(0), 100);
+}
+
+function toggleMute() {
+  audioMuted = !audioMuted;
+  document.getElementById('btn-mute').textContent = audioMuted ? 'Unmute' : 'Mute';
+  if (audioMuted && currentAudio) currentAudio.pause();
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+  if (e.key === 'ArrowRight') nextScene();
+  if (e.key === 'ArrowLeft') prevScene();
+  if (e.key === 'r') restart();
+  if (e.key === 'm') toggleMute();
+});
+
+// Animation loop
+function tick() {
+  const elapsed = getSceneElapsed();
+  const t = Math.min(elapsed / (SCENES[currentScene]?.minDuration || 5), 1);
+
+  // Animate visibility of child elements with data-delay attribute
+  const sceneEl = document.getElementById(`scene-${currentScene}`);
+  if (sceneEl) {
+    sceneEl.querySelectorAll('[data-delay]').forEach(el => {
+      if (elapsed > parseFloat(el.dataset.delay)) el.classList.add('visible');
+    });
+  }
+
+  // Narration progress bar
+  document.getElementById('narration-text').style.setProperty('--speak-progress', `${t * 100}%`);
+
+  // Karaoke caption sync
+  const words = TIMING[currentScene];
+  if (words && words.length && currentAudio) {
+    const ct = currentAudio.currentTime;
+    let active = -1;
+    for (let i = 0; i < words.length; i++) {
+      if (ct >= words[i][1]) active = i; else break;
+    }
+    if (active !== lastCaptionWord) {
+      lastCaptionWord = active;
+      document.querySelectorAll('#narration-text .w').forEach((el, i) => {
+        el.className = 'w' + (i === active ? ' cap-active' : i < active ? ' cap-past' : '');
+      });
+    }
+  }
+  requestAnimationFrame(tick);
+}
+
+// Start overlay
+const overlay = document.createElement('div');
+overlay.id = 'start-overlay';
+overlay.innerHTML = '<div style="font-size:48px;">&#9654;</div><div style="font-size:18px;font-weight:600;color:#fff;">Click to Start</div><div style="font-size:12px;color:#60646d;">The Workshop</div><div style="font-size:10px;color:#4c4f57;margin-top:8px;">Built with presentaHTML</div>';
+document.body.appendChild(overlay);
+
+preloadAudio();
+showScene(0);
+
+overlay.addEventListener('click', () => {
+  overlay.style.opacity = '0';
+  setTimeout(() => overlay.remove(), 500);
+  playFrom(0);
+  requestAnimationFrame(tick);
+});
+</script>
+
+<div style="position:fixed;bottom:8px;right:12px;font-size:9px;color:#2a2b30;z-index:10;">
+  Built with <a href="https://github.com/questsystems-ai/presentaHTML" style="color:#2a2b30;text-decoration:none;" target="_blank">presentaHTML</a>
+</div>
+</body>
+</html>

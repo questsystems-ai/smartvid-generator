@@ -1,0 +1,307 @@
+title: "The Workshop"
+author: "Aaron"
+theme: "dark"
+
+voice:
+  provider: "elevenlabs"
+  name: "George"
+  model: "eleven_multilingual_v2"
+  stability: 0.35
+  similarity: 0.80
+  style: 0.55
+
+scenes:
+
+  - id: "title"
+    template: "title"
+    text: >
+      Welcome to the workshop. This presentation is a walkthrough of what I've been
+      building over the past year, where it stands today, and what it needs to get
+      finished by December. One more thing worth knowing upfront — this presentation
+      was made using one of the tools it describes. Which is, itself, part of the point.
+    props:
+      headline: "The Workshop"
+      subtitle: "What I'm building — and what it needs to get done"
+      tagline: "AARON · 2026"
+
+  - id: "the-moment"
+    template: "default"
+    text: >
+      Something fundamental has changed. Not in a small way —
+      in the way the printing press changed who could write, and who could be heard.
+      Artificial intelligence has made it possible for one person, working alone,
+      to do the research, the writing, the design, the engineering, and the distribution
+      that used to require a whole team — or an entire department.
+      Most people are still figuring out what that means. Some are already afraid of it.
+      I've spent the past year building inside it. And what I've learned is this:
+      the people who understand it earliest are the ones who shape what it becomes.
+    props:
+      title: "Something Has Changed"
+
+  - id: "the-insight"
+    template: "title"
+    text: >
+      Here's the insight that drives everything I'm doing.
+      I didn't set out to build products. I set out to build a method.
+      And the method... is the product.
+      Each tool I make becomes part of the toolkit I use to build the next one.
+      Each paper I publish attracts an audience that funds the one after it.
+      That's not a side project. That's a compounding system —
+      and it's about sixty percent built.
+    props:
+      headline: "The Method Is the Product"
+      subtitle: "Each tool builds the next. Each paper funds the one after."
+      tagline: "COMPOUNDING BY DESIGN"
+
+  - id: "citizen-scientist"
+    template: "gallery"
+    text: >
+      Before universities became the gatekeepers of knowledge,
+      there was a different model — the independent scientist.
+      Someone with enough resources, or enough drive, to pursue real problems
+      without asking for institutional permission.
+      Isaac Newton worked alone. Benjamin Franklin was a printer.
+      George Cayley was an English baronet who invented the concept of the fixed-wing aircraft
+      simply because he was obsessed with flight.
+      Charles Babbage spent forty years building a computer nobody else believed in.
+      In England, natural philosophy was a perfectly respectable occupation
+      for anyone with the means and the curiosity to pursue it.
+      The Royal Society was full of them.
+      What changed was the research university — which arrived around 1850
+      and made credentials the price of entry.
+      That gate is now open again.
+      Artificial intelligence is the great equalizer —
+      it handles the patient, meticulous work that used to require a career of training.
+      The independent researcher is back.
+    props:
+      figures:
+        - src: "portraits/newton.jpg"
+          name: "Isaac Newton"
+          years: "1643–1727"
+        - src: "portraits/franklin.jpg"
+          name: "Benjamin Franklin"
+          years: "1706–1790"
+        - src: "portraits/cayley.jpg"
+          name: "George Cayley"
+          years: "1773–1857"
+        - src: "portraits/babbage.jpg"
+          name: "Charles Babbage"
+          years: "1791–1871"
+
+  - id: "the-portfolio"
+    template: "pillars"
+    text: >
+      Here's the portfolio. Seven projects, all interconnected, all in progress.
+      Five are software tools people can use right now, or very soon.
+      One is a hardware patent with government research funding potential.
+      And one — the tool you're watching this presentation on —
+      is the publishing engine that makes all of it shareable and teachable.
+      Every project links to the others. They're not separate bets.
+      They're one compounding system.
+    props:
+      items:
+        - icon: "✍️"
+          label: "AuthorConsole"
+          detail: "Proves you wrote your own work, in the age of A.I."
+        - icon: "📽️"
+          label: "Presentation Engine"
+          detail: "Turns a script into narrated, animated presentations — like this one"
+        - icon: "📊"
+          label: "A.I. Cost Tracker"
+          detail: "Real-time dashboard tracking A.I. spending across every provider"
+        - icon: "🎨"
+          label: "Romantasy Illustrator"
+          detail: "A.I. illustration studio for fantasy and romance novel authors"
+        - icon: "📣"
+          label: "Marketing Dashboard"
+          detail: "A full marketing operation — no agency required"
+
+  - id: "projects-progress"
+    template: "progress"
+    text: >
+      Here's where each project stands — as a percentage complete toward a product
+      someone can download, subscribe to, or build on.
+      The average across all seven is about forty-one percent done.
+      Three of them can ship within the next month or two.
+      The Romantasy Illustrator is the furthest along at sixty-five percent.
+      The hardware patent — FORGE — is on a longer timeline by nature,
+      but the intellectual property is already filed and protected.
+    props:
+      cards:
+        - label: "Romantasy Illustrator"
+          value: "65%"
+          delta: "6–8 wks to ship"
+          direction: "up"
+        - label: "AuthorConsole"
+          value: "60%"
+          delta: "2–3 wks to ship"
+          direction: "up"
+        - label: "Presentation Engine"
+          value: "50%"
+          delta: "3–4 wks to ship"
+          direction: "up"
+        - label: "A.I. Cost Tracker"
+          value: "40%"
+          delta: "2–3 wks to ship"
+          direction: "up"
+        - label: "Marketing Dashboard"
+          value: "35%"
+          delta: "8–10 wks to ship"
+          direction: "up"
+        - label: "Reasoning Engine"
+          value: "25%"
+          delta: "6–8 wks to ship"
+          direction: "up"
+        - label: "FORGE (patent)"
+          value: "15%"
+          delta: "18–24 months"
+          direction: "up"
+
+  - id: "forge-spotlight"
+    template: "forge-pfd"
+    text: >
+      One project sits apart from the rest, and it's worth a moment of its own.
+      FORGE is a hardware invention — a modular power generator
+      designed for drones and field equipment that currently have to carry
+      heavy, expensive, or hard-to-source fuel systems.
+      The provisional patent was filed in March of this year.
+      The path to revenue here is different from the software projects —
+      it runs through government research grants and technology licensing partnerships,
+      which are the standard commercial pathways for this kind of hard technology.
+      What it adds to the portfolio is credibility of a different kind.
+      Software can be copied. A patent cannot.
+    props:
+      bg_image: "pulse-pfd.svg"
+      items:
+        - icon: "🔩"
+          label: "Hardware Patent"
+          detail: "Provisional filed March 2026. I.P. protected."
+        - icon: "🏛️"
+          label: "Gov't Research Grants"
+          detail: "Non-dilutive funding through D.O.D. and A.F. programs"
+        - icon: "🤝"
+          label: "Licensing Path"
+          detail: "Partner with established manufacturers — no factory required"
+
+  - id: "monetization"
+    template: "pillars"
+    text: >
+      There are two kinds of value in this portfolio, and it's worth understanding both.
+      Some projects make money directly — monthly subscriptions, technology licensing,
+      and government research grants. Others build an audience first,
+      and the audience is what generates the revenue.
+      That happens through Patreon — a platform where readers and followers
+      pay a small amount each month to support independent researchers and creators —
+      and through the natural cross-promotion that happens when one project's audience
+      discovers another. In the modern creator economy, audience is the asset.
+      Everything else follows.
+    props:
+      items:
+        - icon: "💰"
+          label: "Direct Revenue"
+          detail: "Romantasy Illustrator, Marketing Dashboard, FORGE grants"
+        - icon: "👥"
+          label: "Audience-First"
+          detail: "AuthorConsole, Presentation Engine, Reasoning Engine → Patreon"
+        - icon: "🔗"
+          label: "Cross-Promotion"
+          detail: "Each project's audience feeds every other project"
+
+  - id: "the-flywheel"
+    template: "forge-pfd"
+    text: >
+      Here's how the compounding works in practice.
+      AuthorConsole gets published. Academics and writers find it and follow along.
+      They see the link to the narrated explainer — made with the presentation engine.
+      They discover the presentation tool. Some become users.
+      They find the A.I. cost tracker. They find the illustration studio.
+      Each project is a door. Every door leads to the others.
+      And the marketing dashboard — which is itself one of the products —
+      means I never have to pay an agency to reach any of these audiences.
+      I built the marketing machine. It runs the whole operation.
+    props:
+      bg_image: "flywheel.svg"
+      items: []
+
+  - id: "the-model"
+    template: "title"
+    text: >
+      What I'm describing is a new kind of business —
+      one that doesn't have a clean name yet, but it's real and it's working.
+      Not a startup. Not a consulting practice. Not a blog.
+      A vertically integrated one-person operation, where the same person
+      researches, writes, builds, ships, and markets everything —
+      using the very tools they are building and writing about.
+      This presentation is the proof of concept.
+      It was made using the tools it describes.
+      That's not a trick. That's what makes the whole model defensible.
+    props:
+      headline: "A New Kind of Business"
+      subtitle: "Researcher. Builder. Publisher. One operation."
+      tagline: "THE METHOD IS THE PRODUCT"
+
+  - id: "the-ask"
+    template: "metrics"
+    text: >
+      Here's the ask. Two thousand dollars a month, for six months.
+      That breaks down simply: twelve hundred and fifty for living expenses,
+      and seven hundred and fifty for A.I. API costs and minor brand promotion —
+      things like getting the papers in front of the right people at the right moment.
+      At six months, we re-evaluate together. If revenue has started, we stop.
+      If we're close and it makes sense to continue, we talk.
+      There's no open-ended commitment here. Just a focused runway
+      to finish what is already most of the way built.
+      Total for six months: twelve thousand dollars.
+    props:
+      cards:
+        - label: "Monthly"
+          value: "$2,000"
+          delta: "$1,250 living · $750 A.I. + promo"
+          direction: "up"
+        - label: "Duration"
+          value: "6 months"
+          delta: "April → October, then re-evaluate"
+          direction: "up"
+        - label: "Total"
+          value: "$12,000"
+          delta: "with a defined check-in point"
+          direction: "up"
+
+  - id: "timeline"
+    template: "pillars"
+    text: >
+      Here's the six-month roadmap.
+      April and May: the three projects closest to done all ship —
+      AuthorConsole, the presentation engine, and the A.I. cost tracker.
+      Each one launches publicly, starts building an audience, and feeds the next.
+      June through August: the Romantasy Illustrator and the Marketing Dashboard go live.
+      Both are feature-complete — they need polish and distribution, not invention.
+      September and October: the paper series wraps up, the first revenue streams are active,
+      and we sit down and look at what's working.
+      That's the re-evaluation point. By then, the picture is clear.
+    props:
+      items:
+        - icon: "🌱"
+          label: "April – May"
+          detail: "AuthorConsole, Presentation Engine, A.I. Tracker — all shipped"
+        - icon: "☀️"
+          label: "June – August"
+          detail: "Romantasy Illustrator + Marketing Dashboard live"
+        - icon: "📊"
+          label: "September – October"
+          detail: "Paper series complete · first revenue · re-evaluate together"
+
+  - id: "close"
+    template: "close"
+    text: >
+      I'm not asking you to bet on a dream.
+      I'm asking you to fund the last mile of something that is already mostly built —
+      for a defined period, with a clear check-in point, and a specific number
+      that covers exactly what it needs to cover and nothing more.
+      The moment is real. The tools are working.
+      What I need is the space to finish them —
+      and someone who believes that's worth twelve thousand dollars to find out.
+    props:
+      headline: "Fund the Last Mile"
+      cta: "Six months. Twelve thousand. Re-evaluate together."
+      tagline: "THE METHOD IS THE PRODUCT"
