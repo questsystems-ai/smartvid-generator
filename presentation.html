@@ -36,6 +36,7 @@ body {
   pointer-events: none;
 }
 .layer.active { opacity: 1; }
+.anim-paused .layer.active * { animation-play-state: paused !important; }
 
 /* Narration bar */
 #narration {
@@ -54,7 +55,7 @@ body {
   font-size: 16px;
   line-height: 1.6;
   color: #c8cad0;
-  max-width: 800px;
+  max-width: calc(100vw - 80px);
   font-weight: 400;
   position: relative;
 }
@@ -177,6 +178,79 @@ body {
 #btn-edit-save { background: #0c8de9; color: #fff; border-color: transparent; }
 #btn-edit-cancel { background: rgba(255,255,255,0.06); color: #7b7f88; }
 #edit-status { font-size: 11px; color: #44dd88; font-family: 'Courier New', monospace; min-height: 14px; }
+
+/* Slide gallery (dev / localhost only) */
+#slide-gallery {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: 188px;
+  background: rgba(8,10,14,0.97);
+  border-right: 1px solid #1a1d24;
+  overflow-y: auto;
+  z-index: 300;
+  display: none;
+  scrollbar-width: thin;
+  scrollbar-color: #2a2d35 transparent;
+  transform: translateX(0);
+  transition: transform 0.22s ease;
+}
+#slide-gallery.collapsed { transform: translateX(-188px); }
+#slide-gallery::-webkit-scrollbar { width: 4px; }
+#slide-gallery::-webkit-scrollbar-thumb { background: #2a2d35; border-radius: 2px; }
+
+#gallery-toggle {
+  position: fixed;
+  left: 188px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 301;
+  display: none;
+  background: rgba(8,10,14,0.97);
+  border: 1px solid #1a1d24;
+  border-left: none;
+  color: #3a3d45;
+  font-size: 9px;
+  cursor: pointer;
+  padding: 10px 3px;
+  border-radius: 0 5px 5px 0;
+  transition: left 0.22s ease, color 0.15s;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  font-family: 'Courier New', monospace;
+}
+#gallery-toggle:hover { color: #7b7f88; }
+body.has-gallery.gallery-collapsed #gallery-toggle { left: 0; }
+
+.sg-item {
+  padding: 9px 10px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  transition: background 0.12s;
+}
+.sg-item:hover { background: rgba(255,255,255,0.04); }
+.sg-item.active { border-left-color: #38bdf8; background: rgba(56,189,248,0.07); }
+.sg-num {
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  color: #3a3d45;
+  min-width: 16px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.sg-item.active .sg-num { color: #38bdf8; }
+.sg-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: #4c4f57;
+  line-height: 1.3;
+}
+.sg-item.active .sg-title { color: #c8cad0; }
+
+body.has-gallery #controls { left: 204px; transition: left 0.22s ease; }
+body.has-gallery.gallery-collapsed #controls { left: 28px; }
 
 /* Start overlay */
 #start-overlay {
@@ -506,7 +580,7 @@ body {
     <g class="ch-el ch-t4">
       <circle cx="328" cy="175" r="22" fill="#0d1117" stroke="#444" stroke-width="1.5"/>
       <text x="328" y="179" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#555">05</text>
-      <text x="328" y="209" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="#555" letter-spacing="0.5">DISTRIBN</text>
+      <text x="328" y="209" text-anchor="middle" font-family="'Courier New',monospace" font-size="5.5" fill="#555" letter-spacing="0">DISTRIBUTION</text>
     </g>
 
     <!-- ── Divider ── -->
@@ -550,7 +624,7 @@ body {
           font-family="'Courier New',monospace" font-size="8" fill="#ff9944" font-weight="bold">ENGINEER</text>
     <!-- r4: DISTRIBUTION (top-left) ~489,153 -->
     <text class="ch-el ch-r4" x="491" y="157" text-anchor="middle"
-          font-family="'Courier New',monospace" font-size="8" fill="#ff5555" font-weight="bold">DISTRIBN</text>
+          font-family="'Courier New',monospace" font-size="8" fill="#ff5555" font-weight="bold">DISTRIBUTION</text>
 
     <!-- Tagline -->
     <text class="ch-el ch-tag" x="380" y="292" text-anchor="middle"
@@ -797,7 +871,7 @@ body {
       <div class="picon">🔩</div>
       <div class="pbody">
         <div class="pname">PULSE (Patent)</div>
-        <div class="pdesc">Pulse combustion power module for drones and field equipment. H₂O₂ + propane → 48V DC. Provisional filed March 2026.</div>
+        <div class="pdesc">Portable Unified Lightweight Scalable Engine — modular power generator for drones and field equipment. H₂O₂ + propane → 48V DC. Provisional filed March 2026.</div>
       </div>
     </div>
   </div>
@@ -1239,9 +1313,9 @@ body {
       <span class="ia-num" style="display:inline">7.8 &nbsp;</span><span class="ia-title" style="display:inline">PROMOTIONAL MATERIALS</span>
     </div>
     <div class="ia-cards-row">
-      <video id="ia-card1" src="content/video/card1.webm" muted loop playsinline></video>
-      <video id="ia-card2" src="content/video/card2.webm" muted loop playsinline style="opacity:0.15;transition:opacity 0.6s"></video>
-      <video id="ia-card3" src="content/video/card3.webm" muted loop playsinline style="opacity:0.15;transition:opacity 0.6s"></video>
+      <video id="ia-card1" src="content/video/card1.webm" muted playsinline style="transition:opacity 0.6s"></video>
+      <video id="ia-card2" src="content/video/card2.webm" muted playsinline style="opacity:0.15;transition:opacity 0.6s"></video>
+      <video id="ia-card3" src="content/video/card3.webm" muted playsinline style="opacity:0.15;transition:opacity 0.6s"></video>
     </div>
     <div class="ia-body" style="text-align:center;font-size:12px;flex-shrink:0">Generated automatically from your project assets</div>
   </div>
@@ -1488,28 +1562,32 @@ body {
     to   { opacity: 0.55; }
   }
 
-  /* Sequential reveal synced to ~33s narration:
-     2.5s  "AuthorConsole gets published"              → Node 0
-     5.5s  "narrated explainer … presentation engine" → Arc 0→1, Node 1
-    10.0s  "A.I. cost tracker"                        → Arc 1→2, Node 2
-    13.0s  "illustration studio"                      → Arc 2→3, Node 3
-    17.5s  "Each project is a door"                   → Center hub
-    21.0s  "marketing dashboard"                      → Arc 3→4, Node 4
-    27.0s  "I built the marketing machine"            → Arc 4→0 (loop closes)
-    29.5s  tagline
+  /* Sequential reveal synced to 36s narration (word-timestamp aligned):
+     2.5s  "AuthorConsole" (2.9s)                     → Node 0
+     7.9s  "They see the link" (8.2s)                 → Arc 0→1
+    10.5s  "presentation engine" (10.9s)              → Node 1
+    16.8s  "A.I." (17.4s)                             → Arc 1→2
+    17.4s  "A.I. cost tracker"                        → Node 2
+    18.9s  "illustration studio" (19.3s)              → Arc 2→3
+    19.4s                                             → Node 3
+    21.5s  "Each project is a door" (22.1s)           → Center hub
+    25.0s  "marketing dashboard" (25.7s)              → Arc 3→4
+    25.8s                                             → Node 4
+    32.5s  "I built" (33.0s)                          → Arc 4→0 (loop closes)
+    34.5s  "whole operation" (35.4s)                  → tagline
   */
   #scene-9.active .fw-node-0  { animation: fw-pop     0.65s cubic-bezier(0.34,1.56,0.64,1)  2.5s forwards; transform-origin: 310px 140px; }
-  #scene-9.active .fw-arc-01  { animation: fw-arc-in  0.5s  ease                            5.5s forwards; }
-  #scene-9.active .fw-node-1  { animation: fw-pop     0.65s cubic-bezier(0.34,1.56,0.64,1)  6.0s forwards; transform-origin: 434px 230px; }
-  #scene-9.active .fw-arc-12  { animation: fw-arc-in  0.5s  ease                           10.0s forwards; }
-  #scene-9.active .fw-node-2  { animation: fw-pop     0.65s cubic-bezier(0.34,1.56,0.64,1) 10.5s forwards; transform-origin: 386px 375px; }
-  #scene-9.active .fw-arc-23  { animation: fw-arc-in  0.5s  ease                           13.0s forwards; }
-  #scene-9.active .fw-node-3  { animation: fw-pop     0.65s cubic-bezier(0.34,1.56,0.64,1) 13.5s forwards; transform-origin: 234px 375px; }
-  #scene-9.active .fw-hub     { animation: fw-hub-pop 0.75s cubic-bezier(0.34,1.56,0.64,1) 17.5s forwards; transform-origin: 310px 270px; }
-  #scene-9.active .fw-arc-34  { animation: fw-arc-in  0.5s  ease                           21.0s forwards; }
-  #scene-9.active .fw-node-4  { animation: fw-pop     0.65s cubic-bezier(0.34,1.56,0.64,1) 21.5s forwards; transform-origin: 186px 230px; }
-  #scene-9.active .fw-arc-40  { animation: fw-arc-in  0.5s  ease                           27.0s forwards; }
-  #scene-9.active .fw-tag     { animation: fw-tag-in  1.2s  ease                           29.5s forwards; }
+  #scene-9.active .fw-arc-01  { animation: fw-arc-in  0.5s  ease                            7.9s forwards; }
+  #scene-9.active .fw-node-1  { animation: fw-pop     0.65s cubic-bezier(0.34,1.56,0.64,1) 10.5s forwards; transform-origin: 434px 230px; }
+  #scene-9.active .fw-arc-12  { animation: fw-arc-in  0.5s  ease                           16.8s forwards; }
+  #scene-9.active .fw-node-2  { animation: fw-pop     0.65s cubic-bezier(0.34,1.56,0.64,1) 17.4s forwards; transform-origin: 386px 375px; }
+  #scene-9.active .fw-arc-23  { animation: fw-arc-in  0.5s  ease                           18.9s forwards; }
+  #scene-9.active .fw-node-3  { animation: fw-pop     0.65s cubic-bezier(0.34,1.56,0.64,1) 19.4s forwards; transform-origin: 234px 375px; }
+  #scene-9.active .fw-hub     { animation: fw-hub-pop 0.75s cubic-bezier(0.34,1.56,0.64,1) 21.5s forwards; transform-origin: 310px 270px; }
+  #scene-9.active .fw-arc-34  { animation: fw-arc-in  0.5s  ease                           25.0s forwards; }
+  #scene-9.active .fw-node-4  { animation: fw-pop     0.65s cubic-bezier(0.34,1.56,0.64,1) 25.8s forwards; transform-origin: 186px 230px; }
+  #scene-9.active .fw-arc-40  { animation: fw-arc-in  0.5s  ease                           32.5s forwards; }
+  #scene-9.active .fw-tag     { animation: fw-tag-in  1.2s  ease                           34.5s forwards; }
 </style>
 
 <div id="fw-scene">
@@ -1780,34 +1858,41 @@ body {
     to   { opacity: 0.6; transform: scale(1); }
   }
 
-  /* Segment animations — all length 180 */
+  /* Segment animations — synced to 40.3s audio */
   #scene-12.active .rm-spine   { animation: rm-spine-in 0.8s ease 0.3s both; }
-  #scene-12.active .rm-start   { animation: rm-start-pop 0.4s ease 0.6s both; transform-origin: 40px 185px; }
+  #scene-12.active .rm-start   { animation: rm-start-pop 0.4s ease 0.6s both; transform-origin: 40px 145px; }
 
-  #scene-12.active .rm-seg-0   { animation: rm-draw 0.65s ease 1.5s both; stroke-dasharray: 180; }
-  #scene-12.active .rm-node-1  { animation: rm-node-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) 2.0s both; transform-origin: 220px 185px; }
-  #scene-12.active .rm-lab-1   { animation: rm-fade-in 0.4s ease 2.1s both; }
-  #scene-12.active .rm-del-1a  { animation: rm-del-slide 0.35s ease 3.0s both; }
-  #scene-12.active .rm-del-1b  { animation: rm-del-slide 0.35s ease 3.7s both; }
-  #scene-12.active .rm-del-1c  { animation: rm-del-slide 0.35s ease 4.4s both; }
+  /* Phase 1 — "ship" at 4.6s, items 5.4s–13.9s */
+  #scene-12.active .rm-seg-0   { animation: rm-draw 0.65s ease 4.0s both; stroke-dasharray: 180; }
+  #scene-12.active .rm-node-1  { animation: rm-node-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) 4.8s both; transform-origin: 220px 145px; }
+  #scene-12.active .rm-lab-1   { animation: rm-fade-in 0.4s ease 4.9s both; }
+  #scene-12.active .rm-del-1a  { animation: rm-del-slide 0.35s ease 5.4s both; }
+  #scene-12.active .rm-del-1b  { animation: rm-del-slide 0.35s ease 6.7s both; }
+  #scene-12.active .rm-del-1c  { animation: rm-del-slide 0.35s ease 8.3s both; }
+  #scene-12.active .rm-del-1d  { animation: rm-del-slide 0.35s ease 10.2s both; }
+  #scene-12.active .rm-del-1e  { animation: rm-del-slide 0.35s ease 12.3s both; }
 
-  #scene-12.active .rm-seg-1   { animation: rm-draw 0.65s ease 9.5s both; stroke-dasharray: 180; }
-  #scene-12.active .rm-node-2  { animation: rm-node-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) 10.0s both; transform-origin: 400px 185px; }
-  #scene-12.active .rm-lab-2   { animation: rm-fade-in 0.4s ease 10.1s both; }
-  #scene-12.active .rm-del-2a  { animation: rm-del-slide 0.35s ease 11.0s both; }
-  #scene-12.active .rm-del-2b  { animation: rm-del-slide 0.35s ease 11.7s both; }
+  /* Phase 2 — "June" at 19.6s, items 21.0s–26.8s */
+  #scene-12.active .rm-seg-1   { animation: rm-draw 0.65s ease 18.8s both; stroke-dasharray: 180; }
+  #scene-12.active .rm-node-2  { animation: rm-node-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) 19.6s both; transform-origin: 400px 145px; }
+  #scene-12.active .rm-lab-2   { animation: rm-fade-in 0.4s ease 19.7s both; }
+  #scene-12.active .rm-del-2a  { animation: rm-del-slide 0.35s ease 21.0s both; }
+  #scene-12.active .rm-del-2b  { animation: rm-del-slide 0.35s ease 22.4s both; }
+  #scene-12.active .rm-del-2c  { animation: rm-del-slide 0.35s ease 24.9s both; }
 
-  #scene-12.active .rm-seg-2   { animation: rm-draw 0.65s ease 15.5s both; stroke-dasharray: 180; }
-  #scene-12.active .rm-node-3  { animation: rm-node-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) 16.0s both; transform-origin: 580px 185px; }
-  #scene-12.active .rm-lab-3   { animation: rm-fade-in 0.4s ease 16.1s both; }
-  #scene-12.active .rm-del-3a  { animation: rm-del-slide 0.35s ease 17.0s both; }
-  #scene-12.active .rm-del-3b  { animation: rm-del-slide 0.35s ease 17.7s both; }
+  /* Phase 3 — "September" at 27.4s, items 29.1s–33.5s */
+  #scene-12.active .rm-seg-2   { animation: rm-draw 0.65s ease 26.7s both; stroke-dasharray: 180; }
+  #scene-12.active .rm-node-3  { animation: rm-node-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) 27.4s both; transform-origin: 580px 145px; }
+  #scene-12.active .rm-lab-3   { animation: rm-fade-in 0.4s ease 27.5s both; }
+  #scene-12.active .rm-del-3a  { animation: rm-del-slide 0.35s ease 29.1s both; }
+  #scene-12.active .rm-del-3b  { animation: rm-del-slide 0.35s ease 31.7s both; }
 
-  #scene-12.active .rm-seg-3   { animation: rm-draw 0.65s ease 21.5s both; stroke-dasharray: 180; }
-  #scene-12.active .rm-end     { animation: rm-node-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) 22.0s both; transform-origin: 760px 185px; }
-  #scene-12.active .rm-lab-e   { animation: rm-fade-in 0.4s ease 22.2s both; }
+  /* End — "re-evaluation" at 36.7s, "By then" at 38.4s */
+  #scene-12.active .rm-seg-3   { animation: rm-draw 0.65s ease 35.5s both; stroke-dasharray: 180; }
+  #scene-12.active .rm-end     { animation: rm-node-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) 36.2s both; transform-origin: 760px 145px; }
+  #scene-12.active .rm-lab-e   { animation: rm-fade-in 0.4s ease 36.4s both; }
 
-  #scene-12.active .rm-tag     { animation: rm-fade-in 1s ease 27s both; }
+  #scene-12.active .rm-tag     { animation: rm-fade-in 1s ease 38.4s both; }
 </style>
 
 <div id="rm-scene">
@@ -1819,97 +1904,101 @@ body {
     </defs>
 
     <!-- Base spine (full dim line) -->
-    <line class="rm-spine" x1="40" y1="185" x2="760" y2="185"
+    <line class="rm-spine" x1="40" y1="145" x2="760" y2="145"
           stroke="#3a3d45" stroke-width="2"/>
 
     <!-- Start dot -->
     <g class="rm-start">
-      <circle cx="40" cy="185" r="5" fill="#555"/>
-      <text x="40" y="173" text-anchor="middle" font-family="'Courier New',monospace"
+      <circle cx="40" cy="145" r="5" fill="#555"/>
+      <text x="40" y="133" text-anchor="middle" font-family="'Courier New',monospace"
             font-size="7" fill="#555" letter-spacing="0.5">NOW</text>
     </g>
 
     <!-- Colored segments (draw left→right as each phase is announced) -->
-    <line class="rm-seg rm-seg-0" x1="40"  y1="185" x2="220" y2="185"
+    <line class="rm-seg rm-seg-0" x1="40"  y1="145" x2="220" y2="145"
           stroke="#4da6ff" stroke-width="2.5" opacity="0"/>
-    <line class="rm-seg rm-seg-1" x1="220" y1="185" x2="400" y2="185"
+    <line class="rm-seg rm-seg-1" x1="220" y1="145" x2="400" y2="145"
           stroke="#bb88ff" stroke-width="2.5" opacity="0"/>
-    <line class="rm-seg rm-seg-2" x1="400" y1="185" x2="580" y2="185"
+    <line class="rm-seg rm-seg-2" x1="400" y1="145" x2="580" y2="145"
           stroke="#ffcc44" stroke-width="2.5" opacity="0"/>
-    <line class="rm-seg rm-seg-3" x1="580" y1="185" x2="760" y2="185"
+    <line class="rm-seg rm-seg-3" x1="580" y1="145" x2="760" y2="145"
           stroke="#44dd88" stroke-width="2.5" opacity="0" marker-end="url(#rm-arr)"/>
 
     <!-- ── Phase 1: April – May (cx=220) ── -->
     <g class="rm-node rm-node-1">
-      <circle cx="220" cy="185" r="22" fill="#0a1525" stroke="#4da6ff" stroke-width="2"/>
-      <text x="220" y="190" text-anchor="middle" font-family="'Courier New',monospace"
+      <circle cx="220" cy="145" r="22" fill="#0a1525" stroke="#4da6ff" stroke-width="2"/>
+      <text x="220" y="150" text-anchor="middle" font-family="'Courier New',monospace"
             font-size="11" fill="#4da6ff" font-weight="bold">01</text>
     </g>
     <g class="rm-lab rm-lab-1">
-      <text x="220" y="147" text-anchor="middle" font-family="'Courier New',monospace"
+      <text x="220" y="107" text-anchor="middle" font-family="'Courier New',monospace"
             font-size="9" fill="#4da6ff" letter-spacing="1.5" font-weight="bold">SHIP</text>
-      <text x="220" y="132" text-anchor="middle" font-family="'Courier New',monospace"
+      <text x="220" y="92" text-anchor="middle" font-family="'Courier New',monospace"
             font-size="7.5" fill="rgba(77,166,255,0.45)" letter-spacing="1">APR · MAY</text>
     </g>
-    <text class="rm-del rm-del-1a" x="142" y="233" font-family="'Courier New',monospace"
+    <text class="rm-del rm-del-1a" x="142" y="193" font-family="'Courier New',monospace"
           font-size="8" fill="rgba(77,166,255,0.85)">· AuthorConsole</text>
-    <text class="rm-del rm-del-1b" x="142" y="248" font-family="'Courier New',monospace"
+    <text class="rm-del rm-del-1b" x="142" y="206" font-family="'Courier New',monospace"
           font-size="8" fill="rgba(77,166,255,0.85)">· Presentation Engine</text>
-    <text class="rm-del rm-del-1c" x="142" y="263" font-family="'Courier New',monospace"
-          font-size="8" fill="rgba(77,166,255,0.85)">· A.I. Tracker</text>
+    <text class="rm-del rm-del-1c" x="142" y="219" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(77,166,255,0.85)">· A.I. Spend Tracker</text>
+    <text class="rm-del rm-del-1d" x="142" y="232" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(77,166,255,0.85)">· Console Continuity Skills</text>
+    <text class="rm-del rm-del-1e" x="142" y="245" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(77,166,255,0.85)">· a-i-ron.com</text>
 
     <!-- ── Phase 2: June – August (cx=400) ── -->
     <g class="rm-node rm-node-2">
-      <circle cx="400" cy="185" r="22" fill="#180f2d" stroke="#bb88ff" stroke-width="2"/>
-      <text x="400" y="190" text-anchor="middle" font-family="'Courier New',monospace"
+      <circle cx="400" cy="145" r="22" fill="#180f2d" stroke="#bb88ff" stroke-width="2"/>
+      <text x="400" y="150" text-anchor="middle" font-family="'Courier New',monospace"
             font-size="11" fill="#bb88ff" font-weight="bold">02</text>
     </g>
     <g class="rm-lab rm-lab-2">
-      <text x="400" y="147" text-anchor="middle" font-family="'Courier New',monospace"
+      <text x="400" y="107" text-anchor="middle" font-family="'Courier New',monospace"
             font-size="9" fill="#bb88ff" letter-spacing="1.5" font-weight="bold">SCALE</text>
-      <text x="400" y="132" text-anchor="middle" font-family="'Courier New',monospace"
+      <text x="400" y="92" text-anchor="middle" font-family="'Courier New',monospace"
             font-size="7.5" fill="rgba(187,136,255,0.45)" letter-spacing="1">JUN · AUG</text>
     </g>
-    <text class="rm-del rm-del-2a" x="322" y="233" font-family="'Courier New',monospace"
-          font-size="8" fill="rgba(187,136,255,0.85)">· Romantasy Illustrator</text>
-    <text class="rm-del rm-del-2b" x="322" y="248" font-family="'Courier New',monospace"
-          font-size="8" fill="rgba(187,136,255,0.85)">· Marketing Dashboard</text>
+    <text class="rm-del rm-del-2a" x="322" y="193" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(187,136,255,0.85)">· Illustrate-Assist</text>
+    <text class="rm-del rm-del-2b" x="322" y="206" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(187,136,255,0.85)">· Personal Marketing Agent</text>
+    <text class="rm-del rm-del-2c" x="322" y="219" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(187,136,255,0.85)">· First Patreon Revenue</text>
 
     <!-- ── Phase 3: Sept – Oct (cx=580) ── -->
     <g class="rm-node rm-node-3">
-      <circle cx="580" cy="185" r="22" fill="#141005" stroke="#ffcc44" stroke-width="2"/>
-      <text x="580" y="190" text-anchor="middle" font-family="'Courier New',monospace"
+      <circle cx="580" cy="145" r="22" fill="#141005" stroke="#ffcc44" stroke-width="2"/>
+      <text x="580" y="150" text-anchor="middle" font-family="'Courier New',monospace"
             font-size="11" fill="#ffcc44" font-weight="bold">03</text>
     </g>
     <g class="rm-lab rm-lab-3">
-      <text x="580" y="147" text-anchor="middle" font-family="'Courier New',monospace"
+      <text x="580" y="107" text-anchor="middle" font-family="'Courier New',monospace"
             font-size="9" fill="#ffcc44" letter-spacing="1.5" font-weight="bold">REVENUE</text>
-      <text x="580" y="132" text-anchor="middle" font-family="'Courier New',monospace"
+      <text x="580" y="92" text-anchor="middle" font-family="'Courier New',monospace"
             font-size="7.5" fill="rgba(255,204,68,0.45)" letter-spacing="1">SEP · OCT</text>
     </g>
-    <text class="rm-del rm-del-3a" x="504" y="233" font-family="'Courier New',monospace"
-          font-size="8" fill="rgba(255,204,68,0.85)">· Paper series complete</text>
-    <text class="rm-del rm-del-3b" x="504" y="248" font-family="'Courier New',monospace"
-          font-size="8" fill="rgba(255,204,68,0.85)">· First revenue active</text>
+    <text class="rm-del rm-del-3a" x="504" y="193" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(255,204,68,0.85)">· Patreon Revenue → Marketing Spend</text>
+    <text class="rm-del rm-del-3b" x="504" y="206" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(255,204,68,0.85)">· First Product Revenue</text>
 
     <!-- ── End: Re-evaluate (cx=760) ── -->
     <g class="rm-end">
-      <circle cx="760" cy="185" r="16" fill="#041408" stroke="#44dd88" stroke-width="2"/>
-      <text x="760" y="191" text-anchor="middle" font-family="'Courier New',monospace"
+      <circle cx="760" cy="145" r="16" fill="#041408" stroke="#44dd88" stroke-width="2"/>
+      <text x="760" y="151" text-anchor="middle" font-family="'Courier New',monospace"
             font-size="13" fill="#44dd88">✓</text>
     </g>
     <g class="rm-lab rm-lab-e">
-      <text x="760" y="147" text-anchor="middle" font-family="'Courier New',monospace"
+      <text x="760" y="107" text-anchor="middle" font-family="'Courier New',monospace"
             font-size="8" fill="#44dd88" letter-spacing="1.5" font-weight="bold">RE-EVALUATE</text>
-      <text x="760" y="132" text-anchor="middle" font-family="'Courier New',monospace"
+      <text x="760" y="92" text-anchor="middle" font-family="'Courier New',monospace"
             font-size="7" fill="rgba(68,221,136,0.4)" letter-spacing="1">OCT 2026</text>
     </g>
 
     <!-- Tagline -->
-    <text class="rm-tag" x="400" y="310" text-anchor="middle"
-          font-family="'Courier New',monospace" font-size="7.5" fill="#555" letter-spacing="1">
-      BY THEN, THE PICTURE IS CLEAR.
-    </text>
+    <text class="rm-tag" x="400" y="270" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="7.5" fill="#555" letter-spacing="1">BY THEN, THE PICTURE IS CLEAR.</text>
   </svg>
 </div>
     
@@ -1970,7 +2059,6 @@ body {
   #scene-13.active .lm-check      { animation: lm-pop    0.5s cubic-bezier(0.34,1.56,0.64,1) 18.5s both; transform-origin: 700px 164px; }
   /* CTA + tagline */
   #scene-13.active .lm-cta        { animation: lm-fade   0.6s ease 21.0s both; }
-  #scene-13.active .lm-tag        { animation: lm-fade   1.0s ease 23.5s both; }
 </style>
 
 <div id="lm-scene">
@@ -2057,16 +2145,15 @@ body {
           font-family="Inter,-apple-system,sans-serif" font-size="14" font-weight="600"
           fill="#38bdf8">Six months. Twelve thousand. Re-evaluate together.</text>
 
-    <!-- Tagline -->
-    <text class="lm-el lm-tag" x="380" y="302" text-anchor="middle"
-          font-family="'Courier New',monospace" font-size="7.5" fill="#4c4f57"
-          letter-spacing="4">THE METHOD IS THE PRODUCT</text>
+    <!-- Tagline removed -->
   </svg>
 </div>
     
   </div>
 </div>
 
+<div id="slide-gallery"></div>
+<button id="gallery-toggle" title="Toggle slide panel">◀</button>
 <div id="narration"><div id="narration-text"></div></div>
 <div id="progress-bar" style="width: 0%"></div>
 <div id="scene-counter">1 / 13</div>
@@ -2092,7 +2179,8 @@ body {
 </div>
 
 <script>
-const SCENES = [{"minDuration": 18, "narrationHtml": "Welcome to the workshop. This presentation is a walkthrough of what I've been building over the past year, where it stands today, and what it needs to get finished by December. One more thing worth knowing upfront — this presentation was made using one of the tools it describes. Which is, itself, part of the point.\n"}, {"minDuration": 34, "narrationHtml": "Something fundamental has changed. Not in a small way — in the way the printing press changed who could write, and who could be heard. Artificial intelligence has made it possible for one person, working alone, to do the research, the writing, the design, the engineering, and the distribution that used to require a whole team — or an entire department. Most people are still figuring out what that means. Some are already afraid of it. I've spent the past year building inside it. And what I've learned is this: the people who understand it earliest are the ones who shape what it becomes.\n"}, {"minDuration": 24, "narrationHtml": "Here's the insight that drives everything I'm doing. I didn't set out to build products. I set out to build a method. And the method... is the product. Each tool I make becomes part of the toolkit I use to build the next one. Each paper I publish attracts an audience that funds the one after it. That's not a side project. That's a compounding system — and it's about sixty percent built.\n"}, {"minDuration": 50, "narrationHtml": "Before universities became the gatekeepers of knowledge, there was a different model — the independent scientist. Someone with enough resources, or enough drive, to pursue real problems without asking for institutional permission. Isaac Newton worked alone. Benjamin Franklin was a printer. George Cayley was an English baronet who invented the concept of the fixed-wing aircraft simply because he was obsessed with flight. Charles Babbage spent forty years building a computer nobody else believed in. In England, natural philosophy was a perfectly respectable occupation for anyone with the means and the curiosity to pursue it. The Royal Society was full of them. What changed was the research university — which arrived around 1850 and made credentials the price of entry. That gate is now open again. Artificial intelligence is the great equalizer — it handles the patient, meticulous work that used to require a career of training. The independent researcher is back.\n"}, {"minDuration": 23, "narrationHtml": "Here's the portfolio. Eleven projects, all interconnected, all in progress. Five are software tools people can use right now, or very soon. One is a hardware patent with government research funding potential. And one — the tool you're watching this presentation on — is the publishing engine that makes all of it shareable and teachable. Every project links to the others. They're not separate bets. They're one compounding system.\n"}, {"minDuration": 24, "narrationHtml": "Here's where each project stands — as a percentage complete toward a product someone can download, subscribe to, or build on. The average across all seven is about forty-one percent done. Three of them can ship within the next month or two. The Romantasy Illustrator is the furthest along at sixty-five percent. The hardware patent — FORGE — is on a longer timeline by nature, but the intellectual property is already filed and protected.\n"}, {"minDuration": 35, "narrationHtml": "One project sits apart from the rest, and it's worth a moment of its own. FORGE is a hardware invention — a modular power generator designed for drones and field equipment that currently have to carry heavy, expensive, or hard-to-source fuel systems. The provisional patent was filed in March of this year. The path to revenue here is different from the software projects — it runs through government research grants and technology licensing partnerships, which are the standard commercial pathways for this kind of hard technology. What it adds to the portfolio is credibility of a different kind. Software can be copied. A patent cannot.\n"}, {"minDuration": 90, "narrationHtml": "Let's look at Illustrate Assist. The user uploads text — if it's finished, great. If just an idea, the app uses Claude to collaborate on research and writing to develop your ideas into books, screenplays, and pitches. The app uses a sophisticated multi-agent process to parse and extract a world bible and auto-generate model-specific prompts, at which point the user works with Claude to refine the characters, and then the cinematic scenes, collaborating with a fully tooled Sonnet agent with memory and project-context, until just the right image is produced. These are then automatically incorporated into publishable flipbooks, audiovisual interactive lookbooks, or project pitches designed for publishing houses or Hollywood executives. The app also generates promotional materials — and contains access to a project-specific full marketing agent and dashboard tool to manage audience and PR outreach and engagement.\n"}, {"minDuration": 30, "narrationHtml": "There are two kinds of value in this portfolio, and it's worth understanding both. Some projects make money directly — monthly subscriptions, technology licensing, and government research grants. Others build an audience first, and the audience is what generates the revenue. That happens through Patreon — a platform where readers and followers pay a small amount each month to support independent researchers and creators — and through the natural cross-promotion that happens when one project's audience discovers another. In the modern creator economy, audience is the asset. Everything else follows.\n"}, {"minDuration": 33, "narrationHtml": "Here's how the compounding works in practice. AuthorConsole gets published. Academics and writers find it and follow along. They see the link to the narrated explainer — made with the presentation engine. They discover the presentation tool. Some become users. They find the A.I. cost tracker. They find the illustration studio. Each project is a door. Every door leads to the others. And the marketing dashboard — which is itself one of the products — means I never have to pay an agency to reach any of these audiences. I built the marketing machine. It runs the whole operation.\n"}, {"minDuration": 29, "narrationHtml": "What I'm describing is a new kind of business — one that doesn't have a clean name yet, but it's real and it's working. Not a startup. Not a consulting practice. Not a blog. A vertically integrated one-person operation, where the same person researches, writes, builds, ships, and markets everything — in this case using the very tools they are building and writing about.\n", "authorLocked": true}, {"minDuration": 33, "narrationHtml": "Here's the ask. Two thousand dollars a month, for six months. That breaks down simply: twelve hundred and fifty for living expenses, and seven hundred and fifty for A.I. API costs and minor brand promotion — things like getting the papers in front of the right people at the right moment. At six months, we re-evaluate together. If revenue has started, we stop. If we're close and it makes sense to continue, we talk. There's no open-ended commitment here. Just a focused runway to finish what is already most of the way built. Total for six months: twelve thousand dollars.\n"}, {"minDuration": 31, "narrationHtml": "Here's the six-month roadmap. April and May: the three projects closest to done all ship — AuthorConsole, the presentation engine, and the A.I. cost tracker. Each one launches publicly, starts building an audience, and feeds the next. June through August: the Romantasy Illustrator and the Marketing Dashboard go live. Both are feature-complete — they need polish and distribution, not invention. September and October: the paper series wraps up, the first revenue streams are active, and we sit down and look at what's working. That's the re-evaluation point. By then, the picture is clear.\n"}, {"minDuration": 26, "narrationHtml": "I'm not asking you to bet on a dream. I'm asking you to fund the last mile of something that is already mostly built — for a defined period, with a clear check-in point, and a specific number that covers exactly what it needs to cover and nothing more. The moment is real. The tools are working. What I need is the space to finish them — and someone who believes that's worth twelve thousand dollars to find out.\n"}];
+const SCENES = [{"minDuration": 18, "narrationHtml": "Welcome to the workshop. This presentation is a walkthrough of what I've been building over the past year, where it stands today, and what it needs to get finished by December. One more thing worth knowing upfront — this presentation was made using one of the tools it describes. Which is, itself, part of the point.\n"}, {"minDuration": 34, "narrationHtml": "Something fundamental has changed. Not in a small way — in the way the printing press changed who could write, and who could be heard. Artificial intelligence has made it possible for one person, working alone, to do the research, the writing, the design, the engineering, and the distribution that used to require a whole team — or an entire department. Most people are still figuring out what that means. Some are already afraid of it. I've spent the past year building inside it. And what I've learned is this: the people who understand it earliest are the ones who shape what it becomes.\n"}, {"minDuration": 24, "narrationHtml": "Here's the insight that drives everything I'm doing. I didn't set out to build products. I set out to build a method. And the method... is the product. Each tool I make becomes part of the toolkit I use to build the next one. Each paper I publish attracts an audience that funds the one after it. That's not a side project. That's a compounding system — and it's about sixty percent built.\n"}, {"minDuration": 30, "narrationHtml": "There\u2019s an old idea called the citizen scientist \u2014 someone outside the academy, working on real problems, contributing real findings to the world. Darwin was one. Franklin was one. The model is having a renaissance, powered by artificial intelligence. One person. One machine. The freedom to speak plainly, move fast, and work on things that matter \u2014 without institutional overhead, without committee approval, and without asking anyone\u2019s permission.\n"}, {"minDuration": 57, "narrationHtml": "Here's the portfolio. Eleven projects across three categories. Six software tools: AuthorConsole and paperHTML for human authorship and publishing. The presentation engine you're watching right now. api-dash for real-time AI spend. A personal marketing agent that runs campaigns without an agency. And session continuity skills that keep the workflow moving. Two businesses: FlyIRL SkyPark and Illustrate-Assist. One patent: PULSE — Portable Unified Lightweight Scalable Engine, provisional filed March 2026. And two applied research tracks: a multi-agent problem-solving engine, and TRACER — a bio-inspired memory architecture targeting arXiv. Every tool I build goes into the toolkit. Every paper builds the audience. Every business generates the revenue. These aren't separate bets. They're one system.\n"}, {"minDuration": 14, "narrationHtml": "Here's where each project stands — as a percentage complete toward a product someone can download, subscribe to, or build on. Across all eleven, the average is sixty-one percent done.\n"}, {"minDuration": 40, "narrationHtml": "One project sits apart from the rest, and it's worth a moment of its own. PULSE — Portable Unified Lightweight Scalable Engine — is a patent-pending hardware invention: a modular power generator for drones and field equipment, using a pulsed combustion cycle to generate clean DC power in the field. The provisional patent was filed in March of this year. The path to revenue runs through government research grants and technology licensing — the standard commercial pathways for hard technology. What it adds to the portfolio is credibility of a different kind. Software can be copied. A patent cannot.\n"}, {"minDuration": 200, "narrationHtml": "Let's look at Illustrate Assist. The user uploads text — if it's finished, great. If just an idea, the app uses Claude to collaborate on research and writing to develop your ideas into books, screenplays, and pitches. The app uses a sophisticated multi-agent process to parse and extract a world bible and auto-generate model-specific prompts, at which point the user works with Claude to refine the characters, and then the cinematic scenes, collaborating with a fully tooled Sonnet agent with memory and project-context, until just the right image is produced. These are then automatically incorporated into publishable flipbooks, audiovisual interactive lookbooks, or project pitches designed for publishing houses or Hollywood executives. The app also generates promotional materials — and contains access to a project-specific full marketing agent and dashboard tool to manage audience and PR outreach and engagement.\n"}, {"minDuration": 30, "narrationHtml": "There are two kinds of value in this portfolio, and it's worth understanding both. Some projects make money directly — monthly subscriptions, technology licensing, and government research grants. Others build an audience first, and the audience is what generates the revenue. That happens through Patreon — a platform where readers and followers pay a small amount each month to support independent researchers and creators — and through the natural cross-promotion that happens when one project's audience discovers another. In the modern creator economy, audience is the asset. Everything else follows.\n"}, {"minDuration": 33, "narrationHtml": "Here's how the compounding works in practice. AuthorConsole gets published. Academics and writers find it and follow along. They see the link to the narrated explainer — made with the presentation engine. They discover the presentation tool. Some become users. They find the A.I. cost tracker. They find the illustration studio. Each project is a door. Every door leads to the others. And the marketing dashboard — which is itself one of the products — means I never have to pay an agency to reach any of these audiences. I built the marketing machine. It runs the whole operation.\n"}, {"minDuration": 29, "narrationHtml": "What I'm describing is a new kind of business — one that doesn't have a clean name yet, but it's real and it's working. Not a startup. Not a consulting practice. Not a blog. A vertically integrated one-person operation, where the same person researches, writes, builds, ships, and markets everything — in this case using the very tools they are building and writing about.\n", "authorLocked": true}, {"minDuration": 33, "narrationHtml": "Here's the ask. Two thousand dollars a month, for six months. That breaks down simply: twelve hundred and fifty for living expenses, and seven hundred and fifty for A.I. API costs and minor brand promotion — things like getting the papers in front of the right people at the right moment. At six months, we re-evaluate together. If revenue has started, we stop. If we're close and it makes sense to continue, we talk. There's no open-ended commitment here. Just a focused runway to finish what is already most of the way built. Total for six months: twelve thousand dollars.\n"}, {"minDuration": 43, "narrationHtml": "Here's the six-month roadmap. April and May: five things ship — AuthorConsole, the presentation engine, the A.I. Spend Tracker, Console Continuity Skills, and a-i-ron.com. Each one launches publicly, starts building an audience, and feeds the next. June through August: Illustrate-Assist and the Personal Marketing Agent go live, and Patreon revenue starts flowing. September and October: Patreon revenue funds the marketing spend, the first product revenue comes in, and we sit down and look at what's working. That's the re-evaluation point. By then, the picture is clear.\n"}, {"minDuration": 26, "narrationHtml": "I'm not asking you to bet on a dream. I'm asking you to fund the last mile of something that is already mostly built — for a defined period, with a clear check-in point, and a specific number that covers exactly what it needs to cover and nothing more. The moment is real. The tools are working. What I need is the space to finish them — and someone who believes that's worth twelve thousand dollars to find out.\n"}];
+const SKIPPED_SCENES = new Set([2]); // deprecated slides
 const AUDIO_IDS = ["title", "the-moment", "the-insight", "citizen-scientist", "the-portfolio", "projects-progress", "forge-spotlight", "illustrate-assist", "monetization", "the-flywheel", "the-model", "the-ask", "timeline", "close"];
 const TIMING = {};
 let currentScene = 0;
@@ -2146,6 +2234,13 @@ function playSceneAudio(index) {
   });
 }
 
+const _totalDisplayed = SCENES.filter((_, i) => !SKIPPED_SCENES.has(i)).length;
+function _displayNum(index) {
+  let n = 0;
+  for (let i = 0; i <= index; i++) { if (!SKIPPED_SCENES.has(i)) n++; }
+  return n;
+}
+
 function runCounters(el) {
   el.querySelectorAll('.pa-count[data-target]').forEach(c => {
     const target = parseFloat(c.dataset.target);
@@ -2180,8 +2275,9 @@ function showScene(index) {
     document.getElementById('narration-text').innerHTML = SCENES[index]?.narrationHtml || '';
   }
   lastCaptionWord = -2;
-  document.getElementById('scene-counter').textContent = `${index + 1} / ${SCENES.length}`;
-  document.getElementById('progress-bar').style.width = `${((index + 1) / SCENES.length) * 100}%`;
+  document.getElementById('scene-counter').textContent = `${_displayNum(index)} / ${_totalDisplayed}`;
+  document.getElementById('progress-bar').style.width = `${(_displayNum(index) / _totalDisplayed) * 100}%`;
+  updateGallery(index);
 }
 
 async function playFrom(index) {
@@ -2189,6 +2285,7 @@ async function playFrom(index) {
   playing = true;
   document.getElementById('btn-play').textContent = 'Pause';
   for (let i = index; i < SCENES.length && playing && playSession === mySession; i++) {
+    if (SKIPPED_SCENES.has(i)) continue;
     showScene(i);
     await playSceneAudio(i);
   }
@@ -2202,9 +2299,11 @@ function togglePlay() {
   if (playing) {
     playing = false;
     if (currentAudio) currentAudio.pause();
+    document.body.classList.add('anim-paused');
     document.getElementById('btn-play').textContent = 'Play';
   } else {
     playing = true;
+    document.body.classList.remove('anim-paused');
     document.getElementById('btn-play').textContent = 'Pause';
     if (currentAudio && currentAudio.paused) {
       currentAudio.play().catch(() => {});
@@ -2217,7 +2316,9 @@ function togglePlay() {
 function nextScene() {
   if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
   if (audioFinishedResolve) { audioFinishedResolve(); audioFinishedResolve = null; }
-  const next = Math.min(currentScene + 1, SCENES.length - 1);
+  let next = currentScene + 1;
+  while (next < SCENES.length - 1 && SKIPPED_SCENES.has(next)) next++;
+  next = Math.min(next, SCENES.length - 1);
   showScene(next);
   if (playing) playFrom(next);
 }
@@ -2225,7 +2326,9 @@ function nextScene() {
 function prevScene() {
   if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
   if (audioFinishedResolve) { audioFinishedResolve(); audioFinishedResolve = null; }
-  const prev = Math.max(currentScene - 1, 0);
+  let prev = currentScene - 1;
+  while (prev > 0 && SKIPPED_SCENES.has(prev)) prev--;
+  prev = Math.max(prev, 0);
   showScene(prev);
   if (playing) playFrom(prev);
 }
@@ -2254,16 +2357,38 @@ document.addEventListener('keydown', (e) => {
 });
 
 // Illustrate-Assist sub-slide management
-const IA_SUBS = [[0,9],[9,22],[22,35],[35,43],[43,50],[50,57],[57,64],[64,82],[82,90]];
+const IA_SUBS = [[0,2],[2,13],[13,22],[22,25],[25,29],[29,34],[34,46],[46,60]];
 function updateIAScene(elapsed) {
   IA_SUBS.forEach(([s,e],i) => {
     const el = document.getElementById('ia-sub-'+(i+1));
     if (!el) return;
     el.classList.toggle('ia-visible', elapsed >= s && elapsed < e);
   });
-  if (elapsed >= 64 && !window._iaV1) { document.getElementById('ia-card1')?.play().catch(()=>{}); window._iaV1=true; }
-  if (elapsed >= 70 && !window._iaV2) { const v=document.getElementById('ia-card2'); if(v){v.style.opacity='1';v.play().catch(()=>{})} window._iaV2=true; }
-  if (elapsed >= 76 && !window._iaV3) { const v=document.getElementById('ia-card3'); if(v){v.style.opacity='1';v.play().catch(()=>{})} window._iaV3=true; }
+  if (elapsed >= 46 && !window._iaV1) {
+    window._iaV1 = true;
+    const v1 = document.getElementById('ia-card1');
+    const v2 = document.getElementById('ia-card2');
+    const v3 = document.getElementById('ia-card3');
+    if (!v1) return;
+    [v1, v2, v3].forEach(v => { v.currentTime = 0; });
+    v1.play().catch(()=>{});
+    v1.addEventListener('ended', () => {
+      v1.style.opacity = '0.35';
+      v2.style.opacity = '1';
+      v2.play().catch(()=>{});
+      v2.addEventListener('ended', () => {
+        v2.style.opacity = '0.35';
+        v3.style.opacity = '1';
+        v3.play().catch(()=>{});
+        v3.addEventListener('ended', () => {
+          [v1, v2, v3].forEach(v => { v.currentTime = 0; v.style.opacity = '1'; });
+          setTimeout(() => {
+            if (audioFinishedResolve) { audioFinishedResolve(); audioFinishedResolve = null; }
+          }, 2000);
+        }, { once: true });
+      }, { once: true });
+    }, { once: true });
+  }
 }
 
 // Animation loop
@@ -2280,8 +2405,10 @@ function tick() {
   }
 
   if (currentScene === 7) updateIAScene(elapsed);
-  // Narration progress bar
-  document.getElementById('narration-text').style.setProperty('--speak-progress', `${t * 100}%`);
+  // Narration progress bar — only advance when playing
+  if (playing) {
+    document.getElementById('narration-text').style.setProperty('--speak-progress', `${t * 100}%`);
+  }
 
   // Karaoke caption sync
   const words = TIMING[currentScene];
@@ -2345,10 +2472,75 @@ document.body.appendChild(overlay);
 // Reset IA video flags when scene changes
 const _origShowScene = showScene;
 showScene = function(index) {
-  if (index !== 7) { window._iaV1=window._iaV2=window._iaV3=false; }
+  if (index !== 7) {
+    window._iaV1=window._iaV2=window._iaV3=false;
+    ['ia-card1','ia-card2','ia-card3'].forEach((id,i) => {
+      const v = document.getElementById(id);
+      if (v) { v.pause(); v.currentTime = 0; v.style.opacity = i === 0 ? '1' : '0.15'; }
+    });
+  }
   _origShowScene(index);
 };
+const SCENE_TITLES = [
+  'The Workshop',
+  'The Moment',
+  'The Insight',            // skipped
+  'The Independent Scientist',
+  'The Portfolio',
+  'Project Progress',
+  'PULSE',
+  'Illustrate Assist',
+  'Monetization',
+  'The Flywheel',
+  'The Model',
+  'The Ask',
+  'Six-Month Roadmap',
+  'Fund the Last Mile',
+];
+
+function buildGallery() {
+  if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
+  document.body.classList.add('has-gallery');
+  const gallery = document.getElementById('slide-gallery');
+  const toggle  = document.getElementById('gallery-toggle');
+  gallery.style.display = 'block';
+  toggle.style.display  = 'block';
+
+  let displayNum = 0;
+  SCENES.forEach((scene, i) => {
+    if (SKIPPED_SCENES.has(i)) return;
+    displayNum++;
+    const item = document.createElement('div');
+    item.className = 'sg-item';
+    item.dataset.index = i;
+    const title = SCENE_TITLES[i] || `Scene ${displayNum}`;
+    item.innerHTML = `<span class="sg-num">${displayNum}</span><span class="sg-title">${title}</span>`;
+    item.addEventListener('click', () => {
+      if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+      if (audioFinishedResolve) { audioFinishedResolve(); audioFinishedResolve = null; }
+      showScene(i);
+      if (playing) playFrom(i);
+    });
+    gallery.appendChild(item);
+  });
+
+  toggle.addEventListener('click', () => {
+    const collapsed = gallery.classList.toggle('collapsed');
+    document.body.classList.toggle('gallery-collapsed', collapsed);
+    toggle.textContent = collapsed ? '▶' : '◀';
+  });
+}
+
+function updateGallery(index) {
+  document.querySelectorAll('#slide-gallery .sg-item').forEach(el => {
+    el.classList.toggle('active', parseInt(el.dataset.index) === index);
+  });
+  const active = document.querySelector('#slide-gallery .sg-item.active');
+  if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
 preloadAudio();
+buildGallery();
 showScene(0);
 
 overlay.addEventListener('click', () => {
