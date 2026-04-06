@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Scene Prompt Pathways</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #030712; color: #e5e7eb; font-family: 'IBM Plex Mono', monospace; padding: 32px; }
+  h1 { font-family: 'Cinzel', Georgia, serif; font-size: 18px; color: #a5b4fc; letter-spacing: .08em; margin-bottom: 6px; }
+  .subtitle { font-size: 11px; color: #4b5563; margin-bottom: 28px; }
+  svg text { font-family: 'IBM Plex Mono', 'Courier New', monospace; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<h1>Scene Prompt Generation — Pathways Map</h1>
+<p class="subtitle">romantasy-v1 · dev/wip · april 2026 · post-cleanup</p>
+
+<svg width="1200" height="720" viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4b5563"/>
+    </marker>
+    <marker id="arr-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#22c55e"/>
+    </marker>
+    <marker id="arr-amber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f59e0b"/>
+    </marker>
+    <marker id="arr-cyan" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#22d3ee"/>
+    </marker>
+    <marker id="arr-indigo" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#818cf8"/>
+    </marker>
+    <marker id="arr-purple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#c084fc"/>
+    </marker>
+    <filter id="glow-green">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-amber">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- COLUMN 1: DATA SOURCES  x=14 w=210 -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <text x="14" y="24" font-size="9" fill="#374151" letter-spacing="2">DATA SOURCES</text>
+
+  <!-- Gemini World Bible -->
+  <rect x="14" y="34" width="210" height="178" rx="6" fill="#0a0f1e" stroke="#1e3a5f" stroke-width="1.5"/>
+  <rect x="14" y="34" width="210" height="22" rx="6" fill="#0c1a3a"/>
+  <rect x="14" y="48" width="210" height="8" rx="0" fill="#0c1a3a"/>
+  <text x="24" y="49" font-size="10" fill="#60a5fa" font-weight="500">📚  Gemini World Bible</text>
+  <text x="22" y="68" font-size="9" fill="#6b7280">scene.actionBeats[].promptFragment</text>
+  <rect x="188" y="58" width="28" height="14" rx="3" fill="#14532d"/>
+  <text x="193" y="68" font-size="8" fill="#86efac">✓</text>
+  <text x="22" y="86" font-size="9" fill="#6b7280">scene.intimacyBeats[].promptFragment</text>
+  <rect x="188" y="76" width="28" height="14" rx="3" fill="#14532d"/>
+  <text x="193" y="86" font-size="8" fill="#86efac">✓</text>
+  <text x="22" y="104" font-size="9" fill="#6b7280">scene.location · sceneType</text>
+  <rect x="176" y="94" width="40" height="14" rx="3" fill="#14532d"/>
+  <text x="181" y="104" font-size="8" fill="#86efac">good</text>
+  <text x="22" y="122" font-size="9" fill="#6b7280">char.appearance · faceSketch</text>
+  <rect x="170" y="112" width="46" height="14" rx="3" fill="#713f12"/>
+  <text x="175" y="122" font-size="8" fill="#fde68a">partial</text>
+  <text x="22" y="140" font-size="9" fill="#6b7280">char.promptKeywords</text>
+  <rect x="170" y="130" width="46" height="14" rx="3" fill="#7f1d1d"/>
+  <text x="175" y="140" font-size="8" fill="#fca5a5">no hair</text>
+  <text x="22" y="160" font-size="9" fill="#4b5563">Extracted by Gemini 2.5 Pro.</text>
+  <text x="22" y="174" font-size="9" fill="#4b5563">Beat fragments = good. Character</text>
+  <text x="22" y="188" font-size="9" fill="#4b5563">appearance fields incomplete.</text>
+  <text x="22" y="200" font-size="9" fill="#4b5563">Hair consistently missed.</text>
+
+  <!-- Smart Forge Accepted (GOLD) -->
+  <rect x="14" y="228" width="210" height="168" rx="6" fill="#0a1a0f" stroke="#166534" stroke-width="2" filter="url(#glow-green)"/>
+  <rect x="14" y="228" width="210" height="22" rx="6" fill="#052e16"/>
+  <rect x="14" y="242" width="210" height="8" rx="0" fill="#052e16"/>
+  <text x="24" y="243" font-size="10" fill="#4ade80" font-weight="500">⚡  Smart Forge Accepted</text>
+  <text x="22" y="262" font-size="9" fill="#6b7280">ref.headshot_prompt</text>
+  <rect x="170" y="252" width="46" height="14" rx="3" fill="#14532d"/>
+  <text x="175" y="262" font-size="8" fill="#86efac">✓ hair+face</text>
+  <text x="22" y="280" font-size="9" fill="#6b7280">ref.body_prompt</text>
+  <rect x="170" y="270" width="46" height="14" rx="3" fill="#14532d"/>
+  <text x="175" y="280" font-size="8" fill="#86efac">✓ attire</text>
+  <text x="22" y="298" font-size="9" fill="#6b7280">ref.headshot_file_path</text>
+  <rect x="162" y="288" width="54" height="14" rx="3" fill="#14532d"/>
+  <text x="167" y="298" font-size="8" fill="#86efac">face swap</text>
+  <text x="22" y="318" font-size="9" fill="#4b5563">Curated in Smart Forge. Server</text>
+  <text x="22" y="332" font-size="9" fill="#4b5563">queries character_references table</text>
+  <text x="22" y="346" font-size="9" fill="#4b5563">directly — no client needed.</text>
+  <text x="22" y="360" font-size="9" fill="#22c55e">Priority 1 in server assembly.</text>
+  <text x="22" y="374" font-size="9" fill="#22c55e">Gold standard input.</text>
+
+  <!-- Notable Entities / PROPs -->
+  <rect x="14" y="412" width="210" height="108" rx="6" fill="#0d0a00" stroke="#78350f" stroke-width="1.5"/>
+  <rect x="14" y="412" width="210" height="22" rx="6" fill="#1c0f00"/>
+  <rect x="14" y="426" width="210" height="8" rx="0" fill="#1c0f00"/>
+  <text x="24" y="427" font-size="10" fill="#fbbf24" font-weight="500">🗡️  Notable Entities (PROPs)</text>
+  <text x="22" y="446" font-size="9" fill="#6b7280">scene.entitiesPresent → worldBible</text>
+  <text x="22" y="462" font-size="9" fill="#6b7280">.notableEntities[].promptKeywords</text>
+  <text x="22" y="480" font-size="9" fill="#6b7280">forge accepted prompt preferred</text>
+  <text x="22" y="500" font-size="9" fill="#4b5563">Hawk dedup: skip if name in</text>
+  <text x="22" y="514" font-size="9" fill="#4b5563">charactersPresent (fixed ✓)</text>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- COLUMN 2: PATHWAYS  x=260 w=228 -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <text x="260" y="24" font-size="9" fill="#374151" letter-spacing="2">PATHWAYS</text>
+
+  <!-- PATH A: First Pass -->
+  <rect x="260" y="34" width="228" height="252" rx="8" fill="#090e1f" stroke="#059669" stroke-width="2"/>
+  <rect x="260" y="34" width="228" height="28" rx="8" fill="#065f46"/>
+  <rect x="260" y="54" width="228" height="8" rx="0" fill="#065f46"/>
+  <text x="270" y="53" font-size="11" fill="#6ee7b7" font-weight="500">PATH A — First Pass</text>
+  <text x="270" y="70" font-size="9" fill="#34d399">one click → all beats → all images</text>
+
+  <text x="270" y="92" font-size="9" fill="#94a3b8" font-weight="500">FLOW</text>
+  <text x="270" y="108" font-size="9" fill="#6b7280">1. User clicks First Pass (N)</text>
+  <text x="270" y="124" font-size="9" fill="#6b7280">2. loops filteredScenes</text>
+  <text x="270" y="140" font-size="9" fill="#6b7280">3. for each beat in scene.actionBeats</text>
+  <text x="270" y="156" font-size="9" fill="#6b7280">   + scene.intimacyBeats</text>
+  <text x="270" y="172" font-size="9" fill="#22c55e">4. POST /api/authors/build-prompt</text>
+  <text x="270" y="188" font-size="9" fill="#22c55e">   beatIndex + attireMode:detailed</text>
+  <text x="270" y="204" font-size="9" fill="#6b7280">5. POST /api/playground flux-pro</text>
+  <text x="270" y="220" font-size="9" fill="#6b7280">6. auto-save to library</text>
+
+  <line x1="270" y1="232" x2="480" y2="232" stroke="#065f46" stroke-width="1"/>
+  <text x="270" y="248" font-size="9" fill="#4ade80">+ Batch — no prompt needed</text>
+  <text x="270" y="264" font-size="9" fill="#4ade80">+ Server = forge data always used</text>
+  <text x="270" y="278" font-size="9" fill="#fbbf24">– No preview (fire and forget)</text>
+
+  <!-- PATH B: Individual Generate -->
+  <rect x="260" y="302" width="228" height="248" rx="8" fill="#090e1f" stroke="#6366f1" stroke-width="2"/>
+  <rect x="260" y="302" width="228" height="28" rx="8" fill="#312e81"/>
+  <rect x="260" y="322" width="228" height="8" rx="0" fill="#312e81"/>
+  <text x="270" y="321" font-size="11" fill="#a5b4fc" font-weight="500">PATH B — Individual Generate</text>
+  <text x="270" y="338" font-size="9" fill="#818cf8">expand scene → pick beat → Generate</text>
+
+  <text x="270" y="360" font-size="9" fill="#94a3b8" font-weight="500">FLOW</text>
+  <text x="270" y="376" font-size="9" fill="#6b7280">1. User expands scene row</text>
+  <text x="270" y="392" font-size="9" fill="#6b7280">2. Selects art style + model (optional)</text>
+  <text x="270" y="408" font-size="9" fill="#6b7280">3. Picks beat radio (optional)</text>
+  <text x="270" y="424" font-size="9" fill="#6b7280">4. Clicks Generate Image</text>
+  <text x="270" y="440" font-size="9" fill="#818cf8">5a. editablePrompt? → use it</text>
+  <text x="270" y="456" font-size="9" fill="#818cf8">5b. empty → auto-build (shows</text>
+  <text x="270" y="472" font-size="9" fill="#818cf8">    "Building prompt..." in button)</text>
+  <text x="270" y="488" font-size="9" fill="#6b7280">6. POST /api/playground</text>
+
+  <line x1="270" y1="500" x2="480" y2="500" stroke="#312e81" stroke-width="1"/>
+  <text x="270" y="516" font-size="9" fill="#4ade80">+ Variant select overrides prompt</text>
+  <text x="270" y="532" font-size="9" fill="#4ade80">+ Per-scene model override</text>
+  <text x="270" y="548" font-size="9" fill="#fbbf24">– One image per click</text>
+
+  <!-- PATH C: Scene Smart Forge -->
+  <rect x="260" y="566" width="228" height="118" rx="8" fill="#090e1f" stroke="#0891b2" stroke-width="1.5"/>
+  <rect x="260" y="566" width="228" height="24" rx="8" fill="#0c2a4a"/>
+  <rect x="260" y="582" width="228" height="8" rx="0" fill="#0c2a4a"/>
+  <text x="270" y="581" font-size="11" fill="#67e8f9" font-weight="500">PATH C — Scene Smart Forge</text>
+  <text x="270" y="598" font-size="9" fill="#22d3ee">✦ SF link → /scene-copilot/[sceneKey]</text>
+  <text x="270" y="616" font-size="9" fill="#6b7280">Seed image + chat-directed iteration</text>
+  <text x="270" y="632" font-size="9" fill="#6b7280">Run×5, Model Scan, Framing Scan</text>
+  <text x="270" y="650" font-size="9" fill="#4ade80">Agent corrects hair/attire directly</text>
+  <text x="270" y="666" font-size="9" fill="#4ade80">Sidesteps pipeline entirely</text>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- COLUMN 3: SERVER  x=524 w=232 -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <text x="524" y="24" font-size="9" fill="#374151" letter-spacing="2">SERVER  (/api/authors/build-prompt)</text>
+
+  <!-- Single server assembly box (gold path always) -->
+  <rect x="524" y="34" width="232" height="310" rx="6" fill="#071a0f" stroke="#166534" stroke-width="2" filter="url(#glow-green)"/>
+  <rect x="524" y="34" width="232" height="24" rx="6" fill="#052e16"/>
+  <rect x="524" y="50" width="232" height="8" rx="0" fill="#052e16"/>
+  <text x="534" y="51" font-size="10" fill="#4ade80" font-weight="500">Character Assembly — Single Path</text>
+  <text x="534" y="70" font-size="9" fill="#94a3b8" font-weight="500">FORGE-REF PRIORITY CHAIN</text>
+  <text x="534" y="88" font-size="9" fill="#22c55e">P1: ref.headshot_prompt</text>
+  <text x="534" y="104" font-size="9" fill="#22c55e">    hair + face + style ✓</text>
+  <text x="534" y="120" font-size="9" fill="#4ade80">P2: ref.body_prompt</text>
+  <text x="534" y="136" font-size="9" fill="#4ade80">    attire + pose ✓</text>
+  <text x="534" y="152" font-size="9" fill="#6b7280">P3: buildServerCharDesc()</text>
+  <text x="534" y="168" font-size="9" fill="#6b7280">    world bible fallback</text>
+  <text x="534" y="184" font-size="9" fill="#6b7280">    (used only if no forge ref)</text>
+
+  <line x1="534" y1="196" x2="748" y2="196" stroke="#166534" stroke-width="1"/>
+
+  <text x="534" y="214" font-size="9" fill="#94a3b8" font-weight="500">NOTE: prebuiltCharBlocks removed</text>
+  <text x="534" y="230" font-size="9" fill="#22c55e">No client assembly. No race condition.</text>
+  <text x="534" y="246" font-size="9" fill="#22c55e">Forge ref lookup always runs.</text>
+
+  <line x1="534" y1="258" x2="748" y2="258" stroke="#166534" stroke-width="1"/>
+
+  <text x="534" y="276" font-size="9" fill="#94a3b8" font-weight="500">BEAT INJECTION</text>
+  <text x="534" y="292" font-size="9" fill="#6b7280">beatIndex → promptFragment injected</text>
+  <text x="534" y="308" font-size="9" fill="#6b7280">beatEdits[] override if present</text>
+  <text x="534" y="326" font-size="9" fill="#6b7280">drives action/pose in prompt</text>
+
+  <!-- PROP injection -->
+  <rect x="524" y="360" width="232" height="98" rx="6" fill="#0a1020" stroke="#1e293b" stroke-width="1.5"/>
+  <text x="534" y="379" font-size="10" fill="#94a3b8" font-weight="500">PROP Injection</text>
+  <text x="534" y="397" font-size="9" fill="#6b7280">entitiesPresent → notableEntities</text>
+  <text x="534" y="413" font-size="9" fill="#22c55e">✓ hawk dedup (skip if char name)</text>
+  <text x="534" y="429" font-size="9" fill="#22c55e">✓ photo-style suffix stripped</text>
+  <text x="534" y="445" font-size="9" fill="#6b7280">forge accepted or world bible kw</text>
+
+  <!-- Model optimization -->
+  <rect x="524" y="474" width="232" height="78" rx="6" fill="#0a1020" stroke="#1e293b" stroke-width="1.5"/>
+  <text x="534" y="493" font-size="10" fill="#94a3b8" font-weight="500">Haiku Model Optimization</text>
+  <text x="534" y="511" font-size="9" fill="#6b7280">trims to model word budget</text>
+  <text x="534" y="527" font-size="9" fill="#6b7280">flux-pro: 320 words max</text>
+  <text x="534" y="543" font-size="9" fill="#fbbf24">hair = low priority → trimmed first</text>
+
+  <!-- sceneStyleText -->
+  <rect x="524" y="568" width="232" height="64" rx="6" fill="#0a1020" stroke="#1e293b" stroke-width="1.5"/>
+  <text x="534" y="587" font-size="10" fill="#94a3b8" font-weight="500">Style Suffix</text>
+  <text x="534" y="605" font-size="9" fill="#6b7280">sceneArtistId → artist style text</text>
+  <text x="534" y="621" font-size="9" fill="#22c55e">✓ empty when no artist selected</text>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- COLUMN 4: OUTPUT + STATUS  x=792 w=394 -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <text x="792" y="24" font-size="9" fill="#374151" letter-spacing="2">OUTPUT + CURRENT STATUS</text>
+
+  <!-- fal.ai output -->
+  <rect x="792" y="34" width="390" height="72" rx="6" fill="#0a1020" stroke="#1e293b" stroke-width="1.5"/>
+  <text x="802" y="53" font-size="10" fill="#94a3b8" font-weight="500">fal.ai → flux-pro · 840×1120</text>
+  <text x="802" y="71" font-size="9" fill="#6b7280">auto-saved to library · entity_key = scene-N-M · entity_key = beat for beats</text>
+  <text x="802" y="87" font-size="9" fill="#6b7280">hallucination fills every gap · missing spec = model's interpretation</text>
+  <text x="802" y="97" font-size="9" fill="#fbbf24">attire issue: hair trimmed by optimizer → fix by improving char refinement pass</text>
+
+  <!-- What's fixed box -->
+  <rect x="792" y="122" width="190" height="248" rx="8" fill="#0a100a" stroke="#15803d" stroke-width="2"/>
+  <rect x="792" y="122" width="190" height="28" rx="8" fill="#14532d"/>
+  <rect x="792" y="142" width="190" height="8" rx="0" fill="#14532d"/>
+  <text x="802" y="141" font-size="11" fill="#86efac" font-weight="500">Fixed This Session</text>
+  <text x="802" y="162" font-size="9" fill="#4ade80">✓ prebuiltCharBlocks removed</text>
+  <text x="802" y="178" font-size="9" fill="#4ade80">  forge-ref always used</text>
+  <text x="802" y="196" font-size="9" fill="#4ade80">✓ Build Prompt button gone</text>
+  <text x="802" y="212" font-size="9" fill="#4ade80">  Generate auto-builds</text>
+  <text x="802" y="230" font-size="9" fill="#4ade80">✓ Pose Ref removed</text>
+  <text x="802" y="248" font-size="9" fill="#4ade80">  (Smart Forge handles it)</text>
+  <text x="802" y="266" font-size="9" fill="#4ade80">✓ First Pass = beats only</text>
+  <text x="802" y="282" font-size="9" fill="#4ade80">  no main scene overhead</text>
+  <text x="802" y="300" font-size="9" fill="#4ade80">✓ Model select next to</text>
+  <text x="802" y="316" font-size="9" fill="#4ade80">  Art Style (same UI style)</text>
+  <text x="802" y="334" font-size="9" fill="#4ade80">✓ PROP dedup + suffix fix</text>
+  <text x="802" y="350" font-size="9" fill="#4ade80">✓ sceneStyleText default: ""</text>
+
+  <!-- Remaining issues -->
+  <rect x="994" y="122" width="188" height="248" rx="8" fill="#100a0a" stroke="#7f1d1d" stroke-width="2"/>
+  <rect x="994" y="122" width="188" height="28" rx="8" fill="#7f1d1d"/>
+  <rect x="994" y="142" width="188" height="8" rx="0" fill="#7f1d1d"/>
+  <text x="1004" y="141" font-size="11" fill="#fca5a5" font-weight="500">Remaining Issues</text>
+  <text x="1004" y="162" font-size="9" fill="#f87171">Hair trimmed by optimizer</text>
+  <text x="1004" y="178" font-size="9" fill="#f87171">→ hair = low priority token</text>
+  <text x="1004" y="196" font-size="9" fill="#f87171">Attire in 3160: incomplete</text>
+  <text x="1004" y="212" font-size="9" fill="#f87171">→ P2 body_prompt not set?</text>
+  <text x="1004" y="230" font-size="9" fill="#f87171">Gemini char refinement</text>
+  <text x="1004" y="246" font-size="9" fill="#f87171">→ promptKeywords missing</text>
+  <text x="1004" y="264" font-size="9" fill="#f87171">   hair for most chars</text>
+  <text x="1004" y="284" font-size="9" fill="#94a3b8" font-weight="500">FIX PATH</text>
+  <text x="1004" y="300" font-size="9" fill="#fbbf24">1. Accept headshot in Forge</text>
+  <text x="1004" y="316" font-size="9" fill="#fbbf24">   → body_prompt captured</text>
+  <text x="1004" y="332" font-size="9" fill="#fbbf24">2. Re-run char refinement</text>
+  <text x="1004" y="348" font-size="9" fill="#fbbf24">   → Gemini adds hair kw</text>
+  <text x="1004" y="364" font-size="9" fill="#fbbf24">3. Smart Forge to override</text>
+
+  <!-- Philosophy -->
+  <rect x="792" y="386" width="390" height="160" rx="8" fill="#0d0a1f" stroke="#7c3aed" stroke-width="2"/>
+  <rect x="792" y="386" width="390" height="28" rx="8" fill="#4c1d95"/>
+  <rect x="792" y="406" width="390" height="8" rx="0" fill="#4c1d95"/>
+  <text x="802" y="405" font-size="11" fill="#c4b5fd" font-weight="500">Creative Doctrine</text>
+  <text x="802" y="426" font-size="9" fill="#94a3b8" font-weight="500">THREE MODES — WHEN TO USE EACH</text>
+  <text x="802" y="444" font-size="9" fill="#6ee7b7">First Pass</text>
+  <text x="864" y="444" font-size="9" fill="#6b7280">→ initial coverage. All beats, fire+forget. Cheap exploration.</text>
+  <text x="802" y="462" font-size="9" fill="#a5b4fc">Individual</text>
+  <text x="864" y="462" font-size="9" fill="#6b7280">→ specific beat, specific model override, one shot. Variants.</text>
+  <text x="802" y="480" font-size="9" fill="#67e8f9">Smart Forge</text>
+  <text x="864" y="480" font-size="9" fill="#6b7280">→ when result is close. Agent iteration. Hair fix. Elmore pose.</text>
+  <line x1="802" y1="492" x2="1174" y2="492" stroke="#4c1d95" stroke-width="1"/>
+  <text x="802" y="510" font-size="9" fill="#94a3b8" font-weight="500">ATTIRE DOCTRINE</text>
+  <text x="802" y="528" font-size="9" fill="#c4b5fd">"First Pass finds compositions.  Smart Forge fixes the details."</text>
+  <text x="802" y="546" font-size="9" fill="#6b7280">Accept a beat image in Forge · agent locks attire from seed · iterate on pose/lighting</text>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- ARROWS -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <!-- Data sources → server -->
+  <!-- World Bible to server (dashed, fallback) -->
+  <line x1="224" y1="120" x2="524" y2="310" stroke="#1e3a5f" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+  <!-- Smart Forge to server (solid green, primary) -->
+  <line x1="224" y1="260" x2="524" y2="110" stroke="#22c55e" stroke-width="2" marker-end="url(#arr-green)"/>
+  <!-- Entities to server PROP section -->
+  <line x1="224" y1="466" x2="524" y2="410" stroke="#78350f" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-amber)"/>
+
+  <!-- Path A → server -->
+  <line x1="488" y1="155" x2="524" y2="200" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <!-- Path B → server -->
+  <line x1="488" y1="430" x2="524" y2="230" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arr-indigo)"/>
+
+  <!-- Server → fal.ai output -->
+  <line x1="756" y1="310" x2="792" y2="62" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arr-green)"/>
+
+  <!-- Path C (Smart Forge) arrow bypasses server -->
+  <line x1="488" y1="624" x2="792" y2="68" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arr-cyan)"/>
+  <text x="618" y="668" font-size="8" fill="#0e7490">bypasses build-prompt API</text>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- LEGEND -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <rect x="14" y="648" width="724" height="62" rx="6" fill="#050810" stroke="#1e293b" stroke-width="1"/>
+  <text x="24" y="666" font-size="9" fill="#4b5563" letter-spacing="2">LEGEND</text>
+  <line x1="24" y1="680" x2="70" y2="680" stroke="#22c55e" stroke-width="2"/>
+  <text x="76" y="684" font-size="9" fill="#6b7280">forge-ref path (gold)</text>
+  <line x1="200" y1="680" x2="246" y2="680" stroke="#1e3a5f" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="252" y="684" font-size="9" fill="#6b7280">world bible fallback</text>
+  <line x1="380" y1="680" x2="426" y2="680" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="432" y="684" font-size="9" fill="#6b7280">Path B (individual)</text>
+  <line x1="550" y1="680" x2="596" y2="680" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="602" y="684" font-size="9" fill="#6b7280">Smart Forge (bypass)</text>
+  <rect x="24" y="691" width="10" height="10" rx="2" fill="#166534"/>
+  <text x="40" y="701" font-size="9" fill="#6b7280">forge data present</text>
+  <rect x="164" y="691" width="10" height="10" rx="2" fill="#7f1d1d"/>
+  <text x="180" y="701" font-size="9" fill="#6b7280">data incomplete</text>
+  <rect x="290" y="691" width="10" height="10" rx="2" fill="#713f12"/>
+  <text x="306" y="701" font-size="9" fill="#6b7280">partial data</text>
+
+</svg>
+</body>
+</html>

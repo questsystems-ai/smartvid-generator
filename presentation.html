@@ -122,6 +122,62 @@ body {
   color: #c8cad0;
 }
 
+/* Edit modal */
+#edit-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  background: rgba(0,0,0,0.88);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+#edit-modal.open { display: flex; }
+#edit-box {
+  background: #13161c;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 24px;
+  width: 680px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+#edit-label {
+  font-size: 11px;
+  color: #60646d;
+  letter-spacing: 0.08em;
+  font-family: 'Courier New', monospace;
+}
+#edit-textarea {
+  background: #0d1117;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: #c8cad0;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  padding: 14px;
+  resize: vertical;
+  min-height: 160px;
+  outline: none;
+  width: 100%;
+}
+#edit-textarea:focus { border-color: rgba(12,141,233,0.5); }
+#edit-actions { display: flex; gap: 10px; justify-content: flex-end; }
+#edit-actions button {
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+#btn-edit-save { background: #0c8de9; color: #fff; border-color: transparent; }
+#btn-edit-cancel { background: rgba(255,255,255,0.06); color: #7b7f88; }
+#edit-status { font-size: 11px; color: #44dd88; font-family: 'Courier New', monospace; min-height: 14px; }
+
 /* Start overlay */
 #start-overlay {
   position: fixed;
@@ -359,7 +415,150 @@ body {
     
   </div>  <div class="layer " id="scene-1">
 
-    <div class="section-label">Something Has Changed</div>
+<style>
+  #ch-scene { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: #0d1117; }
+  #ch-svg { width: 100%; height: 100%; }
+  .ch-el { opacity: 0; }
+
+  @keyframes ch-pop {
+    from { opacity: 0; transform: scale(0.65); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes ch-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes ch-dim  { from { opacity: 1; } to { opacity: 0.16; } }
+  @keyframes ch-big-pop {
+    from { opacity: 0; transform: scale(0.5); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes ch-label-up {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes ch-orbit-in { from { opacity: 0; } to { opacity: 0.35; } }
+
+  /* Headline */
+  #scene-1.active .ch-headline   { animation: ch-pop  0.6s cubic-bezier(0.34,1.56,0.64,1) 0.5s both; transform-origin: 380px 64px; }
+  /* Left side: team label + staggered circles */
+  #scene-1.active .ch-team-lab   { animation: ch-fade 0.5s ease 2.3s both, ch-dim 0.9s ease 14s forwards; }
+  #scene-1.active .ch-t0 { animation: ch-pop 0.45s ease 3.0s both, ch-dim 0.9s ease 14s forwards; transform-origin: 68px 175px; }
+  #scene-1.active .ch-t1 { animation: ch-pop 0.45s ease 3.5s both, ch-dim 0.9s ease 14s forwards; transform-origin: 133px 175px; }
+  #scene-1.active .ch-t2 { animation: ch-pop 0.45s ease 4.0s both, ch-dim 0.9s ease 14s forwards; transform-origin: 198px 175px; }
+  #scene-1.active .ch-t3 { animation: ch-pop 0.45s ease 4.5s both, ch-dim 0.9s ease 14s forwards; transform-origin: 263px 175px; }
+  #scene-1.active .ch-t4 { animation: ch-pop 0.45s ease 5.0s both, ch-dim 0.9s ease 14s forwards; transform-origin: 328px 175px; }
+  /* Divider */
+  #scene-1.active .ch-div        { animation: ch-fade 0.6s ease 14.5s both; }
+  /* Right: person + orbiting roles */
+  #scene-1.active .ch-person     { animation: ch-big-pop 0.75s cubic-bezier(0.34,1.56,0.64,1) 16.0s both; transform-origin: 570px 175px; }
+  #scene-1.active .ch-person-sub { animation: ch-label-up 0.4s ease 16.8s both; }
+  #scene-1.active .ch-r0 { animation: ch-label-up 0.4s ease 17.5s both; }
+  #scene-1.active .ch-r1 { animation: ch-label-up 0.4s ease 18.1s both; }
+  #scene-1.active .ch-r2 { animation: ch-label-up 0.4s ease 18.7s both; }
+  #scene-1.active .ch-r3 { animation: ch-label-up 0.4s ease 19.3s both; }
+  #scene-1.active .ch-r4 { animation: ch-label-up 0.4s ease 19.9s both; }
+  #scene-1.active .ch-orbit      { animation: ch-orbit-in 1s ease 21s both; }
+  /* Tagline */
+  #scene-1.active .ch-tag        { animation: ch-fade 1s ease 27s both; }
+</style>
+
+<div id="ch-scene">
+  <svg id="ch-svg" viewBox="0 0 760 320" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- Headline -->
+    <g class="ch-el ch-headline">
+      <text x="380" y="54" text-anchor="middle" font-family="Inter,-apple-system,sans-serif"
+            font-size="30" font-weight="800" fill="#e2e3e5" letter-spacing="-0.5">Something Has Changed</text>
+    </g>
+
+    <!-- ── LEFT: The Old Team ── -->
+    <!-- "required a whole team" label -->
+    <text class="ch-el ch-team-lab" x="198" y="108" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="7.5" fill="#555" letter-spacing="1.5">REQUIRED A WHOLE TEAM</text>
+    <!-- Bracket line -->
+    <path class="ch-el ch-team-lab" d="M 48,115 L 48,120 L 348,120 L 348,115"
+          fill="none" stroke="#333" stroke-width="1"/>
+
+    <!-- Team circles + role labels (staggered) -->
+    <!-- t0: RESEARCH x=68 -->
+    <g class="ch-el ch-t0">
+      <circle cx="68" cy="175" r="22" fill="#0d1117" stroke="#444" stroke-width="1.5"/>
+      <text x="68" y="179" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#555">01</text>
+      <text x="68" y="209" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="#555" letter-spacing="0.5">RESEARCH</text>
+    </g>
+    <!-- t1: WRITING x=133 -->
+    <g class="ch-el ch-t1">
+      <circle cx="133" cy="175" r="22" fill="#0d1117" stroke="#444" stroke-width="1.5"/>
+      <text x="133" y="179" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#555">02</text>
+      <text x="133" y="209" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="#555" letter-spacing="0.5">WRITING</text>
+    </g>
+    <!-- t2: DESIGN x=198 -->
+    <g class="ch-el ch-t2">
+      <circle cx="198" cy="175" r="22" fill="#0d1117" stroke="#444" stroke-width="1.5"/>
+      <text x="198" y="179" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#555">03</text>
+      <text x="198" y="209" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="#555" letter-spacing="0.5">DESIGN</text>
+    </g>
+    <!-- t3: ENGINEERING x=263 -->
+    <g class="ch-el ch-t3">
+      <circle cx="263" cy="175" r="22" fill="#0d1117" stroke="#444" stroke-width="1.5"/>
+      <text x="263" y="179" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#555">04</text>
+      <text x="263" y="209" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="#555" letter-spacing="0.5">ENGINEER</text>
+    </g>
+    <!-- t4: DISTRIBUTION x=328 -->
+    <g class="ch-el ch-t4">
+      <circle cx="328" cy="175" r="22" fill="#0d1117" stroke="#444" stroke-width="1.5"/>
+      <text x="328" y="179" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#555">05</text>
+      <text x="328" y="209" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="#555" letter-spacing="0.5">DISTRIBN</text>
+    </g>
+
+    <!-- ── Divider ── -->
+    <g class="ch-el ch-div">
+      <line x1="385" y1="105" x2="385" y2="258" stroke="#2a2d35" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="385" y="183" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="8" fill="#4da6ff" letter-spacing="1">A.I.</text>
+      <text x="385" y="196" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="8" fill="#333">→</text>
+    </g>
+
+    <!-- ── RIGHT: One Person ── -->
+    <!-- Orbit ring (appears last) -->
+    <circle class="ch-el ch-orbit" cx="570" cy="175" r="84"
+            fill="none" stroke="#4da6ff" stroke-width="1" stroke-dasharray="4,4"/>
+
+    <!-- Center person circle -->
+    <g class="ch-el ch-person">
+      <circle cx="570" cy="175" r="34" fill="#0a1525" stroke="#4da6ff" stroke-width="2"/>
+      <text x="570" y="171" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="9" fill="#4da6ff" letter-spacing="1">ONE</text>
+      <text x="570" y="184" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="9" fill="#4da6ff" letter-spacing="1">PERSON</text>
+    </g>
+    <text class="ch-el ch-person-sub" x="570" y="225" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="7" fill="rgba(77,166,255,0.45)"
+          letter-spacing="0.5">working alone</text>
+
+    <!-- Orbiting role labels (pentagon r=84 around 570,175) -->
+    <!-- r0: RESEARCH (top) 570,91 -->
+    <text class="ch-el ch-r0" x="570" y="95" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="8" fill="#4da6ff" font-weight="bold">RESEARCH</text>
+    <!-- r1: WRITING (top-right) ~651,153 -->
+    <text class="ch-el ch-r1" x="649" y="157" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="8" fill="#bb88ff" font-weight="bold">WRITING</text>
+    <!-- r2: DESIGN (bot-right) ~620,248 -->
+    <text class="ch-el ch-r2" x="618" y="252" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="8" fill="#44dd88" font-weight="bold">DESIGN</text>
+    <!-- r3: ENGINEERING (bot-left) ~520,248 -->
+    <text class="ch-el ch-r3" x="522" y="252" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="8" fill="#ff9944" font-weight="bold">ENGINEER</text>
+    <!-- r4: DISTRIBUTION (top-left) ~489,153 -->
+    <text class="ch-el ch-r4" x="491" y="157" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="8" fill="#ff5555" font-weight="bold">DISTRIBN</text>
+
+    <!-- Tagline -->
+    <text class="ch-el ch-tag" x="380" y="292" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="7.5" fill="#555" letter-spacing="1">
+      THE PEOPLE WHO UNDERSTAND IT EARLIEST SHAPE WHAT IT BECOMES.
+    </text>
+  </svg>
+</div>
     
   </div>  <div class="layer " id="scene-2">
 
@@ -923,6 +1122,139 @@ body {
 </div>
 </div>  <div class="layer " id="scene-7">
 <style>
+  #ia-scene { position: absolute; inset: 0; background: #0d1117; overflow: hidden; }
+  .ia-sub {
+    position: absolute; inset: 0; opacity: 0; pointer-events: none;
+    transition: opacity 0.6s ease;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ia-sub.ia-visible { opacity: 1; pointer-events: auto; }
+  .ia-num { font-family: 'Courier New',monospace; font-size: 10px; color: #4da6ff; letter-spacing: 2px; margin-bottom: 10px; }
+  .ia-title { font-family: 'Courier New',monospace; font-size: 11px; color: #fff; letter-spacing: 2px; font-weight: bold; margin-bottom: 10px; }
+  .ia-body { font-size: 14px; color: #9a9b9e; line-height: 1.65; }
+  .ia-tag { font-family: 'Courier New',monospace; font-size: 8px; color: #4c4f57; letter-spacing: 1px; margin-top: 20px; }
+  /* Split layout */
+  .ia-split { flex-direction: row; gap: 48px; padding: 40px 60px; align-items: center; }
+  .ia-img-panel { flex: 0 0 54%; }
+  .ia-img-panel img { width: 100%; max-height: 78vh; object-fit: contain; border-radius: 8px; }
+  .ia-text-panel { flex: 1; display: flex; flex-direction: column; }
+  /* Full-bleed */
+  .ia-full { padding: 0; }
+  .ia-full > img { width: 100%; height: 100%; object-fit: cover; }
+  .ia-full-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 28px 52px;
+    background: linear-gradient(to top, rgba(13,17,23,0.97) 0%, rgba(13,17,23,0.55) 65%, transparent 100%);
+  }
+  /* iframe sub */
+  .ia-iframe-sub { flex-direction: column; padding: 0; }
+  .ia-iframe-sub iframe { flex: 1; width: 100%; border: none; background: #030712; min-height: 0; }
+  .ia-iframe-bar {
+    flex-shrink: 0; height: 38px; background: #0d1117; border-top: 1px solid #1a1d23;
+    display: flex; align-items: center; padding: 0 28px; gap: 14px;
+  }
+  /* Video cards */
+  .ia-cards-sub { flex-direction: column; gap: 18px; padding: 28px 48px; }
+  .ia-cards-row { display: flex; gap: 20px; justify-content: center; align-items: center; flex: 1; min-height: 0; }
+  .ia-cards-row video { flex: 1; min-width: 0; max-height: 58vh; border-radius: 8px; border: 1px solid #2a2d35; background: #000; }
+  /* Marketing text */
+  .ia-text-only { flex-direction: column; gap: 14px; text-align: center; max-width: 640px; }
+  .ia-text-only .ia-title { font-size: 14px; }
+  .ia-text-only .ia-body { font-size: 16px; }
+</style>
+
+<div id="ia-scene">
+  <!-- 7.1 Intro (dungeonforge.jpg) -->
+  <div class="ia-sub ia-full" id="ia-sub-1">
+    <img src="content/images/illustratorslide/dungeonforge.jpg" alt="Illustrate Assist">
+    <div class="ia-full-overlay">
+      <div class="ia-num">7.1</div>
+      <div class="ia-title">ILLUSTRATE ASSIST — ROMANTASY STUDIO</div>
+      <div class="ia-body">From idea to illustrated book, screenplay, or pitch.</div>
+    </div>
+  </div>
+  <!-- 7.2 Input (storynotes.jpg) -->
+  <div class="ia-sub ia-split" id="ia-sub-2">
+    <div class="ia-img-panel">
+      <img src="content/images/illustratorslide/storynotes.jpg" alt="Story notes">
+    </div>
+    <div class="ia-text-panel">
+      <div class="ia-num">7.2 &nbsp; INPUT</div>
+      <div class="ia-title">UPLOAD TEXT OR JUST AN IDEA</div>
+      <div class="ia-body">Finished manuscript? Import it. Just a concept? Claude collaborates on research and writing to develop your ideas into full books, screenplays, and pitches.</div>
+    </div>
+  </div>
+  <!-- 7.3 Pipeline (iframe) -->
+  <div class="ia-sub ia-iframe-sub" id="ia-sub-3">
+    <iframe src="content/svg/scene-prompt-pathways.html" title="Scene Prompt Pathways"></iframe>
+    <div class="ia-iframe-bar">
+      <span class="ia-num" style="margin:0">7.3</span>
+      <span class="ia-body" style="font-size:11px;color:#7b7f88;">Sophisticated multi-agent pipeline &nbsp;·&nbsp; world bible extraction &nbsp;·&nbsp; model-specific prompt generation</span>
+    </div>
+  </div>
+  <!-- 7.4 Characters (characters.jpg) -->
+  <div class="ia-sub ia-split" id="ia-sub-4">
+    <div class="ia-img-panel">
+      <img src="content/images/illustratorslide/characters.jpg" alt="Character refinement">
+    </div>
+    <div class="ia-text-panel">
+      <div class="ia-num">7.4 &nbsp; CHARACTERS</div>
+      <div class="ia-title">REFINE YOUR CHARACTERS</div>
+      <div class="ia-body">Work with Claude to develop and lock character appearance — faces, clothing, distinctive traits. The agent remembers everything across your entire project.</div>
+    </div>
+  </div>
+  <!-- 7.5 Scenes (sceness.jpg) -->
+  <div class="ia-sub ia-split" id="ia-sub-5">
+    <div class="ia-img-panel">
+      <img src="content/images/illustratorslide/sceness.jpg" alt="Cinematic scenes">
+    </div>
+    <div class="ia-text-panel">
+      <div class="ia-num">7.5 &nbsp; SCENES</div>
+      <div class="ia-title">CINEMATIC SCENE COLLABORATION</div>
+      <div class="ia-body">Compose scenes with cinematic precision. The agent holds your world bible in context throughout, ensuring visual consistency across every illustration.</div>
+    </div>
+  </div>
+  <!-- 7.6 Agent (forge.jpg) -->
+  <div class="ia-sub ia-split" id="ia-sub-6">
+    <div class="ia-img-panel">
+      <img src="content/images/illustratorslide/forge.jpg" alt="Sonnet agent">
+    </div>
+    <div class="ia-text-panel">
+      <div class="ia-num">7.6 &nbsp; AGENT</div>
+      <div class="ia-title">FULLY TOOLED SONNET WITH MEMORY</div>
+      <div class="ia-body">A production Claude Sonnet agent with full tool access, persistent project memory, and deep context — collaborating until exactly the right image is produced.</div>
+    </div>
+  </div>
+  <!-- 7.7 Output (elmore-test-1.png) -->
+  <div class="ia-sub ia-full" id="ia-sub-7">
+    <img src="content/images/illustratorslide/elmore-test-1.png" alt="Final illustration">
+    <div class="ia-full-overlay">
+      <div class="ia-num">7.7 &nbsp; OUTPUT</div>
+      <div class="ia-title">UNTIL JUST THE RIGHT IMAGE IS PRODUCED</div>
+      <div class="ia-body">Auto-incorporated into flipbooks, interactive lookbooks, and pitches for publishing houses or Hollywood executives.</div>
+    </div>
+  </div>
+  <!-- 7.8 Promotional videos -->
+  <div class="ia-sub ia-cards-sub" id="ia-sub-8">
+    <div style="text-align:center;flex-shrink:0">
+      <span class="ia-num" style="display:inline">7.8 &nbsp;</span><span class="ia-title" style="display:inline">PROMOTIONAL MATERIALS</span>
+    </div>
+    <div class="ia-cards-row">
+      <video id="ia-card1" src="content/video/card1.webm" muted loop playsinline></video>
+      <video id="ia-card2" src="content/video/card2.webm" muted loop playsinline style="opacity:0.15;transition:opacity 0.6s"></video>
+      <video id="ia-card3" src="content/video/card3.webm" muted loop playsinline style="opacity:0.15;transition:opacity 0.6s"></video>
+    </div>
+    <div class="ia-body" style="text-align:center;font-size:12px;flex-shrink:0">Generated automatically from your project assets</div>
+  </div>
+  <!-- 7.9 Marketing agent -->
+  <div class="ia-sub ia-text-only" id="ia-sub-9">
+    <div class="ia-num">7.9</div>
+    <div class="ia-title">FULL PROJECT MARKETING AGENT</div>
+    <div class="ia-body">A project-specific Claude marketing agent and dashboard — audience building, PR outreach, and engagement management, all included.</div>
+    <div class="ia-tag">ILLUSTRATE ASSIST &nbsp;·&nbsp; ROMANTASY STUDIO &nbsp;·&nbsp; A COMPOUNDING SYSTEM</div>
+  </div>
+</div>
+  </div>  <div class="layer " id="scene-8">
+<style>
   #mono-scene {
     position: absolute;
     inset: 0;
@@ -1121,112 +1453,616 @@ body {
   </div>
 
 </div>
-</div>  <div class="layer " id="scene-8">
-<div class="forge-pfd-scene">
-  <img class="pfd-bg" src="content/svg/flywheel.svg" alt="diagram"/>
-  <div class="pfd-overlay"></div>
-  <div class="pfd-pillars">
-    
-  </div>
-</div>
+</div>  <div class="layer " id="scene-9">
 <style>
-  .forge-pfd-scene {
+  #fw-scene {
     position: absolute;
     inset: 0;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    padding-top: 36px;
+    justify-content: center;
+    background: #0d1117;
   }
-  .pfd-bg {
-    position: absolute;
-    inset: 0;
+  #fw-svg {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    opacity: 0.72;
   }
-  .pfd-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 42%;
-    background: linear-gradient(to bottom, rgba(13,17,23,0.97) 40%, rgba(13,17,23,0.0));
-    pointer-events: none;
+  /* All elements start hidden */
+  .fw-node, .fw-arc, .fw-hub, .fw-tag { opacity: 0; }
+
+  /* Keyframes */
+  @keyframes fw-pop {
+    from { opacity: 0; transform: scale(0.72); }
+    to   { opacity: 1; transform: scale(1); }
   }
-  .pfd-pillars {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    gap: 48px;
-    justify-content: center;
-    padding: 0 32px;
+  @keyframes fw-arc-in {
+    from { opacity: 0; }
+    to   { opacity: 0.72; }
   }
-  .pfd-pillar {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    max-width: 100%;
-    opacity: 0;
-    transform: translateY(14px);
-    transition: all 0.6s ease;
+  @keyframes fw-hub-pop {
+    from { opacity: 0; transform: scale(0.5); }
+    to   { opacity: 1; transform: scale(1); }
   }
-  .layer.active .pfd-pillar { opacity: 1; transform: translateY(0); }
-  .layer.active .pfd-pillar:nth-child(1) { transition-delay: 0.1s; }
-  .layer.active .pfd-pillar:nth-child(2) { transition-delay: 0.3s; }
-  .layer.active .pfd-pillar:nth-child(3) { transition-delay: 0.5s; }
-  .pp-icon { font-size: 22px; margin-bottom: 4px; }
-  .pp-label { font-size: 15px; color: #fff; font-weight: 700; letter-spacing: 0.03em; margin-bottom: 5px; }
-  .pp-detail { font-size: 12px; color: #9a9b9e; line-height: 1.5; }
+  @keyframes fw-tag-in {
+    from { opacity: 0; }
+    to   { opacity: 0.55; }
+  }
+
+  /* Sequential reveal synced to ~33s narration:
+     2.5s  "AuthorConsole gets published"              → Node 0
+     5.5s  "narrated explainer … presentation engine" → Arc 0→1, Node 1
+    10.0s  "A.I. cost tracker"                        → Arc 1→2, Node 2
+    13.0s  "illustration studio"                      → Arc 2→3, Node 3
+    17.5s  "Each project is a door"                   → Center hub
+    21.0s  "marketing dashboard"                      → Arc 3→4, Node 4
+    27.0s  "I built the marketing machine"            → Arc 4→0 (loop closes)
+    29.5s  tagline
+  */
+  #scene-9.active .fw-node-0  { animation: fw-pop     0.65s cubic-bezier(0.34,1.56,0.64,1)  2.5s forwards; transform-origin: 310px 140px; }
+  #scene-9.active .fw-arc-01  { animation: fw-arc-in  0.5s  ease                            5.5s forwards; }
+  #scene-9.active .fw-node-1  { animation: fw-pop     0.65s cubic-bezier(0.34,1.56,0.64,1)  6.0s forwards; transform-origin: 434px 230px; }
+  #scene-9.active .fw-arc-12  { animation: fw-arc-in  0.5s  ease                           10.0s forwards; }
+  #scene-9.active .fw-node-2  { animation: fw-pop     0.65s cubic-bezier(0.34,1.56,0.64,1) 10.5s forwards; transform-origin: 386px 375px; }
+  #scene-9.active .fw-arc-23  { animation: fw-arc-in  0.5s  ease                           13.0s forwards; }
+  #scene-9.active .fw-node-3  { animation: fw-pop     0.65s cubic-bezier(0.34,1.56,0.64,1) 13.5s forwards; transform-origin: 234px 375px; }
+  #scene-9.active .fw-hub     { animation: fw-hub-pop 0.75s cubic-bezier(0.34,1.56,0.64,1) 17.5s forwards; transform-origin: 310px 270px; }
+  #scene-9.active .fw-arc-34  { animation: fw-arc-in  0.5s  ease                           21.0s forwards; }
+  #scene-9.active .fw-node-4  { animation: fw-pop     0.65s cubic-bezier(0.34,1.56,0.64,1) 21.5s forwards; transform-origin: 186px 230px; }
+  #scene-9.active .fw-arc-40  { animation: fw-arc-in  0.5s  ease                           27.0s forwards; }
+  #scene-9.active .fw-tag     { animation: fw-tag-in  1.2s  ease                           29.5s forwards; }
 </style>
 
-  </div>  <div class="layer " id="scene-9">
+<div id="fw-scene">
+  <svg id="fw-svg" viewBox="110 55 400 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="fw-a0" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4da6ff"/></marker>
+      <marker id="fw-a1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#bb88ff"/></marker>
+      <marker id="fw-a2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#44dd88"/></marker>
+      <marker id="fw-a3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff9944"/></marker>
+      <marker id="fw-a4" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff5555"/></marker>
+    </defs>
+
+    <!-- Arcs (drawn beneath nodes) -->
+    <!-- Arc 0→1: AuthorConsole → Presentation Engine -->
+    <path class="fw-arc fw-arc-01" d="M 349,168 A 130,130 0 0 1 395,202"
+          fill="none" stroke="#4da6ff" stroke-width="1.8" stroke-dasharray="6,3" marker-end="url(#fw-a0)"/>
+    <!-- Arc 1→2: Presentation Engine → A.I. Cost Tracker -->
+    <path class="fw-arc fw-arc-12" d="M 419,276 A 130,130 0 0 1 401,329"
+          fill="none" stroke="#bb88ff" stroke-width="1.8" stroke-dasharray="6,3" marker-end="url(#fw-a1)"/>
+    <!-- Arc 2→3: A.I. Cost Tracker → Illustration Studio -->
+    <path class="fw-arc fw-arc-23" d="M 338,375 A 130,130 0 0 1 282,375"
+          fill="none" stroke="#44dd88" stroke-width="1.8" stroke-dasharray="6,3" marker-end="url(#fw-a2)"/>
+    <!-- Arc 3→4: Illustration Studio → Marketing Dashboard -->
+    <path class="fw-arc fw-arc-34" d="M 219,329 A 130,130 0 0 1 201,276"
+          fill="none" stroke="#ff9944" stroke-width="1.8" stroke-dasharray="6,3" marker-end="url(#fw-a3)"/>
+    <!-- Arc 4→0: Marketing Dashboard → AuthorConsole (closes loop) -->
+    <path class="fw-arc fw-arc-40" d="M 225,202 A 130,130 0 0 1 271,168"
+          fill="none" stroke="#ff5555" stroke-width="1.8" stroke-dasharray="6,3" marker-end="url(#fw-a4)"/>
+
+    <!-- Center hub -->
+    <g class="fw-hub">
+      <circle cx="310" cy="270" r="52" fill="#0d1117" stroke="#7c6ff7" stroke-width="1.5"/>
+      <text x="310" y="263" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#7c6ff7" letter-spacing="1.5" font-weight="bold">EACH PROJECT</text>
+      <text x="310" y="275" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#7c6ff7" letter-spacing="1.5">IS A DOOR.</text>
+      <text x="310" y="287" text-anchor="middle" font-family="'Courier New',monospace" font-size="7.5" fill="rgba(124,111,247,0.55)" letter-spacing="1">EVERY DOOR</text>
+      <text x="310" y="298" text-anchor="middle" font-family="'Courier New',monospace" font-size="7.5" fill="rgba(124,111,247,0.55)" letter-spacing="1">LEADS TO THE OTHERS.</text>
+    </g>
+
+    <!-- Node 0: AuthorConsole (top, 310,140) -->
+    <g class="fw-node fw-node-0">
+      <circle cx="310" cy="140" r="48" fill="#0a1525" stroke="#4da6ff" stroke-width="2"/>
+      <text x="310" y="128" text-anchor="middle" font-size="18">✍️</text>
+      <text x="310" y="144" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#4da6ff" font-weight="bold">AUTHOR</text>
+      <text x="310" y="155" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#4da6ff" font-weight="bold">CONSOLE</text>
+      <text x="310" y="166" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="rgba(77,166,255,0.5)">provenance</text>
+    </g>
+
+    <!-- Node 1: Presentation Engine (top-right, 434,230) -->
+    <g class="fw-node fw-node-1">
+      <circle cx="434" cy="230" r="48" fill="#180f2d" stroke="#bb88ff" stroke-width="2"/>
+      <text x="434" y="218" text-anchor="middle" font-size="18">📽️</text>
+      <text x="434" y="234" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#bb88ff" font-weight="bold">PRESENTATION</text>
+      <text x="434" y="245" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#bb88ff" font-weight="bold">ENGINE</text>
+      <text x="434" y="256" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="rgba(187,136,255,0.5)">narrated papers</text>
+    </g>
+
+    <!-- Node 2: A.I. Cost Tracker (bot-right, 386,375) -->
+    <g class="fw-node fw-node-2">
+      <circle cx="386" cy="375" r="48" fill="#041408" stroke="#44dd88" stroke-width="2"/>
+      <text x="386" y="363" text-anchor="middle" font-size="18">📊</text>
+      <text x="386" y="379" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#44dd88" font-weight="bold">A.I. COST</text>
+      <text x="386" y="390" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#44dd88" font-weight="bold">TRACKER</text>
+      <text x="386" y="401" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="rgba(68,221,136,0.5)">spend visibility</text>
+    </g>
+
+    <!-- Node 3: Illustration Studio (bot-left, 234,375) -->
+    <g class="fw-node fw-node-3">
+      <circle cx="234" cy="375" r="48" fill="#1a0800" stroke="#ff9944" stroke-width="2"/>
+      <text x="234" y="363" text-anchor="middle" font-size="18">🎨</text>
+      <text x="234" y="379" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#ff9944" font-weight="bold">ILLUSTRATION</text>
+      <text x="234" y="390" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#ff9944" font-weight="bold">STUDIO</text>
+      <text x="234" y="401" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="rgba(255,153,68,0.5)">romantasy authors</text>
+    </g>
+
+    <!-- Node 4: Marketing Dashboard (top-left, 186,230) -->
+    <g class="fw-node fw-node-4">
+      <circle cx="186" cy="230" r="48" fill="#1a0202" stroke="#ff5555" stroke-width="2"/>
+      <text x="186" y="218" text-anchor="middle" font-size="18">📣</text>
+      <text x="186" y="234" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#ff5555" font-weight="bold">MARKETING</text>
+      <text x="186" y="245" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" fill="#ff5555" font-weight="bold">DASHBOARD</text>
+      <text x="186" y="256" text-anchor="middle" font-family="'Courier New',monospace" font-size="7" fill="rgba(255,85,85,0.5)">no agency needed</text>
+    </g>
+
+    <!-- Tagline -->
+    <text class="fw-tag" x="310" y="443" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="7.5" fill="#888" letter-spacing="1">
+      I BUILT THE MARKETING MACHINE. IT RUNS THE WHOLE OPERATION.
+    </text>
+  </svg>
+</div>
+
+  </div>  <div class="layer " id="scene-10">
 
     <div class="title-screen">
       <h1 class="ts-headline">A New Kind of Business</h1>
-      <p class="ts-subtitle">Researcher. Builder. Publisher. One operation.</p>
-      <p class="ts-tagline">THE METHOD IS THE PRODUCT</p>
-    </div>
-    
-  </div>  <div class="layer " id="scene-10">
-
-    <div class="metrics-layout">
-      <div class="metrics-row" id="metrics-the-ask">
-        
-        <div class="m-card"><div class="m-label">Monthly</div><div class="m-value">$2,000</div><div class="m-delta up">$1,250 living · $750 A.I. + promo</div></div>
-        
-        <div class="m-card"><div class="m-label">Duration</div><div class="m-value">6 months</div><div class="m-delta up">April → October, then re-evaluate</div></div>
-        
-        <div class="m-card"><div class="m-label">Total</div><div class="m-value">$12,000</div><div class="m-delta up">with a defined check-in point</div></div>
-        
-      </div>
+      <p class="ts-subtitle">Researcher. Builder. Publisher. Marketer. One operation.</p>
     </div>
     
   </div>  <div class="layer " id="scene-11">
 
-    <div class="pillars-layout">
-      <div class="pillars-row" id="pillars-timeline">
-        
-        <div class="pillar"><div class="p-icon">🌱</div><div class="p-label">April – May</div><div class="p-detail">AuthorConsole, Presentation Engine, A.I. Tracker — all shipped</div></div>
-        
-        <div class="pillar"><div class="p-icon">☀️</div><div class="p-label">June – August</div><div class="p-detail">Romantasy Illustrator + Marketing Dashboard live</div></div>
-        
-        <div class="pillar"><div class="p-icon">📊</div><div class="p-label">September – October</div><div class="p-detail">Paper series complete · first revenue · re-evaluate together</div></div>
-        
-      </div>
-    </div>
+<style>
+  #ask-scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0d1117;
+  }
+  #ask-svg { width: 100%; height: 100%; }
+
+  .ask-el { opacity: 0; }
+
+  @keyframes ask-pop {
+    from { opacity: 0; transform: scale(0.72); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes ask-big-pop {
+    from { opacity: 0; transform: scale(0.55); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes ask-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes ask-bar-fill {
+    from { transform: scaleX(0); opacity: 0; }
+    to   { transform: scaleX(1); opacity: 0.9; }
+  }
+  @keyframes ask-label-up {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes ask-sep { from { opacity: 0; } to { opacity: 0.28; } }
+
+  /* Monthly */
+  #scene-11.active .ask-monthly-big { animation: ask-pop  0.6s cubic-bezier(0.34,1.56,0.64,1) 1.0s both; transform-origin: 145px 150px; }
+  #scene-11.active .ask-monthly-sub { animation: ask-fade 0.4s ease 1.4s both; }
+  /* Bars */
+  #scene-11.active .ask-bar-bg      { animation: ask-fade 0.3s ease 2.5s both; }
+  #scene-11.active .ask-bar-living  { animation: ask-bar-fill 0.6s ease 3.0s both; transform-box: fill-box; transform-origin: left; }
+  #scene-11.active .ask-bar-ai      { animation: ask-bar-fill 0.6s ease 5.0s both; transform-box: fill-box; transform-origin: left; }
+  #scene-11.active .ask-lab-living  { animation: ask-label-up 0.35s ease 3.5s both; }
+  #scene-11.active .ask-lab-ai      { animation: ask-label-up 0.35s ease 5.5s both; }
+  /* Sep × */
+  #scene-11.active .ask-sep-x       { animation: ask-sep  0.4s ease 12.5s both; }
+  /* Duration */
+  #scene-11.active .ask-dur-big     { animation: ask-pop  0.6s cubic-bezier(0.34,1.56,0.64,1) 13.0s both; transform-origin: 385px 150px; }
+  #scene-11.active .ask-dur-sub     { animation: ask-fade 0.4s ease 13.4s both; }
+  #scene-11.active .ask-dur-range   { animation: ask-label-up 0.35s ease 13.8s both; }
+  #scene-11.active .ask-dur-reval   { animation: ask-label-up 0.35s ease 15.0s both; }
+  /* Sep = */
+  #scene-11.active .ask-sep-eq      { animation: ask-sep  0.4s ease 21.5s both; }
+  /* Total */
+  #scene-11.active .ask-total-big   { animation: ask-big-pop 0.75s cubic-bezier(0.34,1.56,0.64,1) 22.0s both; transform-origin: 620px 158px; }
+  #scene-11.active .ask-total-sub   { animation: ask-fade 0.5s ease 22.8s both; }
+  #scene-11.active .ask-total-note  { animation: ask-label-up 0.35s ease 28.0s both; }
+  #scene-11.active .ask-tag         { animation: ask-fade 1s ease 30s both; }
+</style>
+
+<div id="ask-scene">
+  <svg id="ask-svg" viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- ── Column 1: $2,000 / month ── -->
+    <g class="ask-el ask-monthly-big">
+      <text x="145" y="105" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="8.5" fill="rgba(77,166,255,0.45)" letter-spacing="2">MONTHLY</text>
+      <text x="145" y="158" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="46" fill="#4da6ff" font-weight="bold">2,000</text>
+    </g>
+    <text class="ask-el ask-monthly-sub" x="145" y="178" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="9.5" fill="rgba(77,166,255,0.4)"
+          letter-spacing="1">dollars / month</text>
+
+    <!-- Breakdown bars (centered under col 1 at x=145, bars span x=58–232, width=174) -->
+    <!-- Living rail + fill: $1,250 = 62.5% × 174 = 109px -->
+    <rect class="ask-el ask-bar-bg"     x="58" y="200" width="174" height="10" rx="3" fill="rgba(77,166,255,0.1)"/>
+    <rect class="ask-el ask-bar-living" x="58" y="200" width="109" height="10" rx="3" fill="#4da6ff"/>
+    <text class="ask-el ask-lab-living" x="60" y="192" font-family="'Courier New',monospace"
+          font-size="7.5" fill="rgba(77,166,255,0.75)">$1,250 · living expenses</text>
+
+    <!-- AI rail + fill: $750 = 37.5% × 174 = 65px -->
+    <rect class="ask-el ask-bar-bg"  x="58" y="220" width="174" height="10" rx="3" fill="rgba(187,136,255,0.1)"/>
+    <rect class="ask-el ask-bar-ai"  x="58" y="220" width="65"  height="10" rx="3" fill="#bb88ff"/>
+    <text class="ask-el ask-lab-ai"  x="60" y="245" font-family="'Courier New',monospace"
+          font-size="7.5" fill="rgba(187,136,255,0.75)">$750 · A.I. + promotion</text>
+
+    <!-- ── Separator × ── -->
+    <text class="ask-el ask-sep-x" x="288" y="160" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="36" fill="#4a4d55">×</text>
+
+    <!-- ── Column 2: 6 months ── -->
+    <g class="ask-el ask-dur-big">
+      <text x="385" y="105" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="8.5" fill="rgba(226,227,229,0.35)" letter-spacing="2">DURATION</text>
+      <text x="385" y="158" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="46" fill="#e2e3e5" font-weight="bold">6</text>
+    </g>
+    <text class="ask-el ask-dur-sub" x="385" y="178" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="9.5" fill="rgba(226,227,229,0.3)"
+          letter-spacing="1">months</text>
+    <text class="ask-el ask-dur-range" x="385" y="210" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="8" fill="rgba(226,227,229,0.45)"
+          letter-spacing="0.5">April → October</text>
+    <text class="ask-el ask-dur-reval" x="385" y="232" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="7.5" fill="rgba(68,221,136,0.65)"
+          letter-spacing="0.3">re-evaluate together at 6 months</text>
+
+    <!-- ── Separator = ── -->
+    <text class="ask-el ask-sep-eq" x="488" y="160" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="36" fill="#4a4d55">=</text>
+
+    <!-- ── Column 3: $12,000 total ── -->
+    <g class="ask-el ask-total-big">
+      <text x="620" y="105" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="8.5" fill="rgba(255,204,68,0.45)" letter-spacing="2">TOTAL</text>
+      <text x="620" y="168" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="52" fill="#ffcc44" font-weight="bold">12,000</text>
+    </g>
+    <text class="ask-el ask-total-sub" x="620" y="190" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="9.5" fill="rgba(255,204,68,0.4)"
+          letter-spacing="1">dollars</text>
+    <text class="ask-el ask-total-note" x="620" y="225" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="7.5" fill="rgba(255,204,68,0.5)">focused runway · defined scope</text>
+
+    <!-- Tagline -->
+    <text class="ask-el ask-tag" x="380" y="295" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="7.5" fill="#555" letter-spacing="1">
+      THE MOMENT IS REAL. THE TOOLS ARE WORKING.
+    </text>
+  </svg>
+</div>
     
   </div>  <div class="layer " id="scene-12">
 
-    <div class="close-layout">
-      <div class="cl-headline">Fund the Last Mile</div>
-      <div class="cl-divider"></div>
-      <div class="cl-cta">Six months. Twelve thousand. Re-evaluate together.</div>
-      <div class="cl-tagline">THE METHOD IS THE PRODUCT</div>
-    </div>
+<style>
+  #rm-scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0d1117;
+  }
+  #rm-svg { width: 100%; height: 100%; }
+
+  /* All hidden by default */
+  .rm-start, .rm-spine, .rm-seg, .rm-node, .rm-lab, .rm-del, .rm-end, .rm-tag { opacity: 0; }
+
+  /* Keyframes */
+  @keyframes rm-spine-in {
+    from { opacity: 0; } to { opacity: 0.25; }
+  }
+  @keyframes rm-draw {
+    from { stroke-dashoffset: 180; opacity: 0; }
+    to   { stroke-dashoffset: 0;   opacity: 0.9; }
+  }
+  @keyframes rm-node-pop {
+    from { opacity: 0; transform: scale(0.6); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes rm-fade-in {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  @keyframes rm-del-slide {
+    from { opacity: 0; transform: translateX(-7px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes rm-start-pop {
+    from { opacity: 0; transform: scale(0); }
+    to   { opacity: 0.6; transform: scale(1); }
+  }
+
+  /* Segment animations — all length 180 */
+  #scene-12.active .rm-spine   { animation: rm-spine-in 0.8s ease 0.3s both; }
+  #scene-12.active .rm-start   { animation: rm-start-pop 0.4s ease 0.6s both; transform-origin: 40px 185px; }
+
+  #scene-12.active .rm-seg-0   { animation: rm-draw 0.65s ease 1.5s both; stroke-dasharray: 180; }
+  #scene-12.active .rm-node-1  { animation: rm-node-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) 2.0s both; transform-origin: 220px 185px; }
+  #scene-12.active .rm-lab-1   { animation: rm-fade-in 0.4s ease 2.1s both; }
+  #scene-12.active .rm-del-1a  { animation: rm-del-slide 0.35s ease 3.0s both; }
+  #scene-12.active .rm-del-1b  { animation: rm-del-slide 0.35s ease 3.7s both; }
+  #scene-12.active .rm-del-1c  { animation: rm-del-slide 0.35s ease 4.4s both; }
+
+  #scene-12.active .rm-seg-1   { animation: rm-draw 0.65s ease 9.5s both; stroke-dasharray: 180; }
+  #scene-12.active .rm-node-2  { animation: rm-node-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) 10.0s both; transform-origin: 400px 185px; }
+  #scene-12.active .rm-lab-2   { animation: rm-fade-in 0.4s ease 10.1s both; }
+  #scene-12.active .rm-del-2a  { animation: rm-del-slide 0.35s ease 11.0s both; }
+  #scene-12.active .rm-del-2b  { animation: rm-del-slide 0.35s ease 11.7s both; }
+
+  #scene-12.active .rm-seg-2   { animation: rm-draw 0.65s ease 15.5s both; stroke-dasharray: 180; }
+  #scene-12.active .rm-node-3  { animation: rm-node-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) 16.0s both; transform-origin: 580px 185px; }
+  #scene-12.active .rm-lab-3   { animation: rm-fade-in 0.4s ease 16.1s both; }
+  #scene-12.active .rm-del-3a  { animation: rm-del-slide 0.35s ease 17.0s both; }
+  #scene-12.active .rm-del-3b  { animation: rm-del-slide 0.35s ease 17.7s both; }
+
+  #scene-12.active .rm-seg-3   { animation: rm-draw 0.65s ease 21.5s both; stroke-dasharray: 180; }
+  #scene-12.active .rm-end     { animation: rm-node-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) 22.0s both; transform-origin: 760px 185px; }
+  #scene-12.active .rm-lab-e   { animation: rm-fade-in 0.4s ease 22.2s both; }
+
+  #scene-12.active .rm-tag     { animation: rm-fade-in 1s ease 27s both; }
+</style>
+
+<div id="rm-scene">
+  <svg id="rm-svg" viewBox="0 0 800 360" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="rm-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0,8 3,0 6" fill="#44dd88" opacity="0.8"/>
+      </marker>
+    </defs>
+
+    <!-- Base spine (full dim line) -->
+    <line class="rm-spine" x1="40" y1="185" x2="760" y2="185"
+          stroke="#3a3d45" stroke-width="2"/>
+
+    <!-- Start dot -->
+    <g class="rm-start">
+      <circle cx="40" cy="185" r="5" fill="#555"/>
+      <text x="40" y="173" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="7" fill="#555" letter-spacing="0.5">NOW</text>
+    </g>
+
+    <!-- Colored segments (draw left→right as each phase is announced) -->
+    <line class="rm-seg rm-seg-0" x1="40"  y1="185" x2="220" y2="185"
+          stroke="#4da6ff" stroke-width="2.5" opacity="0"/>
+    <line class="rm-seg rm-seg-1" x1="220" y1="185" x2="400" y2="185"
+          stroke="#bb88ff" stroke-width="2.5" opacity="0"/>
+    <line class="rm-seg rm-seg-2" x1="400" y1="185" x2="580" y2="185"
+          stroke="#ffcc44" stroke-width="2.5" opacity="0"/>
+    <line class="rm-seg rm-seg-3" x1="580" y1="185" x2="760" y2="185"
+          stroke="#44dd88" stroke-width="2.5" opacity="0" marker-end="url(#rm-arr)"/>
+
+    <!-- ── Phase 1: April – May (cx=220) ── -->
+    <g class="rm-node rm-node-1">
+      <circle cx="220" cy="185" r="22" fill="#0a1525" stroke="#4da6ff" stroke-width="2"/>
+      <text x="220" y="190" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="11" fill="#4da6ff" font-weight="bold">01</text>
+    </g>
+    <g class="rm-lab rm-lab-1">
+      <text x="220" y="147" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="9" fill="#4da6ff" letter-spacing="1.5" font-weight="bold">SHIP</text>
+      <text x="220" y="132" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="7.5" fill="rgba(77,166,255,0.45)" letter-spacing="1">APR · MAY</text>
+    </g>
+    <text class="rm-del rm-del-1a" x="142" y="233" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(77,166,255,0.85)">· AuthorConsole</text>
+    <text class="rm-del rm-del-1b" x="142" y="248" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(77,166,255,0.85)">· Presentation Engine</text>
+    <text class="rm-del rm-del-1c" x="142" y="263" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(77,166,255,0.85)">· A.I. Tracker</text>
+
+    <!-- ── Phase 2: June – August (cx=400) ── -->
+    <g class="rm-node rm-node-2">
+      <circle cx="400" cy="185" r="22" fill="#180f2d" stroke="#bb88ff" stroke-width="2"/>
+      <text x="400" y="190" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="11" fill="#bb88ff" font-weight="bold">02</text>
+    </g>
+    <g class="rm-lab rm-lab-2">
+      <text x="400" y="147" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="9" fill="#bb88ff" letter-spacing="1.5" font-weight="bold">SCALE</text>
+      <text x="400" y="132" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="7.5" fill="rgba(187,136,255,0.45)" letter-spacing="1">JUN · AUG</text>
+    </g>
+    <text class="rm-del rm-del-2a" x="322" y="233" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(187,136,255,0.85)">· Romantasy Illustrator</text>
+    <text class="rm-del rm-del-2b" x="322" y="248" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(187,136,255,0.85)">· Marketing Dashboard</text>
+
+    <!-- ── Phase 3: Sept – Oct (cx=580) ── -->
+    <g class="rm-node rm-node-3">
+      <circle cx="580" cy="185" r="22" fill="#141005" stroke="#ffcc44" stroke-width="2"/>
+      <text x="580" y="190" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="11" fill="#ffcc44" font-weight="bold">03</text>
+    </g>
+    <g class="rm-lab rm-lab-3">
+      <text x="580" y="147" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="9" fill="#ffcc44" letter-spacing="1.5" font-weight="bold">REVENUE</text>
+      <text x="580" y="132" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="7.5" fill="rgba(255,204,68,0.45)" letter-spacing="1">SEP · OCT</text>
+    </g>
+    <text class="rm-del rm-del-3a" x="504" y="233" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(255,204,68,0.85)">· Paper series complete</text>
+    <text class="rm-del rm-del-3b" x="504" y="248" font-family="'Courier New',monospace"
+          font-size="8" fill="rgba(255,204,68,0.85)">· First revenue active</text>
+
+    <!-- ── End: Re-evaluate (cx=760) ── -->
+    <g class="rm-end">
+      <circle cx="760" cy="185" r="16" fill="#041408" stroke="#44dd88" stroke-width="2"/>
+      <text x="760" y="191" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="13" fill="#44dd88">✓</text>
+    </g>
+    <g class="rm-lab rm-lab-e">
+      <text x="760" y="147" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="8" fill="#44dd88" letter-spacing="1.5" font-weight="bold">RE-EVALUATE</text>
+      <text x="760" y="132" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="7" fill="rgba(68,221,136,0.4)" letter-spacing="1">OCT 2026</text>
+    </g>
+
+    <!-- Tagline -->
+    <text class="rm-tag" x="400" y="310" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="7.5" fill="#555" letter-spacing="1">
+      BY THEN, THE PICTURE IS CLEAR.
+    </text>
+  </svg>
+</div>
+    
+  </div>  <div class="layer " id="scene-13">
+
+<style>
+  #lm-scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0d1117;
+  }
+  #lm-svg { width: 100%; height: 100%; }
+  .lm-el { opacity: 0; }
+
+  @keyframes lm-pop {
+    from { opacity: 0; transform: scale(0.7); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes lm-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes lm-bar-built {
+    from { transform: scaleX(0); opacity: 0; }
+    to   { transform: scaleX(1); opacity: 0.72; }
+  }
+  @keyframes lm-bar-fill {
+    from { transform: scaleX(0); opacity: 0; }
+    to   { transform: scaleX(1); opacity: 0.95; }
+  }
+  @keyframes lm-label-up {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes lm-pulse {
+    0%   { opacity: 0.3; } 50% { opacity: 0.8; } 100% { opacity: 0.3; }
+  }
+
+  /* Track */
+  #scene-13.active .lm-track      { animation: lm-fade   0.5s ease 0.4s both; }
+  /* Headline */
+  #scene-13.active .lm-headline   { animation: lm-pop    0.7s cubic-bezier(0.34,1.56,0.64,1) 3.5s both; transform-origin: 380px 82px; }
+  /* Already-built bar */
+  #scene-13.active .lm-built      { animation: lm-bar-built 1.1s ease 4.5s both; transform-box: fill-box; transform-origin: left; }
+  #scene-13.active .lm-built-lab  { animation: lm-label-up 0.4s ease 5.5s both; }
+  #scene-13.active .lm-tick       { animation: lm-fade   0.3s ease 5.8s both; }
+  /* Gap label (pulses until filled) */
+  #scene-13.active .lm-gap-lab    { animation: lm-label-up 0.4s ease 1.5s both; }
+  #scene-13.active .lm-gap-pulse  { animation: lm-pulse  2s ease-in-out 2s 8; }
+  /* Pillars */
+  #scene-13.active .lm-p1         { animation: lm-label-up 0.4s ease  7.5s both; }
+  #scene-13.active .lm-p2         { animation: lm-label-up 0.4s ease  9.5s both; }
+  #scene-13.active .lm-p3         { animation: lm-label-up 0.4s ease 11.5s both; }
+  /* "The moment is real" */
+  #scene-13.active .lm-moment     { animation: lm-fade   0.6s ease 14.0s both; }
+  /* The gold fill — the climax */
+  #scene-13.active .lm-fill       { animation: lm-bar-fill 0.9s ease 17.5s both; transform-box: fill-box; transform-origin: left; }
+  #scene-13.active .lm-check      { animation: lm-pop    0.5s cubic-bezier(0.34,1.56,0.64,1) 18.5s both; transform-origin: 700px 164px; }
+  /* CTA + tagline */
+  #scene-13.active .lm-cta        { animation: lm-fade   0.6s ease 21.0s both; }
+  #scene-13.active .lm-tag        { animation: lm-fade   1.0s ease 23.5s both; }
+</style>
+
+<div id="lm-scene">
+  <svg id="lm-svg" viewBox="0 0 760 320" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="lm-built-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%"   stop-color="#4da6ff" stop-opacity="0.8"/>
+        <stop offset="100%" stop-color="#bb88ff" stop-opacity="0.75"/>
+      </linearGradient>
+      <linearGradient id="lm-hl-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%"   stop-color="#0c8de9"/>
+        <stop offset="50%"  stop-color="#38bdf8"/>
+        <stop offset="100%" stop-color="#818cf8"/>
+      </linearGradient>
+      <clipPath id="lm-clip">
+        <rect x="60" y="140" width="640" height="32" rx="8"/>
+      </clipPath>
+    </defs>
+
+    <!-- Headline -->
+    <text class="lm-el lm-headline" x="380" y="92" text-anchor="middle"
+          font-family="Inter,-apple-system,sans-serif" font-size="42" font-weight="800"
+          fill="url(#lm-hl-grad)" letter-spacing="-1">Fund the Last Mile</text>
+
+    <!-- Bar track -->
+    <rect class="lm-el lm-track" x="60" y="140" width="640" height="32" rx="8"
+          fill="rgba(255,255,255,0.03)" stroke="#2a2d35" stroke-width="1.5"/>
+
+    <!-- Clipped fills -->
+    <g clip-path="url(#lm-clip)">
+      <!-- Already built: 78% = 499px of 640 -->
+      <rect class="lm-el lm-built" x="60" y="140" width="499" height="32"
+            fill="url(#lm-built-grad)"/>
+      <!-- The last mile: remaining 22% = 141px, gold — appears at 17.5s -->
+      <rect class="lm-el lm-fill" x="559" y="140" width="141" height="32"
+            fill="#ffcc44"/>
+    </g>
+
+    <!-- Tick mark at the 78% junction -->
+    <line class="lm-el lm-tick" x1="559" y1="134" x2="559" y2="140"
+          stroke="#888" stroke-width="1"/>
+    <text class="lm-el lm-tick" x="559" y="130" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="7" fill="#666">~78%</text>
+
+    <!-- "ALREADY BUILT" label below bar, left section -->
+    <text class="lm-el lm-built-lab" x="310" y="187"
+          text-anchor="middle" font-family="'Courier New',monospace"
+          font-size="7.5" fill="rgba(100,160,255,0.55)" letter-spacing="1.5">ALREADY BUILT</text>
+
+    <!-- "THE LAST MILE" label below bar, right section (appears early, pulses) -->
+    <text class="lm-el lm-gap-lab" x="630" y="187"
+          text-anchor="middle" font-family="'Courier New',monospace"
+          font-size="7.5" fill="rgba(255,204,68,0.6)" letter-spacing="1.5">THE LAST MILE</text>
+    <!-- Pulse glow on the gap area -->
+    <rect class="lm-el lm-gap-pulse" x="561" y="141" width="137" height="30" rx="6"
+          fill="none" stroke="#ffcc44" stroke-width="1.5" opacity="0"/>
+
+    <!-- Completion check at right end (appears after gold fill) -->
+    <g class="lm-el lm-check">
+      <circle cx="700" cy="156" r="13" fill="#0d1117" stroke="#44dd88" stroke-width="2"/>
+      <text x="700" y="161" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="12" fill="#44dd88">✓</text>
+    </g>
+
+    <!-- Three pillars -->
+    <g class="lm-el lm-p1">
+      <text x="163" y="222" text-anchor="middle" font-family="'Courier New',monospace"
+            font-size="8" fill="#4da6ff" letter-spacing="1" font-weight="bold">A DEFINED PERIOD</text>
+    </g>
+    <text class="lm-el lm-p2" x="380" y="222" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="8" fill="#bb88ff"
+          letter-spacing="1" font-weight="bold">A SPECIFIC NUMBER</text>
+    <text class="lm-el lm-p3" x="597" y="222" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="8" fill="#44dd88"
+          letter-spacing="1" font-weight="bold">A CLEAR CHECK-IN</text>
+
+    <!-- "The moment is real" -->
+    <text class="lm-el lm-moment" x="380" y="247" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="8" fill="rgba(226,227,229,0.4)"
+          letter-spacing="0.5">The moment is real. The tools are working.</text>
+
+    <!-- CTA -->
+    <text class="lm-el lm-cta" x="380" y="274" text-anchor="middle"
+          font-family="Inter,-apple-system,sans-serif" font-size="14" font-weight="600"
+          fill="#38bdf8">Six months. Twelve thousand. Re-evaluate together.</text>
+
+    <!-- Tagline -->
+    <text class="lm-el lm-tag" x="380" y="302" text-anchor="middle"
+          font-family="'Courier New',monospace" font-size="7.5" fill="#4c4f57"
+          letter-spacing="4">THE METHOD IS THE PRODUCT</text>
+  </svg>
+</div>
     
   </div>
 </div>
@@ -1240,11 +2076,24 @@ body {
   <button onclick="nextScene()">Next</button>
   <button onclick="restart()">Restart</button>
   <button onclick="toggleMute()" id="btn-mute">Mute</button>
+  <button onclick="openEdit()" id="btn-edit">Edit</button>
+</div>
+
+<div id="edit-modal">
+  <div id="edit-box">
+    <div id="edit-label">SCENE <span id="edit-scene-num"></span> — edit narration · saved to disk · marked authorLocked</div>
+    <textarea id="edit-textarea"></textarea>
+    <div id="edit-status"></div>
+    <div id="edit-actions">
+      <button id="btn-edit-cancel" onclick="closeEdit()">Cancel</button>
+      <button id="btn-edit-save" onclick="saveEdit()">Save to disk</button>
+    </div>
+  </div>
 </div>
 
 <script>
-const SCENES = [{"minDuration": 18, "narrationHtml": "Welcome to the workshop. This presentation is a walkthrough of what I've been building over the past year, where it stands today, and what it needs to get finished by December. One more thing worth knowing upfront \u2014 this presentation was made using one of the tools it describes. Which is, itself, part of the point.\n"}, {"minDuration": 34, "narrationHtml": "Something fundamental has changed. Not in a small way \u2014 in the way the printing press changed who could write, and who could be heard. Artificial intelligence has made it possible for one person, working alone, to do the research, the writing, the design, the engineering, and the distribution that used to require a whole team \u2014 or an entire department. Most people are still figuring out what that means. Some are already afraid of it. I've spent the past year building inside it. And what I've learned is this: the people who understand it earliest are the ones who shape what it becomes.\n"}, {"minDuration": 24, "narrationHtml": "Here's the insight that drives everything I'm doing. I didn't set out to build products. I set out to build a method. And the method... is the product. Each tool I make becomes part of the toolkit I use to build the next one. Each paper I publish attracts an audience that funds the one after it. That's not a side project. That's a compounding system \u2014 and it's about sixty percent built.\n"}, {"minDuration": 50, "narrationHtml": "Before universities became the gatekeepers of knowledge, there was a different model \u2014 the independent scientist. Someone with enough resources, or enough drive, to pursue real problems without asking for institutional permission. Isaac Newton worked alone. Benjamin Franklin was a printer. George Cayley was an English baronet who invented the concept of the fixed-wing aircraft simply because he was obsessed with flight. Charles Babbage spent forty years building a computer nobody else believed in. In England, natural philosophy was a perfectly respectable occupation for anyone with the means and the curiosity to pursue it. The Royal Society was full of them. What changed was the research university \u2014 which arrived around 1850 and made credentials the price of entry. That gate is now open again. Artificial intelligence is the great equalizer \u2014 it handles the patient, meticulous work that used to require a career of training. The independent researcher is back.\n"}, {"minDuration": 23, "narrationHtml": "Here's the portfolio. Eleven projects, all interconnected, all in progress. Five are software tools people can use right now, or very soon. One is a hardware patent with government research funding potential. And one \u2014 the tool you're watching this presentation on \u2014 is the publishing engine that makes all of it shareable and teachable. Every project links to the others. They're not separate bets. They're one compounding system.\n"}, {"minDuration": 24, "narrationHtml": "Here's where each project stands \u2014 as a percentage complete toward a product someone can download, subscribe to, or build on. The average across all seven is about forty-one percent done. Three of them can ship within the next month or two. The Romantasy Illustrator is the furthest along at sixty-five percent. The hardware patent \u2014 FORGE \u2014 is on a longer timeline by nature, but the intellectual property is already filed and protected.\n"}, {"minDuration": 35, "narrationHtml": "One project sits apart from the rest, and it's worth a moment of its own. FORGE is a hardware invention \u2014 a modular power generator designed for drones and field equipment that currently have to carry heavy, expensive, or hard-to-source fuel systems. The provisional patent was filed in March of this year. The path to revenue here is different from the software projects \u2014 it runs through government research grants and technology licensing partnerships, which are the standard commercial pathways for this kind of hard technology. What it adds to the portfolio is credibility of a different kind. Software can be copied. A patent cannot.\n"}, {"minDuration": 30, "narrationHtml": "There are two kinds of value in this portfolio, and it's worth understanding both. Some projects make money directly \u2014 monthly subscriptions, technology licensing, and government research grants. Others build an audience first, and the audience is what generates the revenue. That happens through Patreon \u2014 a platform where readers and followers pay a small amount each month to support independent researchers and creators \u2014 and through the natural cross-promotion that happens when one project's audience discovers another. In the modern creator economy, audience is the asset. Everything else follows.\n"}, {"minDuration": 33, "narrationHtml": "Here's how the compounding works in practice. AuthorConsole gets published. Academics and writers find it and follow along. They see the link to the narrated explainer \u2014 made with the presentation engine. They discover the presentation tool. Some become users. They find the A.I. cost tracker. They find the illustration studio. Each project is a door. Every door leads to the others. And the marketing dashboard \u2014 which is itself one of the products \u2014 means I never have to pay an agency to reach any of these audiences. I built the marketing machine. It runs the whole operation.\n"}, {"minDuration": 29, "narrationHtml": "What I'm describing is a new kind of business \u2014 one that doesn't have a clean name yet, but it's real and it's working. Not a startup. Not a consulting practice. Not a blog. A vertically integrated one-person operation, where the same person researches, writes, builds, ships, and markets everything \u2014 using the very tools they are building and writing about. This presentation is the proof of concept. It was made using the tools it describes. That's not a trick. That's what makes the whole model defensible.\n"}, {"minDuration": 33, "narrationHtml": "Here's the ask. Two thousand dollars a month, for six months. That breaks down simply: twelve hundred and fifty for living expenses, and seven hundred and fifty for A.I. API costs and minor brand promotion \u2014 things like getting the papers in front of the right people at the right moment. At six months, we re-evaluate together. If revenue has started, we stop. If we're close and it makes sense to continue, we talk. There's no open-ended commitment here. Just a focused runway to finish what is already most of the way built. Total for six months: twelve thousand dollars.\n"}, {"minDuration": 31, "narrationHtml": "Here's the six-month roadmap. April and May: the three projects closest to done all ship \u2014 AuthorConsole, the presentation engine, and the A.I. cost tracker. Each one launches publicly, starts building an audience, and feeds the next. June through August: the Romantasy Illustrator and the Marketing Dashboard go live. Both are feature-complete \u2014 they need polish and distribution, not invention. September and October: the paper series wraps up, the first revenue streams are active, and we sit down and look at what's working. That's the re-evaluation point. By then, the picture is clear.\n"}, {"minDuration": 26, "narrationHtml": "I'm not asking you to bet on a dream. I'm asking you to fund the last mile of something that is already mostly built \u2014 for a defined period, with a clear check-in point, and a specific number that covers exactly what it needs to cover and nothing more. The moment is real. The tools are working. What I need is the space to finish them \u2014 and someone who believes that's worth twelve thousand dollars to find out.\n"}];
-const AUDIO_IDS = ["title", "the-moment", "the-insight", "citizen-scientist", "the-portfolio", "projects-progress", "forge-spotlight", "monetization", "the-flywheel", "the-model", "the-ask", "timeline", "close"];
+const SCENES = [{"minDuration": 18, "narrationHtml": "Welcome to the workshop. This presentation is a walkthrough of what I've been building over the past year, where it stands today, and what it needs to get finished by December. One more thing worth knowing upfront — this presentation was made using one of the tools it describes. Which is, itself, part of the point.\n"}, {"minDuration": 34, "narrationHtml": "Something fundamental has changed. Not in a small way — in the way the printing press changed who could write, and who could be heard. Artificial intelligence has made it possible for one person, working alone, to do the research, the writing, the design, the engineering, and the distribution that used to require a whole team — or an entire department. Most people are still figuring out what that means. Some are already afraid of it. I've spent the past year building inside it. And what I've learned is this: the people who understand it earliest are the ones who shape what it becomes.\n"}, {"minDuration": 24, "narrationHtml": "Here's the insight that drives everything I'm doing. I didn't set out to build products. I set out to build a method. And the method... is the product. Each tool I make becomes part of the toolkit I use to build the next one. Each paper I publish attracts an audience that funds the one after it. That's not a side project. That's a compounding system — and it's about sixty percent built.\n"}, {"minDuration": 50, "narrationHtml": "Before universities became the gatekeepers of knowledge, there was a different model — the independent scientist. Someone with enough resources, or enough drive, to pursue real problems without asking for institutional permission. Isaac Newton worked alone. Benjamin Franklin was a printer. George Cayley was an English baronet who invented the concept of the fixed-wing aircraft simply because he was obsessed with flight. Charles Babbage spent forty years building a computer nobody else believed in. In England, natural philosophy was a perfectly respectable occupation for anyone with the means and the curiosity to pursue it. The Royal Society was full of them. What changed was the research university — which arrived around 1850 and made credentials the price of entry. That gate is now open again. Artificial intelligence is the great equalizer — it handles the patient, meticulous work that used to require a career of training. The independent researcher is back.\n"}, {"minDuration": 23, "narrationHtml": "Here's the portfolio. Eleven projects, all interconnected, all in progress. Five are software tools people can use right now, or very soon. One is a hardware patent with government research funding potential. And one — the tool you're watching this presentation on — is the publishing engine that makes all of it shareable and teachable. Every project links to the others. They're not separate bets. They're one compounding system.\n"}, {"minDuration": 24, "narrationHtml": "Here's where each project stands — as a percentage complete toward a product someone can download, subscribe to, or build on. The average across all seven is about forty-one percent done. Three of them can ship within the next month or two. The Romantasy Illustrator is the furthest along at sixty-five percent. The hardware patent — FORGE — is on a longer timeline by nature, but the intellectual property is already filed and protected.\n"}, {"minDuration": 35, "narrationHtml": "One project sits apart from the rest, and it's worth a moment of its own. FORGE is a hardware invention — a modular power generator designed for drones and field equipment that currently have to carry heavy, expensive, or hard-to-source fuel systems. The provisional patent was filed in March of this year. The path to revenue here is different from the software projects — it runs through government research grants and technology licensing partnerships, which are the standard commercial pathways for this kind of hard technology. What it adds to the portfolio is credibility of a different kind. Software can be copied. A patent cannot.\n"}, {"minDuration": 90, "narrationHtml": "Let's look at Illustrate Assist. The user uploads text — if it's finished, great. If just an idea, the app uses Claude to collaborate on research and writing to develop your ideas into books, screenplays, and pitches. The app uses a sophisticated multi-agent process to parse and extract a world bible and auto-generate model-specific prompts, at which point the user works with Claude to refine the characters, and then the cinematic scenes, collaborating with a fully tooled Sonnet agent with memory and project-context, until just the right image is produced. These are then automatically incorporated into publishable flipbooks, audiovisual interactive lookbooks, or project pitches designed for publishing houses or Hollywood executives. The app also generates promotional materials — and contains access to a project-specific full marketing agent and dashboard tool to manage audience and PR outreach and engagement.\n"}, {"minDuration": 30, "narrationHtml": "There are two kinds of value in this portfolio, and it's worth understanding both. Some projects make money directly — monthly subscriptions, technology licensing, and government research grants. Others build an audience first, and the audience is what generates the revenue. That happens through Patreon — a platform where readers and followers pay a small amount each month to support independent researchers and creators — and through the natural cross-promotion that happens when one project's audience discovers another. In the modern creator economy, audience is the asset. Everything else follows.\n"}, {"minDuration": 33, "narrationHtml": "Here's how the compounding works in practice. AuthorConsole gets published. Academics and writers find it and follow along. They see the link to the narrated explainer — made with the presentation engine. They discover the presentation tool. Some become users. They find the A.I. cost tracker. They find the illustration studio. Each project is a door. Every door leads to the others. And the marketing dashboard — which is itself one of the products — means I never have to pay an agency to reach any of these audiences. I built the marketing machine. It runs the whole operation.\n"}, {"minDuration": 29, "narrationHtml": "What I'm describing is a new kind of business — one that doesn't have a clean name yet, but it's real and it's working. Not a startup. Not a consulting practice. Not a blog. A vertically integrated one-person operation, where the same person researches, writes, builds, ships, and markets everything — in this case using the very tools they are building and writing about.\n", "authorLocked": true}, {"minDuration": 33, "narrationHtml": "Here's the ask. Two thousand dollars a month, for six months. That breaks down simply: twelve hundred and fifty for living expenses, and seven hundred and fifty for A.I. API costs and minor brand promotion — things like getting the papers in front of the right people at the right moment. At six months, we re-evaluate together. If revenue has started, we stop. If we're close and it makes sense to continue, we talk. There's no open-ended commitment here. Just a focused runway to finish what is already most of the way built. Total for six months: twelve thousand dollars.\n"}, {"minDuration": 31, "narrationHtml": "Here's the six-month roadmap. April and May: the three projects closest to done all ship — AuthorConsole, the presentation engine, and the A.I. cost tracker. Each one launches publicly, starts building an audience, and feeds the next. June through August: the Romantasy Illustrator and the Marketing Dashboard go live. Both are feature-complete — they need polish and distribution, not invention. September and October: the paper series wraps up, the first revenue streams are active, and we sit down and look at what's working. That's the re-evaluation point. By then, the picture is clear.\n"}, {"minDuration": 26, "narrationHtml": "I'm not asking you to bet on a dream. I'm asking you to fund the last mile of something that is already mostly built — for a defined period, with a clear check-in point, and a specific number that covers exactly what it needs to cover and nothing more. The moment is real. The tools are working. What I need is the space to finish them — and someone who believes that's worth twelve thousand dollars to find out.\n"}];
+const AUDIO_IDS = ["title", "the-moment", "the-insight", "citizen-scientist", "the-portfolio", "projects-progress", "forge-spotlight", "illustrate-assist", "monetization", "the-flywheel", "the-model", "the-ask", "timeline", "close"];
 const TIMING = {};
 let currentScene = 0;
 let playing = false;
@@ -1396,12 +2245,26 @@ function toggleMute() {
 }
 
 document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'TEXTAREA') return;
   if (e.key === ' ') { e.preventDefault(); togglePlay(); }
   if (e.key === 'ArrowRight') nextScene();
   if (e.key === 'ArrowLeft') prevScene();
   if (e.key === 'r') restart();
   if (e.key === 'm') toggleMute();
 });
+
+// Illustrate-Assist sub-slide management
+const IA_SUBS = [[0,9],[9,22],[22,35],[35,43],[43,50],[50,57],[57,64],[64,82],[82,90]];
+function updateIAScene(elapsed) {
+  IA_SUBS.forEach(([s,e],i) => {
+    const el = document.getElementById('ia-sub-'+(i+1));
+    if (!el) return;
+    el.classList.toggle('ia-visible', elapsed >= s && elapsed < e);
+  });
+  if (elapsed >= 64 && !window._iaV1) { document.getElementById('ia-card1')?.play().catch(()=>{}); window._iaV1=true; }
+  if (elapsed >= 70 && !window._iaV2) { const v=document.getElementById('ia-card2'); if(v){v.style.opacity='1';v.play().catch(()=>{})} window._iaV2=true; }
+  if (elapsed >= 76 && !window._iaV3) { const v=document.getElementById('ia-card3'); if(v){v.style.opacity='1';v.play().catch(()=>{})} window._iaV3=true; }
+}
 
 // Animation loop
 function tick() {
@@ -1416,6 +2279,7 @@ function tick() {
     });
   }
 
+  if (currentScene === 7) updateIAScene(elapsed);
   // Narration progress bar
   document.getElementById('narration-text').style.setProperty('--speak-progress', `${t * 100}%`);
 
@@ -1437,12 +2301,53 @@ function tick() {
   requestAnimationFrame(tick);
 }
 
+// Edit narration
+function openEdit() {
+  document.getElementById('edit-status').textContent = '';
+  document.getElementById('edit-scene-num').textContent = (currentScene + 1) + ' / ' + SCENES.length;
+  document.getElementById('edit-textarea').value = (SCENES[currentScene].narrationHtml || '').replace(/\n$/, '');
+  document.getElementById('edit-modal').classList.add('open');
+  document.getElementById('edit-textarea').focus();
+  if (playing) togglePlay();
+}
+function closeEdit() {
+  document.getElementById('edit-modal').classList.remove('open');
+}
+async function saveEdit() {
+  const text = document.getElementById('edit-textarea').value.trimEnd() + '\n';
+  const status = document.getElementById('edit-status');
+  SCENES[currentScene].narrationHtml = text;
+  SCENES[currentScene].authorLocked = true;
+  document.getElementById('narration-text').innerHTML = text;
+  status.textContent = 'saving…';
+  try {
+    const resp = await fetch(location.pathname + '?nocache=' + Date.now());
+    const html = await resp.text();
+    const updated = html.replace(/const SCENES = \[.*?\];/, 'const SCENES = ' + JSON.stringify(SCENES) + ';');
+    await fetch('/save', { method: 'POST', headers: { 'X-Filename': 'presentation.html', 'Content-Type': 'text/html' }, body: updated });
+    status.textContent = '✓ saved · authorLocked: true';
+    setTimeout(closeEdit, 1400);
+  } catch(e) {
+    status.style.color = '#ff5555';
+    status.textContent = '✗ save failed — is serve.py running on :8500?';
+  }
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('edit-modal').classList.contains('open')) closeEdit();
+});
+
 // Start overlay
 const overlay = document.createElement('div');
 overlay.id = 'start-overlay';
 overlay.innerHTML = '<div style="font-size:48px;">&#9654;</div><div style="font-size:18px;font-weight:600;color:#fff;">Click to Start</div><div style="font-size:12px;color:#60646d;">The Workshop</div><div style="font-size:10px;color:#4c4f57;margin-top:8px;">Built with presentaHTML</div>';
 document.body.appendChild(overlay);
 
+// Reset IA video flags when scene changes
+const _origShowScene = showScene;
+showScene = function(index) {
+  if (index !== 7) { window._iaV1=window._iaV2=window._iaV3=false; }
+  _origShowScene(index);
+};
 preloadAudio();
 showScene(0);
 

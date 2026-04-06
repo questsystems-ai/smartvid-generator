@@ -1,1 +1,36 @@
-{}
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp /c/Users/aaron/Documents/a-i-rons_projects/human-author-provenance/paper/presentation.html /c/Users/aaron/Documents/a-i-rons_projects/slide-studio/presentation.html)",
+      "Bash(cp -r /c/Users/aaron/Documents/a-i-rons_projects/human-author-provenance/paper/audio /c/Users/aaron/Documents/a-i-rons_projects/slide-studio/audio)",
+      "Bash(cp /c/Users/aaron/Documents/a-i-rons_projects/notes/dad-pitch-output/presentation.html /c/Users/aaron/Documents/a-i-rons_projects/slide-studio/presentation.html)",
+      "Bash(cp /c/Users/aaron/Documents/a-i-rons_projects/notes/dad-pitch-output/flywheel.svg /c/Users/aaron/Documents/a-i-rons_projects/slide-studio/flywheel.svg)",
+      "Bash(cp /c/Users/aaron/Documents/a-i-rons_projects/notes/dad-pitch-output/pulse-pfd.svg /c/Users/aaron/Documents/a-i-rons_projects/slide-studio/pulse-pfd.svg)",
+      "Bash(cp -r /c/Users/aaron/Documents/a-i-rons_projects/notes/dad-pitch-output/audio /c/Users/aaron/Documents/a-i-rons_projects/slide-studio/dad-pitch-audio)",
+      "Bash(curl -s http://localhost:8500/presentation.html)",
+      "Bash(find /c/Users/aaron/Documents/a-i-rons_projects/presentaHTML/ -name *.html -o -name *.md)",
+      "Bash(cp /d/Downloads/bigCavendish_images30_IsaacNewton.jpg content/images/user-uploaded/newton.jpg)",
+      "Bash(cp /d/Downloads/benfranklin.webp content/images/user-uploaded/franklin.webp)",
+      "Bash(cp /d/Downloads/George_Cayley.jpg content/images/user-uploaded/cayley.jpg)",
+      "Bash(cp /d/Downloads/Charles-Babbage-detail-oil-painting-Samuel-Lawrence-1845.webp content/images/user-uploaded/babbage.webp)",
+      "Bash(curl:*)",
+      "Bash(taskkill //F //IM python.exe //FI 'WINDOWTITLE eq serve*')",
+      "Bash(netstat -ano)",
+      "Bash(xargs -r taskkill //F //PID)",
+      "Bash(taskkill //F //PID 58944 //PID 75664 //PID 71972 //PID 69280)",
+      "Bash(sed -i 's/Researcher\\\\. Builder\\\\. Publisher\\\\. One operation\\\\./Researcher. Builder. Publisher. Marketer. One operation./' presentation.html)",
+      "Bash(sed -i '/class=\"\"ts-tagline\"\">THE METHOD IS THE PRODUCT<\\\\/p>/d' presentation.html)",
+      "Read(//d/Downloads/**)",
+      "Bash(unzip -o illlutsratorslide.zip -d illustratorslide_assets)",
+      "Bash(head -3 grep -c \"svg\\\\|SVG\\\\|<g\\\\|<path\" /d/Downloads/illustratorslide_assets/illlutsratorslide/scene-prompt-pathways.html)",
+      "Read(//c/Users/aaron/Downloads/**)",
+      "Bash(/dev/null ls:*)",
+      "Read(//c/Users/aaron/Downloads//**)",
+      "Bash(mkdir -p content/images/illustratorslide content/video)",
+      "Bash(cp /d/Downloads/illustratorslide_assets/illlutsratorslide/dungeonforge.jpg content/images/illustratorslide/)",
+      "Bash(cp /d/Downloads/illustratorslide_assets/illlutsratorslide/storynotes.jpg content/images/illustratorslide/)",
+      "Bash(cp /d/Downloads/illustratorslide_assets/illlutsratorslide/characters.jpg content/images/illustratorslide/)",
+      "Bash(cp /d/Downloads/illustratorslide_assets/illlutsratorslide/sceness.jpg content/images/illustratorslide/)"
+    ]
+  }
+}
