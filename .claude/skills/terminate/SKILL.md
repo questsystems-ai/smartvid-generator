@@ -26,6 +26,8 @@ Run these in parallel:
 
 Write a **timestamped** handoff file: `scripts/output/session-handoff-YYYYMMDD-HHMM.md` (e.g. `session-handoff-20260331-1430.md`). Use today's date and current time. Create the directory if needed. Keep it under 80 lines. Include:
 
+**Settled decisions** (names chosen, acronyms selected, options picked): log these explicitly in Key decisions as `[Thing]: chosen value` — e.g. `[Acronym]: PULSE = Portable Unified Lightweight Scalable Engine`. These are the facts most likely to be asked about in future sessions and least likely to survive as only a memory.
+
 1. **The Product** — one paragraph: what this app/service does, who it's for
 2. **Stack** — one line: framework, language, DB, key APIs/services
 3. **Business Context** — one line: who's building it, what stage, what's the goal

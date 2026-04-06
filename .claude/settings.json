@@ -25,7 +25,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python scripts/log_claude_response.py"
+            "command": "python C:/Users/aaron/Documents/a-i-rons_projects/slide-studio/scripts/log_claude_response.py"
           }
         ]
       }

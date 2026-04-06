@@ -33,6 +33,12 @@ Summarize what the last few commits accomplished. Note the gap between committed
 
 Read the memory index (`MEMORY.md` in the project's memory directory) and scan for any memories that seem relevant to what's pending. Read the most important ones (especially feedback and project memories). Don't read all files — just the ones that matter for what's next.
 
+**Past decision lookup:** If the user asks about a specific past decision (a chosen name, acronym, option picked, etc.) and the handoffs + memory don't contain it — grep the JSONL transcripts before asking the user to repeat themselves. The transcripts are the ground truth. Search with:
+```bash
+grep -ao '"text":"[^"]*<keyword>[^"]*"' <jsonl_path> | sed 's/"text":"//;s/"$//' | head -20
+```
+Use the most recent JSONL first (`ls -t /c/Users/aaron/.claude/projects/<project-id>/*.jsonl | head -3`). Do not surface "I can't find it" until you've checked the transcripts.
+
 ### Step 5: Verify cost-aware mode
 
 Check that you are running as **Sonnet** (not Opus). If you detect you are Opus, warn the user immediately:
