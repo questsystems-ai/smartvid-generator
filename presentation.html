@@ -1261,18 +1261,9 @@ body.has-gallery.gallery-collapsed #controls { left: 28px; }
   .ia-title { font-family: 'Courier New',monospace; font-size: 11px; color: #fff; letter-spacing: 2px; font-weight: bold; margin-bottom: 10px; }
   .ia-body { font-size: 14px; color: #9a9b9e; line-height: 1.65; }
   .ia-tag { font-family: 'Courier New',monospace; font-size: 8px; color: #4c4f57; letter-spacing: 1px; margin-top: 20px; }
-  /* Split layout */
-  .ia-split { flex-direction: row; gap: 48px; padding: 40px 60px; align-items: center; }
-  .ia-img-panel { flex: 0 0 54%; }
-  .ia-img-panel img { width: 100%; max-height: 78vh; object-fit: contain; border-radius: 8px; }
-  .ia-text-panel { flex: 1; display: flex; flex-direction: column; }
   /* Full-bleed */
   .ia-full { padding: 0; }
   .ia-full > img { width: 100%; height: 100%; object-fit: cover; }
-  .ia-full-overlay {
-    position: absolute; bottom: 0; left: 0; right: 0; padding: 28px 52px;
-    background: linear-gradient(to top, rgba(13,17,23,0.97) 0%, rgba(13,17,23,0.55) 65%, transparent 100%);
-  }
   /* iframe sub */
   .ia-iframe-sub { flex-direction: column; padding: 0; }
   .ia-iframe-sub iframe { flex: 1; width: 100%; border: none; background: #030712; min-height: 0; }
@@ -1281,104 +1272,47 @@ body.has-gallery.gallery-collapsed #controls { left: 28px; }
     display: flex; align-items: center; padding: 0 28px; gap: 14px;
   }
   /* Video cards */
-  .ia-cards-sub { flex-direction: column; gap: 18px; padding: 28px 48px; }
-  .ia-cards-row { display: flex; gap: 20px; justify-content: center; align-items: center; flex: 1; min-height: 0; }
-  .ia-cards-row video { flex: 1; min-width: 0; max-height: 58vh; border-radius: 8px; border: 1px solid #2a2d35; background: #000; }
-  /* Marketing text */
-  .ia-text-only { flex-direction: column; gap: 14px; text-align: center; max-width: 640px; }
-  .ia-text-only .ia-title { font-size: 14px; }
-  .ia-text-only .ia-body { font-size: 16px; }
+  .ia-cards-sub { flex-direction: column; padding: 24px 40px; }
+  .ia-cards-row { display: flex; gap: 20px; justify-content: center; align-items: center; flex: 1; min-height: 0; height: 100%; }
+  .ia-cards-row video { flex: 1; min-width: 0; max-height: 72vh; border-radius: 8px; border: 1px solid #2a2d35; background: #000; }
 </style>
 
 <div id="ia-scene">
   <!-- 7.1 Intro (dungeonforge.jpg) -->
   <div class="ia-sub ia-full" id="ia-sub-1">
     <img src="content/images/illustratorslide/dungeonforge.jpg" alt="Illustrate Assist">
-    <div class="ia-full-overlay">
-      <div class="ia-num">7.1</div>
-      <div class="ia-title">ILLUSTRATE ASSIST — ROMANTASY STUDIO</div>
-      <div class="ia-body">From idea to illustrated book, screenplay, or pitch.</div>
-    </div>
   </div>
   <!-- 7.2 Input (storynotes.jpg) -->
-  <div class="ia-sub ia-split" id="ia-sub-2">
-    <div class="ia-img-panel">
-      <img src="content/images/illustratorslide/storynotes.jpg" alt="Story notes">
-    </div>
-    <div class="ia-text-panel">
-      <div class="ia-num">7.2 &nbsp; INPUT</div>
-      <div class="ia-title">UPLOAD TEXT OR JUST AN IDEA</div>
-      <div class="ia-body">Finished manuscript? Import it. Just a concept? Claude collaborates on research and writing to develop your ideas into full books, screenplays, and pitches.</div>
-    </div>
+  <div class="ia-sub ia-full" id="ia-sub-2">
+    <img src="content/images/illustratorslide/storynotes.jpg" alt="Story notes">
   </div>
   <!-- 7.3 Pipeline (iframe) -->
   <div class="ia-sub ia-iframe-sub" id="ia-sub-3">
     <iframe src="content/svg/scene-prompt-pathways.html" title="Scene Prompt Pathways"></iframe>
-    <div class="ia-iframe-bar">
-      <span class="ia-num" style="margin:0">7.3</span>
-      <span class="ia-body" style="font-size:11px;color:#7b7f88;">Sophisticated multi-agent pipeline &nbsp;·&nbsp; world bible extraction &nbsp;·&nbsp; model-specific prompt generation</span>
-    </div>
   </div>
   <!-- 7.4 Characters (characters.jpg) -->
-  <div class="ia-sub ia-split" id="ia-sub-4">
-    <div class="ia-img-panel">
-      <img src="content/images/illustratorslide/characters.jpg" alt="Character refinement">
-    </div>
-    <div class="ia-text-panel">
-      <div class="ia-num">7.4 &nbsp; CHARACTERS</div>
-      <div class="ia-title">REFINE YOUR CHARACTERS</div>
-      <div class="ia-body">Work with Claude to develop and lock character appearance — faces, clothing, distinctive traits. The agent remembers everything across your entire project.</div>
-    </div>
+  <div class="ia-sub ia-full" id="ia-sub-4">
+    <img src="content/images/illustratorslide/characters.jpg" alt="Character refinement">
   </div>
   <!-- 7.5 Scenes (sceness.jpg) -->
-  <div class="ia-sub ia-split" id="ia-sub-5">
-    <div class="ia-img-panel">
-      <img src="content/images/illustratorslide/sceness.jpg" alt="Cinematic scenes">
-    </div>
-    <div class="ia-text-panel">
-      <div class="ia-num">7.5 &nbsp; SCENES</div>
-      <div class="ia-title">CINEMATIC SCENE COLLABORATION</div>
-      <div class="ia-body">Compose scenes with cinematic precision. The agent holds your world bible in context throughout, ensuring visual consistency across every illustration.</div>
-    </div>
+  <div class="ia-sub ia-full" id="ia-sub-5">
+    <img src="content/images/illustratorslide/sceness.jpg" alt="Cinematic scenes">
   </div>
   <!-- 7.6 Agent (forge.jpg) -->
-  <div class="ia-sub ia-split" id="ia-sub-6">
-    <div class="ia-img-panel">
-      <img src="content/images/illustratorslide/forge.jpg" alt="Sonnet agent">
-    </div>
-    <div class="ia-text-panel">
-      <div class="ia-num">7.6 &nbsp; AGENT</div>
-      <div class="ia-title">FULLY TOOLED SONNET WITH MEMORY</div>
-      <div class="ia-body">A production Claude Sonnet agent with full tool access, persistent project memory, and deep context — collaborating until exactly the right image is produced.</div>
-    </div>
+  <div class="ia-sub ia-full" id="ia-sub-6">
+    <img src="content/images/illustratorslide/forge.jpg" alt="Sonnet agent">
   </div>
   <!-- 7.7 Output (elmore-test-1.png) -->
   <div class="ia-sub ia-full" id="ia-sub-7">
     <img src="content/images/illustratorslide/elmore-test-1.png" alt="Final illustration">
-    <div class="ia-full-overlay">
-      <div class="ia-num">7.7 &nbsp; OUTPUT</div>
-      <div class="ia-title">UNTIL JUST THE RIGHT IMAGE IS PRODUCED</div>
-      <div class="ia-body">Auto-incorporated into flipbooks, interactive lookbooks, and pitches for publishing houses or Hollywood executives.</div>
-    </div>
   </div>
   <!-- 7.8 Promotional videos -->
   <div class="ia-sub ia-cards-sub" id="ia-sub-8">
-    <div style="text-align:center;flex-shrink:0">
-      <span class="ia-num" style="display:inline">7.8 &nbsp;</span><span class="ia-title" style="display:inline">PROMOTIONAL MATERIALS</span>
-    </div>
     <div class="ia-cards-row">
       <video id="ia-card1" src="content/video/card1.webm" muted playsinline style="transition:opacity 0.6s"></video>
       <video id="ia-card2" src="content/video/card2.webm" muted playsinline style="opacity:0.15;transition:opacity 0.6s"></video>
       <video id="ia-card3" src="content/video/card3.webm" muted playsinline style="opacity:0.15;transition:opacity 0.6s"></video>
     </div>
-    <div class="ia-body" style="text-align:center;font-size:12px;flex-shrink:0">Generated automatically from your project assets</div>
-  </div>
-  <!-- 7.9 Marketing agent -->
-  <div class="ia-sub ia-text-only" id="ia-sub-9">
-    <div class="ia-num">7.9</div>
-    <div class="ia-title">FULL PROJECT MARKETING AGENT</div>
-    <div class="ia-body">A project-specific Claude marketing agent and dashboard — audience building, PR outreach, and engagement management, all included.</div>
-    <div class="ia-tag">ILLUSTRATE ASSIST &nbsp;·&nbsp; ROMANTASY STUDIO &nbsp;·&nbsp; A COMPOUNDING SYSTEM</div>
   </div>
 </div>
   </div>  <div class="layer " id="scene-8">
