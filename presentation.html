@@ -2492,17 +2492,17 @@ function tick() {
   const elapsed = getSceneElapsed();
   const t = Math.min(elapsed / (SCENES[currentScene]?.minDuration || 5), 1);
 
-  // Animate visibility of child elements with data-delay attribute
-  const sceneEl = document.getElementById(`scene-${currentScene}`);
-  if (sceneEl) {
-    sceneEl.querySelectorAll('[data-delay]').forEach(el => {
-      if (elapsed > parseFloat(el.dataset.delay)) el.classList.add('visible');
-    });
-  }
-
-  if (currentScene === 7) updateIAScene(elapsed);
-  // Narration progress bar — only advance when playing
   if (playing) {
+    // Animate visibility of child elements with data-delay attribute
+    const sceneEl = document.getElementById(`scene-${currentScene}`);
+    if (sceneEl) {
+      sceneEl.querySelectorAll('[data-delay]').forEach(el => {
+        if (elapsed > parseFloat(el.dataset.delay)) el.classList.add('visible');
+      });
+    }
+
+    if (currentScene === 7) updateIAScene(elapsed);
+    // Narration progress bar
     document.getElementById('narration-text').style.setProperty('--speak-progress', `${t * 100}%`);
   }
 
@@ -2598,7 +2598,6 @@ const SCENE_TITLES = [
 ];
 
 function buildGallery() {
-  if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
   document.body.classList.add('has-gallery');
   const gallery = document.getElementById('slide-gallery');
   const toggle  = document.getElementById('gallery-toggle');
