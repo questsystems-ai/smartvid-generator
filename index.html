@@ -132,7 +132,7 @@ body {
   color: #7b7f88 !important;
 }
 
-/* Download CTA — centered top */
+/* Download CTA — centered top, shifts right when gallery open to avoid controls */
 #download-cta {
   position: fixed;
   top: 12px;
@@ -149,12 +149,14 @@ body {
   font-family: inherit;
   letter-spacing: 0.04em;
   white-space: nowrap;
-  transition: all 0.2s;
+  transition: left 0.22s ease, all 0.2s;
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 6px;
 }
+/* When gallery is open, re-center within the non-sidebar area */
+body.has-gallery #download-cta { left: calc(50% + 94px); }
 #download-cta:hover { color: #38bdf8; border-color: rgba(56,189,248,0.3); background: rgba(56,189,248,0.06); }
 
 /* Agent Assist button — top right */
@@ -162,7 +164,7 @@ body {
   position: fixed;
   top: 12px;
   right: 20px;
-  z-index: 200;
+  z-index: 400;
   background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(129,140,248,0.15));
   border: 1px solid rgba(129,140,248,0.35);
   color: #818cf8;
@@ -185,28 +187,36 @@ body {
 }
 @keyframes agent-pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.7); } }
 
-/* Agent chat modal */
-#agent-modal {
+/* Agent chat panel — dropdown from top-right button */
+#agent-panel {
   position: fixed;
-  inset: 0;
-  z-index: 700;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(6px);
-}
-#agent-modal.open { display: flex; }
-#agent-box {
-  width: 480px;
-  max-width: 92vw;
+  top: 48px;
+  right: 20px;
+  width: 380px;
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 70px);
   background: #0d1017;
   border: 1px solid rgba(129,140,248,0.25);
-  border-radius: 16px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(129,140,248,0.1);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.65), 0 0 0 1px rgba(129,140,248,0.08);
+  display: none;
+  flex-direction: column;
+  z-index: 399;
+  transform-origin: top right;
+  animation: agent-drop-in 0.18s cubic-bezier(0.34,1.3,0.64,1) forwards;
+}
+#agent-panel.open { display: flex; }
+@keyframes agent-drop-in {
+  from { opacity: 0; transform: scale(0.92) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+/* Reuse #agent-box inner styles but now it fills the panel */
+#agent-box {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  overflow: hidden;
 }
 #agent-header {
   padding: 16px 20px;
@@ -292,7 +302,10 @@ body.presentation-mode #controls,
 body.presentation-mode #scene-counter,
 body.presentation-mode #progress-bar,
 body.presentation-mode #slide-gallery,
-body.presentation-mode #gallery-toggle {
+body.presentation-mode #gallery-toggle,
+body.presentation-mode #download-cta,
+body.presentation-mode #btn-agent,
+body.presentation-mode #agent-panel {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s;
@@ -2321,7 +2334,7 @@ body.has-gallery.gallery-collapsed #controls { left: 28px; }
   <button onclick="togglePlay()" id="btn-play">Pause</button>
   <button onclick="prevScene()">Prev</button>
   <button onclick="nextScene()">Next</button>
-  <button onclick="restart()">Restart</button>
+
   <button onclick="toggleMute()" id="btn-mute">Mute</button>
   <button onclick="enterPresentationMode()" id="btn-present">Present</button>
   <button id="btn-edit-disabled" disabled title="Editing requires the dev build">Edit</button>
@@ -2335,7 +2348,7 @@ body.has-gallery.gallery-collapsed #controls { left: 28px; }
   <span class="agent-dot"></span> Agent Assist
 </button>
 
-<div id="agent-modal">
+<div id="agent-panel">
   <div id="agent-box">
     <div id="agent-header">
       <div id="agent-avatar">🤖</div>
@@ -2553,11 +2566,13 @@ const AGENT_REPLIES = [
 ];
 let _agentReplyIdx = 0;
 function openAgent() {
-  document.getElementById('agent-modal').classList.add('open');
+  const panel = document.getElementById('agent-panel');
+  if (panel.classList.contains('open')) { closeAgent(); return; }
+  panel.classList.add('open');
   document.getElementById('agent-input').focus();
 }
 function closeAgent() {
-  document.getElementById('agent-modal').classList.remove('open');
+  document.getElementById('agent-panel').classList.remove('open');
 }
 function sendAgent() {
   const input = document.getElementById('agent-input');
@@ -2583,7 +2598,7 @@ function sendAgent() {
   msgs.scrollTop = msgs.scrollHeight;
 }
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && document.getElementById('agent-modal').classList.contains('open')) closeAgent();
+  if (e.key === 'Escape' && document.getElementById('agent-panel').classList.contains('open')) closeAgent();
 });
 
 // Presentation mode
