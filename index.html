@@ -123,7 +123,168 @@ body {
   background: rgba(255,255,255,0.14);
   color: #c8cad0;
 }
+#btn-edit-disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+#btn-edit-disabled:hover {
+  background: rgba(255,255,255,0.08) !important;
+  color: #7b7f88 !important;
+}
 
+/* Download CTA — centered top */
+#download-cta {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #60646d;
+  font-size: 11px;
+  padding: 6px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#download-cta:hover { color: #38bdf8; border-color: rgba(56,189,248,0.3); background: rgba(56,189,248,0.06); }
+
+/* Agent Assist button — top right */
+#btn-agent {
+  position: fixed;
+  top: 12px;
+  right: 20px;
+  z-index: 200;
+  background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(129,140,248,0.15));
+  border: 1px solid rgba(129,140,248,0.35);
+  color: #818cf8;
+  font-size: 12px;
+  padding: 6px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#btn-agent:hover { background: linear-gradient(135deg, rgba(56,189,248,0.25), rgba(129,140,248,0.25)); color: #a5b4fc; border-color: rgba(129,140,248,0.6); }
+.agent-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #818cf8;
+  animation: agent-pulse 2s ease-in-out infinite;
+}
+@keyframes agent-pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.7); } }
+
+/* Agent chat modal */
+#agent-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 700;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(6px);
+}
+#agent-modal.open { display: flex; }
+#agent-box {
+  width: 480px;
+  max-width: 92vw;
+  background: #0d1017;
+  border: 1px solid rgba(129,140,248,0.25);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(129,140,248,0.1);
+  display: flex;
+  flex-direction: column;
+}
+#agent-header {
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(56,189,248,0.08), rgba(129,140,248,0.12));
+  border-bottom: 1px solid rgba(129,140,248,0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+#agent-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0c8de9, #818cf8);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+#agent-header-info { flex: 1; }
+#agent-header-name { font-size: 13px; font-weight: 600; color: #e2e3e5; }
+#agent-header-sub { font-size: 10px; color: #60646d; letter-spacing: 0.06em; margin-top: 1px; }
+#agent-close {
+  background: none; border: none; color: #3a3d45; cursor: pointer;
+  font-size: 18px; padding: 4px; line-height: 1; transition: color 0.15s;
+}
+#agent-close:hover { color: #7b7f88; }
+#agent-messages {
+  padding: 24px 20px;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.agent-msg { display: flex; gap: 10px; align-items: flex-start; }
+.agent-msg-avatar {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, #0c8de9, #818cf8);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+.agent-msg-bubble {
+  background: rgba(129,140,248,0.1);
+  border: 1px solid rgba(129,140,248,0.18);
+  border-radius: 4px 12px 12px 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #c8cad0;
+}
+.agent-msg-bubble strong { color: #a5b4fc; }
+.agent-msg-bubble .no { color: #f87171; font-weight: 700; }
+#agent-input-row {
+  padding: 14px 20px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  gap: 8px;
+}
+#agent-input {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: #c8cad0;
+  font-size: 13px;
+  font-family: inherit;
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+#agent-input::placeholder { color: #3a3d45; }
+#agent-input:focus { border-color: rgba(129,140,248,0.4); }
+#agent-send {
+  background: linear-gradient(135deg, #0c8de9, #818cf8);
+  border: none; border-radius: 8px;
+  color: #fff; font-size: 13px;
+  padding: 8px 16px; cursor: pointer;
+  font-family: inherit; font-weight: 500;
+  transition: opacity 0.15s;
+}
+#agent-send:hover { opacity: 0.85; }
 
 /* Presentation mode */
 body.presentation-mode #narration,
@@ -2163,6 +2324,42 @@ body.has-gallery.gallery-collapsed #controls { left: 28px; }
   <button onclick="restart()">Restart</button>
   <button onclick="toggleMute()" id="btn-mute">Mute</button>
   <button onclick="enterPresentationMode()" id="btn-present">Present</button>
+  <button id="btn-edit-disabled" disabled title="Editing requires the dev build">Edit</button>
+</div>
+
+<a id="download-cta" href="https://github.com/questsystems-ai/smartvid-generator" target="_blank">
+  ⬇ Download Presentation Engine <span style="color:#3a3d45;margin:0 2px">·</span> Claude API needed
+</a>
+
+<button id="btn-agent" onclick="openAgent()">
+  <span class="agent-dot"></span> Agent Assist
+</button>
+
+<div id="agent-modal">
+  <div id="agent-box">
+    <div id="agent-header">
+      <div id="agent-avatar">🤖</div>
+      <div id="agent-header-info">
+        <div id="agent-header-name">Presentation Agent</div>
+        <div id="agent-header-sub">POWERED BY CLAUDE · QUESTSYSTEMS AI</div>
+      </div>
+      <button id="agent-close" onclick="closeAgent()">✕</button>
+    </div>
+    <div id="agent-messages">
+      <div class="agent-msg">
+        <div class="agent-msg-avatar">🤖</div>
+        <div class="agent-msg-bubble">
+          Hey! <strong>You're not a-i-ron!</strong><br><br>
+          This presentation was built with the <strong>Presentation Engine</strong> — a live, collaborative slide builder where the author narrates intent and Claude builds it.<br><br>
+          <span class="no">You can't edit this one.</span> But you can download the engine and build your own. 👇
+        </div>
+      </div>
+    </div>
+    <div id="agent-input-row">
+      <input id="agent-input" type="text" placeholder="Ask me anything about this presentation…" onkeydown="if(event.key==='Enter')sendAgent()" />
+      <button id="agent-send" onclick="sendAgent()">Send</button>
+    </div>
+  </div>
 </div>
 
 <div id="pres-hud" class="hud-hidden">
@@ -2343,6 +2540,51 @@ function toggleMute() {
   document.getElementById('btn-mute').textContent = audioMuted ? 'Unmute' : 'Mute';
   if (audioMuted && currentAudio) currentAudio.pause();
 }
+
+// Agent Assist
+const AGENT_REPLIES = [
+  "This presentation was built live — a-i-ron described each slide and Claude wrote it.",
+  "The narration is voiced by ElevenLabs (George voice). Word-level timing drives the karaoke captions.",
+  "Every animated SVG was built inline by Claude, no design tools involved.",
+  "The export pipeline uses Playwright headless + ffmpeg to record a YouTube-ready MP4.",
+  "Download the engine from GitHub and bring your own Claude API key to build your own.",
+  "This is the dad pitch — a $12k / 6-month funding ask to finish the AI product portfolio.",
+  "Each slide took about 15–30 minutes of back-and-forth to get right.",
+];
+let _agentReplyIdx = 0;
+function openAgent() {
+  document.getElementById('agent-modal').classList.add('open');
+  document.getElementById('agent-input').focus();
+}
+function closeAgent() {
+  document.getElementById('agent-modal').classList.remove('open');
+}
+function sendAgent() {
+  const input = document.getElementById('agent-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  const msgs = document.getElementById('agent-messages');
+  // User bubble
+  const userMsg = document.createElement('div');
+  userMsg.style.cssText = 'display:flex;justify-content:flex-end;';
+  userMsg.innerHTML = `<div style="background:rgba(12,141,233,0.15);border:1px solid rgba(12,141,233,0.25);border-radius:12px 4px 12px 12px;padding:10px 14px;font-size:14px;color:#c8cad0;max-width:300px;">${text.replace(/</g,'&lt;')}</div>`;
+  msgs.appendChild(userMsg);
+  // Agent reply (canned)
+  setTimeout(() => {
+    const reply = AGENT_REPLIES[_agentReplyIdx % AGENT_REPLIES.length];
+    _agentReplyIdx++;
+    const agentMsg = document.createElement('div');
+    agentMsg.className = 'agent-msg';
+    agentMsg.innerHTML = `<div class="agent-msg-avatar">🤖</div><div class="agent-msg-bubble">${reply}</div>`;
+    msgs.appendChild(agentMsg);
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 600);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('agent-modal').classList.contains('open')) closeAgent();
+});
 
 // Presentation mode
 let _hudTimer = null;
