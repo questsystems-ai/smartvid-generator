@@ -91,8 +91,10 @@ def _fmt_srt_time(s):
     return f"{int(s)//3600:02d}:{int(s)//60%60:02d}:{int(s)%60:02d},{ms:03d}"
 
 
-def gen_srt(durations):
-    """Generate SRT from word-level timing JSONs."""
+def gen_srt(durations, time_offset=0.0):
+    """Generate SRT from word-level timing JSONs.
+    time_offset: seconds to add to all timestamps (accounts for video startup delay).
+    """
     entries = []
     offset = 0.0
 
@@ -106,8 +108,8 @@ def gen_srt(durations):
             words = json.loads(timing_path.read_text(encoding='utf-8'))
             for j in range(0, len(words), WORDS_PER_CAPTION):
                 chunk = words[j:j + WORDS_PER_CAPTION]
-                start = offset + chunk[0][1]
-                end = offset + chunk[-1][2]
+                start = time_offset + offset + chunk[0][1]
+                end = time_offset + offset + chunk[-1][2]
                 text = ' '.join(w[0] for w in chunk)
                 entries.append((start, end, text))
         else:
@@ -180,15 +182,6 @@ def record_video(durations, total_wait_seconds):
 }})();
 """
 
-    # CSS to hide sidebar and UI chrome for a clean export
-    export_css = """
-#gallery-sidebar { display: none !important; }
-#controls { display: none !important; }
-#scene-counter { display: none !important; }
-#progress-bar-container { display: none !important; }
-#narration-bar { display: none !important; }
-"""
-
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True, args=['--autoplay-policy=no-user-gesture-required'])
         context = browser.new_context(
@@ -196,17 +189,21 @@ def record_video(durations, total_wait_seconds):
             record_video_dir=str(video_tmp),
             record_video_size={'width': 1920, 'height': 1080}
         )
+        t0 = time.time()
         page = context.new_page()
         page.add_init_script(audio_mock_js)
 
         print(f"  Navigating to {PRESENTATION_URL}...")
         page.goto(PRESENTATION_URL, wait_until='networkidle', timeout=30000)
 
-        # Inject export CSS to hide UI chrome
-        page.add_style_tag(content=export_css)
+        # Enter presentation mode: hides all chrome using the body class
+        # (fullscreen is not requested — headless ignores it anyway)
+        page.evaluate("document.body.classList.add('presentation-mode')")
 
         print("  Starting presentation (clicking overlay)...")
         page.click('#start-overlay')
+        startup_delay = time.time() - t0
+        print(f"  Startup delay (recording offset): {startup_delay:.2f}s")
 
         print(f"  Recording {total_wait_seconds:.0f}s ({total_wait_seconds/60:.1f} min)...")
         # Poll every 10s and print progress
@@ -219,7 +216,6 @@ def record_video(durations, total_wait_seconds):
             print(f"  ... {elapsed:.0f}s / {total_wait_seconds:.0f}s ({pct:.0f}%)")
 
         print("  Closing browser (flushing video)...")
-        video = page.video
         page.close()
         context.close()
         browser.close()
@@ -228,7 +224,32 @@ def record_video(durations, total_wait_seconds):
     webms = sorted(video_tmp.glob('*.webm'), key=os.path.getmtime, reverse=True)
     if not webms:
         raise RuntimeError(f"No .webm found in {video_tmp}")
-    return webms[0]
+    return webms[0], startup_delay
+
+
+def prepend_silence(audio_path, silence_seconds):
+    """Prepend N seconds of silence to an audio file so it aligns with the video."""
+    silence_path = EXPORT_DIR / 'silence.mp3'
+    subprocess.run([
+        'ffmpeg', '-y',
+        '-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=44100',
+        '-t', f'{silence_seconds:.3f}',
+        '-q:a', '2',
+        str(silence_path)
+    ], check=True, capture_output=True)
+
+    concat_txt = EXPORT_DIR / 'narration_offset_concat.txt'
+    with open(concat_txt, 'w') as f:
+        f.write(f"file '{str(silence_path).replace(chr(92), '/')}'\n")
+        f.write(f"file '{str(audio_path).replace(chr(92), '/')}'\n")
+
+    out = EXPORT_DIR / 'narration_offset.mp3'
+    subprocess.run([
+        'ffmpeg', '-y', '-f', 'concat', '-safe', '0',
+        '-i', str(concat_txt), '-c', 'copy', str(out)
+    ], check=True, capture_output=True)
+    print(f"  Prepended {silence_seconds:.2f}s silence -> {out.name}")
+    return out
 
 
 def mux(video_path, audio_path):
@@ -281,9 +302,6 @@ def main():
     print("\nStep 2: Concatenate narration audio")
     audio_path = build_narration_audio(durations)
 
-    print("\nStep 3: Generate SRT captions")
-    srt_path = gen_srt(durations)
-
     # Compute total recording duration
     total_audio = sum(
         durations.get(aid, 30.0)
@@ -293,7 +311,7 @@ def main():
     total_wait = total_audio + IA_VIDEO_EXTRA_SECONDS + END_BUFFER
     print(f"\n  Total presentation duration: {total_audio:.0f}s audio + {IA_VIDEO_EXTRA_SECONDS}s IA cards + {END_BUFFER}s buffer = {total_wait:.0f}s")
 
-    print("\nStep 4: Check serve.py")
+    print("\nStep 3: Check serve.py")
     serve_proc = None
     if is_serve_running():
         print("  serve.py already running on :8500 OK")
@@ -302,14 +320,20 @@ def main():
         print("  serve.py started OK")
 
     try:
-        print("\nStep 5: Record video (Playwright headless)")
-        video_path = record_video(durations, total_wait)
+        print("\nStep 4: Record video (Playwright headless, presentation mode)")
+        video_path, startup_delay = record_video(durations, total_wait)
         print(f"  Raw recording -> {video_path.name}")
 
-        print("\nStep 6: Mux video + audio -> MP4")
-        muxed_path = mux(video_path, audio_path)
+        print(f"\nStep 5: Offset audio by {startup_delay:.2f}s (prepend silence)")
+        offset_audio_path = prepend_silence(audio_path, startup_delay)
 
-        print("\nStep 7: Burn captions into video")
+        print(f"\nStep 6: Generate SRT captions (offset +{startup_delay:.2f}s)")
+        srt_path = gen_srt(durations, time_offset=startup_delay)
+
+        print("\nStep 7: Mux video + offset audio -> MP4")
+        muxed_path = mux(video_path, offset_audio_path)
+
+        print("\nStep 8: Burn captions into video")
         final_path = burn_captions(muxed_path, srt_path)
     finally:
         if serve_proc:

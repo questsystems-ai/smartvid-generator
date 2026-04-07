@@ -124,61 +124,6 @@ body {
   color: #c8cad0;
 }
 
-/* Edit modal */
-#edit-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 600;
-  background: rgba(0,0,0,0.88);
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-#edit-modal.open { display: flex; }
-#edit-box {
-  background: #13161c;
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 12px;
-  padding: 24px;
-  width: 680px;
-  max-width: 90vw;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-#edit-label {
-  font-size: 11px;
-  color: #60646d;
-  letter-spacing: 0.08em;
-  font-family: 'Courier New', monospace;
-}
-#edit-textarea {
-  background: #0d1117;
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 8px;
-  color: #c8cad0;
-  font-size: 15px;
-  font-family: 'Inter', sans-serif;
-  line-height: 1.6;
-  padding: 14px;
-  resize: vertical;
-  min-height: 160px;
-  outline: none;
-  width: 100%;
-}
-#edit-textarea:focus { border-color: rgba(12,141,233,0.5); }
-#edit-actions { display: flex; gap: 10px; justify-content: flex-end; }
-#edit-actions button {
-  padding: 8px 20px;
-  border-radius: 8px;
-  font-size: 13px;
-  cursor: pointer;
-  font-family: inherit;
-  border: 1px solid rgba(255,255,255,0.12);
-}
-#btn-edit-save { background: #0c8de9; color: #fff; border-color: transparent; }
-#btn-edit-cancel { background: rgba(255,255,255,0.06); color: #7b7f88; }
-#edit-status { font-size: 11px; color: #44dd88; font-family: 'Courier New', monospace; min-height: 14px; }
 
 /* Presentation mode */
 body.presentation-mode #narration,
@@ -2217,7 +2162,6 @@ body.has-gallery.gallery-collapsed #controls { left: 28px; }
   <button onclick="nextScene()">Next</button>
   <button onclick="restart()">Restart</button>
   <button onclick="toggleMute()" id="btn-mute">Mute</button>
-  <button onclick="openEdit()" id="btn-edit">Edit</button>
   <button onclick="enterPresentationMode()" id="btn-present">Present</button>
 </div>
 
@@ -2228,17 +2172,6 @@ body.has-gallery.gallery-collapsed #controls { left: 28px; }
   <button id="pres-hud-exit" onclick="exitPresentationMode()">ESC</button>
 </div>
 
-<div id="edit-modal">
-  <div id="edit-box">
-    <div id="edit-label">SCENE <span id="edit-scene-num"></span> — edit narration · saved to disk · marked authorLocked</div>
-    <textarea id="edit-textarea"></textarea>
-    <div id="edit-status"></div>
-    <div id="edit-actions">
-      <button id="btn-edit-cancel" onclick="closeEdit()">Cancel</button>
-      <button id="btn-edit-save" onclick="saveEdit()">Save to disk</button>
-    </div>
-  </div>
-</div>
 
 <script>
 const SCENES = [{"minDuration": 18, "narrationHtml": "Welcome to the workshop. This presentation is a walkthrough of what I've been building over the past year, where it stands today, and what it needs to get finished by December. One more thing worth knowing upfront — this presentation was made using one of the tools it describes. Which is, itself, part of the point.\n"}, {"minDuration": 24, "narrationHtml": "Something fundamental has changed. Not in a small way — in the way the printing press changed who could write, and who could be heard. Artificial intelligence has made it possible for one person, working alone, to do the research, the writing, the design, the engineering, and the distribution that used to require a whole team — or an entire department.\n"}, {"minDuration": 24, "narrationHtml": "Here's the insight that drives everything I'm doing. I didn't set out to build products. I set out to build a method. And the method... is the product. Each tool I make becomes part of the toolkit I use to build the next one. Each paper I publish attracts an audience that funds the one after it. That's not a side project. That's a compounding system — and it's about sixty percent built.\n"}, {"minDuration": 30, "narrationHtml": "There\u2019s an old idea called the citizen scientist \u2014 someone outside the academy, working on real problems, contributing real findings to the world. Darwin was one. Franklin was one. The model is having a renaissance, powered by artificial intelligence. One person. One machine. The freedom to speak plainly, move fast, and work on things that matter \u2014 without institutional overhead, without committee approval, and without asking anyone\u2019s permission.\n"}, {"minDuration": 57, "narrationHtml": "Here's the portfolio. Eleven projects across three categories. Six software tools: AuthorConsole and paperHTML for human authorship and publishing. The presentation engine you're watching right now. api-dash for real-time AI spend. A personal marketing agent that runs campaigns without an agency. And session continuity skills that keep the workflow moving. Two businesses: FlyIRL SkyPark and Illustrate-Assist. One patent: PULSE — Portable Unified Lightweight Scalable Engine, provisional filed March 2026. And two applied research tracks: a multi-agent problem-solving engine, and TRACER — a bio-inspired memory architecture targeting arXiv. Every tool I build goes into the toolkit. Every paper builds the audience. Every business generates the revenue. These aren't separate bets. They're one system.\n"}, {"minDuration": 14, "narrationHtml": "Here's where each project stands — as a percentage complete toward a product someone can download, subscribe to, or build on. Across all eleven, the average is sixty-one percent done.\n"}, {"minDuration": 40, "narrationHtml": "One project sits apart from the rest, and it's worth a moment of its own. PULSE — Portable Unified Lightweight Scalable Engine — is a patent-pending hardware invention: a modular power generator for drones and field equipment, using a pulsed combustion cycle to generate clean DC power in the field. The provisional patent was filed in March of this year. The path to revenue runs through government research grants and technology licensing — the standard commercial pathways for hard technology. What it adds to the portfolio is credibility of a different kind. Software can be copied. A patent cannot.\n"}, {"minDuration": 80, "narrationHtml": "Let's look at Illustrate Assist. The user uploads text — if it's finished, great. If just an idea, the app uses Claude to collaborate on research and writing to develop your ideas into books, screenplays, and pitches. The app uses a sophisticated multi-model agent-orchestrated process to parse and extract a world bible and auto-generate model-specific prompts, at which point the user works with Claude to refine the characters, and then the cinematic scenes, collaborating with a fully tooled Sonnet agent with memory and project-context, until just the right image is produced. These are then automatically incorporated into publishable flipbooks, audiovisual interactive lookbooks, or project pitches designed for publishing houses or Hollywood executives. The app also generates promotional materials — and contains access to a project-specific full marketing agent and dashboard tool to manage audience and PR outreach and engagement.\n"}, {"minDuration": 30, "narrationHtml": "There are two kinds of value in this portfolio, and it's worth understanding both. Some projects make money directly — monthly subscriptions, technology licensing, and government research grants. Others build an audience first, and the audience is what generates the revenue. That happens through Patreon — a platform where readers and followers pay a small amount each month to support independent researchers and creators — and through the natural cross-promotion that happens when one project's audience discovers another. In the modern creator economy, audience is the asset. Everything else follows.\n"}, {"minDuration": 33, "narrationHtml": "Here's how the compounding works in practice. AuthorConsole gets published. Academics and writers find it and follow along. They see the link to the narrated explainer — made with the presentation engine. They discover the presentation tool. Some become users. They find the A.I. cost tracker. They find the illustration studio. Each project is a door. Every door leads to the others. And the marketing dashboard — which is itself one of the products — means I never have to pay an agency to reach any of these audiences. I built the full-stack marketing machine-brain. Together we run the show.\n", "authorLocked": true}, {"minDuration": 29, "narrationHtml": "What I'm describing is a new kind of business — one that doesn't have a clean name yet, but it's real and it's working. Not a startup. Not a consulting practice. Not a blog. A vertically integrated one-person operation, where the same person researches, writes, builds, ships, and markets everything — in this case using the very tools they are building and writing about.\n", "authorLocked": true}, {"minDuration": 33, "narrationHtml": "Here's the ask. Two thousand dollars a month, for six months. That breaks down simply: twelve hundred and fifty for living expenses, and seven hundred and fifty for A.I. API costs and minor brand promotion. At six months, we re-evaluate together. If revenue has started, we stop. If we're close and it makes sense to continue, we talk. There's no open-ended commitment here. Just a focused runway to finish what is already most of the way built. Total for six months: twelve thousand dollars.\n"}, {"minDuration": 43, "narrationHtml": "Here's the six-month roadmap. April and May: five things ship — AuthorConsole, the presentation engine, the A.I. Spend Tracker, Console Continuity Skills, and a-i-ron.com. Each one launches publicly, starts building an audience, and feeds the next. June through August: Illustrate-Assist and the Personal Marketing Agent go live, and Patreon revenue starts flowing. September and October: Patreon revenue funds the marketing spend, the first product revenue comes in, and we sit down and look at what's working. That's the re-evaluation point. By then, the picture is clear.\n"}, {"minDuration": 26, "narrationHtml": "I'm not asking you to bet on a dream. I'm asking you to fund the last mile of something that is already mostly built — for a defined period, with a clear check-in point, and a specific number that covers exactly what it needs to cover and nothing more. The moment is real. The tools are working. What I need is the space to finish them — and someone who believes that's worth twelve thousand dollars to find out.\n"}];
@@ -2525,41 +2458,8 @@ function tick() {
 }
 
 // Edit narration
-function openEdit() {
-  document.getElementById('edit-status').textContent = '';
-  document.getElementById('edit-scene-num').textContent = (currentScene + 1) + ' / ' + SCENES.length;
-  document.getElementById('edit-textarea').value = (SCENES[currentScene].narrationHtml || '').replace(/\n$/, '');
-  document.getElementById('edit-modal').classList.add('open');
-  document.getElementById('edit-textarea').focus();
-  if (playing) togglePlay();
-}
-function closeEdit() {
-  document.getElementById('edit-modal').classList.remove('open');
-}
-async function saveEdit() {
-  const text = document.getElementById('edit-textarea').value.trimEnd() + '\n';
-  const status = document.getElementById('edit-status');
-  SCENES[currentScene].narrationHtml = text;
-  SCENES[currentScene].authorLocked = true;
-  document.getElementById('narration-text').innerHTML = text;
-  status.textContent = 'saving…';
-  try {
-    const resp = await fetch(location.pathname + '?nocache=' + Date.now());
-    const html = await resp.text();
-    const updated = html.replace(/const SCENES = \[.*?\];/, 'const SCENES = ' + JSON.stringify(SCENES) + ';');
-    await fetch('/save', { method: 'POST', headers: { 'X-Filename': 'presentation.html', 'Content-Type': 'text/html' }, body: updated });
-    status.textContent = '✓ saved · authorLocked: true';
-    setTimeout(closeEdit, 1400);
-  } catch(e) {
-    status.style.color = '#ff5555';
-    status.textContent = '✗ save failed — is serve.py running on :8500?';
-  }
-}
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    if (document.getElementById('edit-modal').classList.contains('open')) closeEdit();
-    else if (document.body.classList.contains('presentation-mode')) exitPresentationMode();
-  }
+  if (e.key === 'Escape' && document.body.classList.contains('presentation-mode')) exitPresentationMode();
 });
 
 // Start overlay
