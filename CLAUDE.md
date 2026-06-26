@@ -50,6 +50,9 @@ generate.py
 ## Complexity Check (Self-Audit Rule)
 After 2 failed attempts at the same problem: STOP. Diagnose what's tangled, propose a focused fix, estimate the effort, let the user decide. Don't brute-force.
 
+## When Searching
+If Glob or Grep returns a directory or file path that's plausibly relevant to the question, read inside it before answering. Don't stop at the listing.
+
 ## Git Workflow
 - Default branch: `main`. Use `dev/wip` for in-progress work, never push broken code to `main`.
 - Never commit `.env.local`, `node_modules/`, `__pycache__/`, `*.pyc`
